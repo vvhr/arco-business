@@ -1,0 +1,182 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { ArcoResolver } from 'unplugin-vue-components/resolvers';
+import UnoCSS from 'unocss/vite'
+import dts from 'vite-plugin-dts'
+
+import { resolve } from 'path'
+import { readFileSync, writeFileSync } from 'fs'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
+
+/**
+ * 自动生成全局组件类型声明文件
+ * 从 src/index.ts 中提取组件导出，生成 dist/global.d.ts
+ */
+async function generateGlobalDts() {
+  const indexFile = resolve(__dirname, 'src/index.ts')
+  const targetFile = resolve(__dirname, 'global.d.ts')
+
+  // 读取 src/index.ts 并提取组件导出
+  const indexContent = readFileSync(indexFile, 'utf-8')
+
+  // 定义所有组件名称
+  const components = [
+    'AeForm',
+    'AeIcon',
+    'AeTable',
+    'AeEditor',
+    'AeUpload',
+    'AeDialog',
+    'AeDrawer',
+    'AeTabs',
+    'AeTabPane',
+    'AeText',
+    'AeComboInput'
+  ]
+
+  // 生成组件声明（使用 Element Plus 的模式）
+  const declarations = components
+    .map(name => `    ${name}: typeof import('acro-business')['${name}']`)
+    .join('\n')
+
+  const content = `/* prettier-ignore */
+declare module 'vue' {
+  // GlobalComponents for Volar
+  export interface GlobalComponents {
+${declarations}
+  }
+}
+
+export {}
+`
+
+  writeFileSync(targetFile, content, 'utf-8')
+  console.log(`✓ Created global.d.ts with ${components.length} components`)
+}
+
+/**
+ * 编译独立的 element-plus-beauty.less 文件
+ */
+async function compileBeautyStyles() {
+  const lessFile = resolve(__dirname, 'src/styles/element-plus-beauty.less')
+  const outputFile = resolve(__dirname, 'dist/element-plus-beauty.css')
+
+  try {
+    // 使用 lessc 命令编译 less 文件
+    await execAsync(`npx lessc ${lessFile} ${outputFile}`)
+    console.log('✓ Compiled element-plus-beauty.less to dist/element-plus-beauty.css')
+  } catch (error) {
+    console.error('✗ Failed to compile element-plus-beauty.less:', error)
+  }
+}
+
+export default defineConfig({
+  plugins: [
+    UnoCSS(),
+    vue(),
+    vueJsx({
+      // 配置JSX
+      transformOn: true,
+      mergeProps: false
+    }),
+    AutoImport({
+      imports: ['vue', '@vueuse/core'],
+      resolvers: [ElementPlusResolver(), ArcoResolver()],
+      dts: 'types/auto-imports.d.ts',
+      eslintrc: {
+        enabled: true,
+        filepath: '.eslintrc-auto-import.json',
+        globalsPropValue: true
+      }
+    }),
+    Components({
+      // 只包含 Element Plus 组件，排除所有自定义组件
+      dirs: [], // 不扫描任何目录
+      resolvers: [ElementPlusResolver(), ArcoResolver({ sideEffect: true })],
+      dts: 'types/components.d.ts'
+    }),
+    dts({
+      include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue', 'src/global.d.ts'],
+      exclude: [
+        'src/**/*.spec.ts',
+        'src/**/*.test.ts',
+        'src/main.ts',
+        'src/App.vue',
+        'src/examples/**/*',
+        'types/env.d.ts',
+        'types/auto-imports.d.ts',
+        'types/uno.d.ts',
+        'types/components.d.ts'
+      ],
+      outDir: 'dist',
+      staticImport: true,
+      insertTypesEntry: true,
+      rollupTypes: false,
+      copyDtsFiles: true,
+      tsconfigPath: './tsconfig.json',
+      compilerOptions: {
+        declarationMap: true
+      },
+      afterBuild: async () => {
+        await generateGlobalDts()
+        await compileBeautyStyles()
+      }
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+      '~': resolve(__dirname, '.')
+    }
+  },
+  base: process.env.NODE_ENV === 'production' ? '/arco-business/' : './',
+  server: {
+    port: 8989,
+    open: true
+  },
+  build: {
+    target: 'es2015',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'AdvancedEleUI',
+      formats: ['es', 'cjs', 'umd'],
+      fileName: format => {
+        if (format === 'es') return 'index.js'
+        if (format === 'cjs') return 'index.cjs'
+        if (format === 'umd') return 'index.umd.js'
+        return `index.${format}.js`
+      }
+    },
+    rollupOptions: {
+      external: ['vue', 'element-plus', '@arco-design/web-vue', '@iconify/vue', '@vueuse/core', 'lodash-es', 'dayjs'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          '@arco-design/web-vue': 'ArcoDesignVue',
+          'element-plus': 'ElementPlus',
+          '@iconify/vue': 'IconifyVue',
+          '@vueuse/core': 'VueUse',
+          'lodash-es': '_',
+          dayjs: 'dayjs'
+        },
+        exports: 'named',
+        assetFileNames: assetInfo => {
+          if (assetInfo.name === 'style.css') return 'style.css'
+          return assetInfo.name || ''
+        }
+      }
+    },
+    cssCodeSplit: false,
+    sourcemap: true,
+    minify: 'esbuild'
+  }
+})

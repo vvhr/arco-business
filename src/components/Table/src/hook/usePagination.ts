@@ -1,0 +1,61 @@
+import { ref, computed, watch, unref } from 'vue'
+import { TableEmits, TableProps } from '../types'
+
+export function usePagination(props: TableProps, emit: TableEmits) {
+  const pageSizeRef = ref(props.pageSize)
+  const currentPageRef = ref(props.page)
+  const pagination = computed(() => {
+    return Object.assign(
+      {
+        background: false,
+        layout: 'total, sizes, prev, pager, next, jumper',
+        pageSizes: [10, 20, 30, 40, 50, 100],
+        disabled: false,
+        hideOnSinglePage: false,
+        total: 10
+      },
+      { total: unref(props).total, ...(unref(props).pagination || {}) }
+    )
+  })
+  function watchPage() {
+    // 监听分页器变化
+    const stop1 = watch(
+      () => pageSizeRef.value,
+      (val: number) => {
+        emit('update:pageSize', val)
+      }
+    )
+    const stop2 = watch(
+      () => currentPageRef.value,
+      (val: number) => {
+        emit('update:page', val)
+      }
+    )
+    const stop3 = watch(
+      () => unref(props).pageSize,
+      (val: number) => {
+        pageSizeRef.value = val
+      }
+    )
+    const stop4 = watch(
+      () => unref(props).page,
+      (val: number) => {
+        currentPageRef.value = val
+      }
+    )
+
+    return () => {
+      stop1()
+      stop2()
+      stop3()
+      stop4()
+    }
+  }
+
+  return {
+    pageSizeRef,
+    currentPageRef,
+    pagination,
+    watchPage
+  }
+}
