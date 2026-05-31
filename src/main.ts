@@ -4,6 +4,10 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/theme-chalk/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'virtual:uno.css'
+
+import ArcoVueIcon from '@arco-design/web-vue/es/icon';
+import '@arco-design/web-vue/dist/arco.css';
+
 import App from './App.vue'
 
 const app = createApp(App)
@@ -18,6 +22,6 @@ app.config.warnHandler = (msg, instance, _trace) => {
   }
   console.warn(msg)
 }
-
+app.use(ArcoVueIcon);
 app.use(ElementPlus, { locale: zhCn })
 app.mount('#app')

@@ -29,7 +29,6 @@ import { Table } from '@/components/Table'
 import Group from './components/Group.vue'
 import Disclosure from './components/Disclosure.vue'
 import Blank from './components/Blank.vue'
-import { Editor } from '@/components/Editor'
 import { Upload } from '@/components/Upload'
 import { ComboInput } from '@/components/ComboInput'
 import { Text } from '@/components/Text'
@@ -54,7 +53,6 @@ const defaultComponents: Recordable<Component, ComponentName> = {
   ColorPicker: ElColorPicker,
   ComboInput: ComboInput,
   DatePicker: ElDatePicker,
-  Editor: Editor,
   Input: ElInput,
   InputNumber: ElInputNumber,
   InputTag: ElInputTag,

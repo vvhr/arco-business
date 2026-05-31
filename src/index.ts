@@ -5,9 +5,8 @@ import 'virtual:uno.css'
 import { AeForm } from './components/Form'
 import { AeIcon } from './components/Icon'
 import { AeTable } from './components/Table'
-import { AeEditor } from './components/Editor'
 import { AeUpload } from './components/Upload'
-import { AeDialog } from './components/Dialog'
+import { AbModal } from './components/Modal'
 import { AeDrawer } from './components/Drawer'
 import { AeTabs, AeTabPane } from './components/Tabs'
 import { AeText } from './components/Text'
@@ -29,7 +28,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AeIcon, AeTable, AeEditor, AeUpload, AeDialog, AeDrawer, AeTabs, AeTabPane, AeText, AeComboInput }
+export { AeForm, AeIcon, AeTable, AeUpload, AbModal, AeDrawer, AeTabs, AeTabPane, AeText, AeComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -98,19 +97,6 @@ export type {
 export type { IconProps, IconData, IconCollection } from './components/Icon'
 export { addIcon, addIconCollection, addIconCollections } from './components/Icon'
 
-// Editor
-export type {
-  EditorDefineProps,
-  EditorInstance,
-  EditorProps,
-  EditorEmits,
-  ToolbarKey,
-  AddToolItem,
-  AddToolItemPosition
-} from './components/Editor'
-export type { AiEditor } from 'aieditor'
-export { SIMPLE_TOOLBAR_KEYS, FULL_TOOLBAR_KEYS } from './components/Editor'
-
 // Upload
 export type {
   UploadDefineProps,
@@ -123,8 +109,8 @@ export type {
   FileTemplate
 } from './components/Upload'
 
-// Dialog
-export type { DialogProps, DialogEmits, DialogInstance, DialogSlots } from './components/Dialog'
+// Modal
+export type { ModalProps, ModalEmits, ModalInstance, ModalSlots } from './components/Modal'
 // Drawer
 export type { DrawerProps, DrawerEmits, DrawerInstance, DrawerSlots } from './components/Drawer'
 // Tabs
@@ -213,9 +199,8 @@ const install = (app: App, options?: InstallOptions) => {
     AeForm,
     AeIcon,
     AeTable,
-    AeEditor,
     AeUpload,
-    AeDialog,
+    AbModal,
     AeDrawer,
     AeTabs,
     AeTabPane,

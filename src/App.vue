@@ -13,14 +13,23 @@
           />
         </svg>
       </a>
-      <el-switch
+      <a-switch
         v-model="isDark"
+        unchecked-color="rgb(var(--warning-6))"
         class="theme-switch"
-        inline-prompt
-        :active-icon="Moon"
-        :inactive-icon="Sunny"
         @change="toggleTheme"
-      />
+      >
+        <template #checked-icon>
+          <span style="color: rgb(var(--primary-6))">
+             <icon-moon-fill />
+          </span>
+        </template>
+        <template #unchecked-icon>
+          <span style="color: rgb(var(--warning-6))">
+            <icon-sun-fill />
+          </span>
+        </template>
+      </a-switch>
       <img
         src="https://img.howcat.cn/LxLGz5p-v_cQsTA0sP_oQ"
         title="logo"
@@ -41,9 +50,6 @@
       </el-tab-pane>
       <el-tab-pane label="🎨 AeIcon 图标组件" name="icon">
         <IconExample v-if="activeTab === 'icon'" />
-      </el-tab-pane>
-      <el-tab-pane label="📄 AeEditor 富文本编辑器" name="editor">
-        <EditorExample v-if="activeTab === 'editor'" />
       </el-tab-pane>
       <el-tab-pane label="📄 AeUpload 文件上传" name="upload">
         <UploadExample v-if="activeTab === 'upload'" />
@@ -69,11 +75,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Moon, Sunny } from '@element-plus/icons-vue'
+
 import FormExample from './examples/FormExample.vue'
 import TableExample from './examples/TableExample.vue'
 import IconExample from './examples/IconExample.vue'
-import EditorExample from './examples/EditorExample.vue'
 import UploadExample from './examples/UploadExample.vue'
 import DialogExample from './examples/DialogExample.vue'
 import DrawerExample from './examples/DrawerExample.vue'
@@ -152,8 +157,6 @@ const toggleTheme = (value: boolean) => {
   position: absolute;
   top: 32px;
   right: 20px;
-  --el-switch-on-color: #409eff;
-  --el-switch-off-color: #ff9800;
 }
 
 .demo-header {

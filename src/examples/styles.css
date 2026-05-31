@@ -9,7 +9,7 @@
 .section-header {
   > h2 {
     font-size: 28px;
-    color: var(--el-text-color);
+    color: var(--color-text-1);
     margin: 0 0 10px 0;
   }
 }

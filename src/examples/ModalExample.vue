@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh, Download, Printer } from '@element-plus/icons-vue'
-import { Dialog } from '../components/Dialog'
+import { AbModal } from '@/index'
 
 const basicDialogVisible = ref(false)
 const draggableDialogVisible = ref(false)
@@ -13,9 +13,9 @@ const customActionsDialogVisible = ref(false)
 const noHeaderDialogVisible = ref(false)
 const activeTab = ref('first')
 // 处理基础对话框确认
-const handleBasicConfirm = () => {
-  ElMessage.success('确认操作')
-  basicDialogVisible.value = false
+
+function handleClose() {
+  ElMessage.success('关闭消息')
 }
 
 // 关闭前确认
@@ -71,54 +71,42 @@ const handlePrint = () => {
       <el-button type="warning" @click="noHeaderDialogVisible = true">无标题对话框</el-button>
     </el-card>
 
-    <Dialog
+    <AbModal
       v-model="basicDialogVisible"
       title="基础对话框"
       width="500px"
-      @close="handleBasicConfirm"
+      :show-fullscreen="true"
+      @close="handleClose"
     >
-      <p>这是一个基础的对话框示例。</p>
-      <p>对话框默认支持以下特性：</p>
-      <ul>
-        <li>标题栏和底部区域带有边框</li>
-        <li>关闭时自动销毁内容</li>
-        <li>点击遮罩层不关闭（可配置）</li>
-        <li>按 ESC 键关闭（可配置）</li>
-      </ul>
+      <div style="background-color: aqua; min-height: 300px; height: 100%; width: 100%"></div>
       <template #footer>
         <el-button @click="basicDialogVisible = false">关闭</el-button>
       </template>
-    </Dialog>
-    <Dialog v-model="draggableDialogVisible" title="可拖拽对话框" width="600px" :draggable="true">
-      <div>
-        <p>🖱️ 试试拖动标题栏移动对话框！</p>
-        <p>
-          拖拽功能默认开启，可以通过
-          <code>draggable</code>
-          属性控制。
-        </p>
-        <p>在最大化或全屏状态下，拖拽功能会自动禁用。</p>
-      </div>
+    </AbModal>
+    <AbModal v-model="draggableDialogVisible" title="可拖拽对话框" width="600px" :draggable="true">
+      <div style="background-color: aqua; height: 300px; width: 100%"></div>
       <template #footer>
         <el-button @click="draggableDialogVisible = false">关闭</el-button>
       </template>
-    </Dialog>
-    <Dialog v-model="fullscreenDialogVisible" title="全屏对话框" :fullscreen="true">
-      <div>
-        <p>全屏模式下对话框会占据整个屏幕。</p>
-        <div style="margin-top: 20px; padding: 20px; background: var(--el-fill-color-light)">
-          <h3>全屏内容展示</h3>
-          <p v-for="i in 20" :key="i">这是第 {{ i }} 行内容，全屏模式下可以显示更多内容</p>
-        </div>
+    </AbModal>
+    <AbModal
+      v-model="fullscreenDialogVisible"
+      title="全屏对话框"
+      :show-fullscreen="true"
+      :scrollable="true"
+    >
+      <div style="padding: 10px; background: var(--el-fill-color-light)">
+        <div v-for="i in 50" :key="i">这是第 {{ i }} 行内容，全屏模式下可以显示更多内容</div>
       </div>
       <template #footer>
         <el-button @click="fullscreenDialogVisible = false">关闭</el-button>
       </template>
-    </Dialog>
-    <Dialog
+    </AbModal>
+    <AbModal
       v-model="beforeCloseDialogVisible"
       title="关闭前确认"
       width="500px"
+      :mask-closable="false"
       :before-close="handleBeforeClose"
     >
       <div>
@@ -133,10 +121,10 @@ const handlePrint = () => {
           </ul>
         </div>
       </div>
-    </Dialog>
+    </AbModal>
 
     <!-- 标签页对话框 -->
-    <Dialog v-model="tabsDialogVisible" title="标签页对话框" width="700px" :scrollable="false">
+    <AbModal v-model="tabsDialogVisible" title="标签页对话框" width="700px" :scrollable="false">
       <el-tabs
         v-model="activeTab"
         style="height: 100%; display: flex; flex-direction: column"
@@ -180,18 +168,23 @@ const handlePrint = () => {
       <template #footer>
         <el-button @click="tabsDialogVisible = false">关闭</el-button>
       </template>
-    </Dialog>
+    </AbModal>
 
     <!-- 自定义操作按钮对话框 -->
-    <Dialog v-model="customActionsDialogVisible" title="数据详情" width="600px" :fullscreen="true">
+    <AbModal
+      v-model="customActionsDialogVisible"
+      title="数据详情"
+      width="600px"
+      :show-fullscreen="true"
+    >
       <template #header-actions>
-        <div class="dialog-action-btn" @click="handleRefresh">
+        <div class="ab-modal-btn" @click="handleRefresh">
           <el-icon><Refresh /></el-icon>
         </div>
-        <div class="dialog-action-btn" @click="handleDownload">
+        <div class="ab-modal-btn" @click="handleDownload">
           <el-icon><Download /></el-icon>
         </div>
-        <div class="dialog-action-btn" @click="handlePrint">
+        <div class="ab-modal-btn" @click="handlePrint">
           <el-icon><Printer /></el-icon>
         </div>
       </template>
@@ -220,18 +213,13 @@ const handlePrint = () => {
       <template #footer>
         <el-button @click="customActionsDialogVisible = false">关闭</el-button>
       </template>
-    </Dialog>
-    <Dialog
-      v-model="noHeaderDialogVisible"
-      width="600px"
-      :no-header="true"
-      :close-on-click-modal="true"
-    >
+    </AbModal>
+    <AbModal v-model="noHeaderDialogVisible" width="600px" :hide-title="true" :mask-closable="true">
       <div>
         <p>📌 无标题栏对话框</p>
         <p>
           通过
-          <code>no-header</code>
+          <code>hide-title</code>
           属性可以关闭对话框的标题栏。
         </p>
         <p>
@@ -241,6 +229,6 @@ const handlePrint = () => {
         </p>
         <el-button @click="noHeaderDialogVisible = false">关闭</el-button>
       </div>
-    </Dialog>
+    </AbModal>
   </div>
 </template>
