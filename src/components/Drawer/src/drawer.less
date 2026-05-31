@@ -1,0 +1,37 @@
+.ab-drawer-overlay {
+  > .arco-drawer {
+    > .arco-drawer-header {
+      padding: 0 16px;
+      .ab-drawer-btn {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text-1);
+        font-size: 16px;
+        height: 24px;
+        width: 24px;
+        cursor: pointer;
+        border-radius: var(--border-radius-small);
+        transition: all 150ms ease-in-out;
+        background-color: transparent;
+        pointer-events: all;
+        &:hover {
+          background-color: var(--color-fill-2);
+        }
+      }
+    }
+    > .arco-drawer-body {
+      padding: 0;
+      overflow: hidden;
+      > .ab-drawer-body__no-scrollbar {
+        padding: 12px 10px;
+        height: 100%;
+        box-sizing: border-box;
+      }
+    }
+    > .arco-drawer-footer {
+      padding: 10px 16px 16px 16px;
+    }
+  }
+}

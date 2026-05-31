@@ -2,7 +2,6 @@
 import { Modal, Scrollbar } from '@arco-design/web-vue'
 import { computed, useAttrs, ref, unref, useSlots } from 'vue'
 import { isNumber } from '@/utils/is'
-import { Icon } from '@/components/Icon'
 import type { ModalProps, ScrollToOptions } from './types'
 
 defineOptions({
@@ -29,7 +28,7 @@ const props = withDefaults(defineProps<ModalProps>(), {
   width: '500px',
   mask: true,
   unmountOnClose: true,
-  maskClosable: true,
+  maskClosable: false,
   renderToBody: true,
   modalClass: '',
   bodyClass: '',
@@ -115,7 +114,7 @@ const getBindValue = computed(() => {
     // 最外层Class始终绑定我们的固定类名
     class: mergeClassName('ab-modal-overlay', obj.class),
     modalClass: mergeClassName('ab-modal', obj.modalClass),
-    //
+    // 是否有插槽
     footer: slots.footer ? true : false
   }
 })
@@ -134,7 +133,8 @@ const scrollbarStyle = computed(() => {
   return {
     height: height,
     padding: 'var(--size-4)',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    boxSizing: 'border-box'
   }
 })
 
@@ -192,7 +192,7 @@ defineExpose({
     <template v-if="!hideTitle" #title>
       <div class="flex justify-between items-center relative w-full">
         <div class="flex items-center">
-          <Icon v-if="draggable" icon="mdi:drag" class="ab-modal-draggable-indicator" :size="30" />
+          <icon-drag-dot-vertical v-if="draggable" class="ab-modal-draggable-indicator" :size="20"/>
           <slot name="title">
             {{ title }}
           </slot>
@@ -200,14 +200,11 @@ defineExpose({
         <div class="flex flex-row items-center gap-1">
           <slot name="header-actions"></slot>
           <div v-if="showFullscreen" class="ab-modal-btn" @click="toggleFull">
-            <Icon
-              :icon="
-                fullscreenLocal ? 'radix-icons:exit-full-screen' : 'radix-icons:enter-full-screen'
-              "
-            />
+            <icon-fullscreen-exit v-if="fullscreenLocal" :size="16" />
+            <icon-fullscreen v-else :size="16"/>
           </div>
           <div class="ab-modal-btn" @click="handleClose()">
-            <Icon icon="ep:close" />
+            <icon-close :size="16"/>
           </div>
         </div>
       </div>
@@ -233,74 +230,3 @@ defineExpose({
     </template>
   </Modal>
 </template>
-
-<style lang="less">
-.ab-modal-overlay {
-  .ab-modal {
-    &.arco-modal-fullscreen {
-      > .arco-modal-body {
-        flex: 1;
-        height: 0;
-        > .ab-modal-body__no-scrollbar {
-          height: 100%;
-        }
-        > .arco-scrollbar-type-embed {
-          height: 100%;
-          > .arco-scrollbar-container {
-            height: 100% !important;
-          }
-        }
-      }
-    }
-    &.arco-modal-draggable {
-      > .arco-modal-header {
-        cursor: auto;
-        pointer-events: none;
-      }
-    }
-    > .arco-modal-header {
-      padding: 0 16px;
-      .ab-modal-btn {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-text-1);
-        font-size: 16px;
-        height: 24px;
-        width: 24px;
-        cursor: pointer;
-        border-radius: var(--border-radius-small);
-        transition: all 150ms ease-in-out;
-        background-color: transparent;
-        pointer-events: all;
-        &:hover {
-          background-color: var(--color-fill-2);
-        }
-      }
-      .ab-modal-draggable-indicator {
-        color: var(--color-text-3);
-        cursor: move;
-        opacity: 0.8;
-        transition: opacity 0.2s ease;
-        margin-right: 5px;
-        pointer-events: all;
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-    > .arco-modal-body {
-      padding: 0;
-      overflow: hidden;
-      > .ab-modal-body__no-scrollbar {
-        padding: 12px 10px;
-        box-sizing: border-box;
-      }
-    }
-    > .arco-modal-footer {
-      padding: 10px 16px;
-    }
-  }
-}
-</style>

@@ -7,7 +7,7 @@ declare module 'vue' {
     AeTable: typeof import('acro-business')['AeTable']
     AeUpload: typeof import('acro-business')['AeUpload']
     AbModal: typeof import('acro-business')['AbModal']
-    AeDrawer: typeof import('acro-business')['AeDrawer']
+    AbDrawer: typeof import('acro-business')['AbDrawer']
     AeTabs: typeof import('acro-business')['AeTabs']
     AeTabPane: typeof import('acro-business')['AeTabPane']
     AeText: typeof import('acro-business')['AeText']

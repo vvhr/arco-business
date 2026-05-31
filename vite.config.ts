@@ -33,7 +33,7 @@ async function generateGlobalDts() {
     'AeTable',
     'AeUpload',
     'AbModal',
-    'AeDrawer',
+    'AbDrawer',
     'AeTabs',
     'AeTabPane',
     'AeText',

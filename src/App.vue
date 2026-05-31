@@ -36,7 +36,7 @@
         width="400px"
         alt="logo"
       />
-      <p class="subtitle">基于 Vue 3 + Element Plus 的高级组件库</p>
+      <p class="subtitle">基于 Vue 3 + Arco Design Vue 的高级组件库</p>
     </header>
     <el-tabs v-model="activeTab" class="demo-tabs">
       <el-tab-pane label="🚀 快速开始" name="start">
@@ -54,10 +54,10 @@
       <el-tab-pane label="📄 AeUpload 文件上传" name="upload">
         <UploadExample v-if="activeTab === 'upload'" />
       </el-tab-pane>
-      <el-tab-pane label="💬 AeDialog 对话框" name="dialog">
-        <DialogExample v-if="activeTab === 'dialog'" />
+      <el-tab-pane label="💬 AbModal 对话框" name="modal">
+        <ModalExample v-if="activeTab === 'modal'" />
       </el-tab-pane>
-      <el-tab-pane label="💬 AeDrawer 抽屉" name="drawer">
+      <el-tab-pane label="💬 AbDrawer 抽屉" name="drawer">
         <DrawerExample v-if="activeTab === 'drawer'" />
       </el-tab-pane>
       <el-tab-pane label="💬 AeTabs 标签页" name="tabs">
@@ -80,7 +80,7 @@ import FormExample from './examples/FormExample.vue'
 import TableExample from './examples/TableExample.vue'
 import IconExample from './examples/IconExample.vue'
 import UploadExample from './examples/UploadExample.vue'
-import DialogExample from './examples/DialogExample.vue'
+import ModalExample from './examples/ModalExample.vue'
 import DrawerExample from './examples/DrawerExample.vue'
 import TabsExample from './examples/TabsExample.vue'
 import QuickStartExample from './examples/QuickStartExample.vue'

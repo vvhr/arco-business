@@ -1,16 +1,16 @@
 import Drawer from './src/Drawer.vue'
 import { withInstall } from '@/utils/install'
 import type { SFCWithInstall } from '@/utils/install'
-import type { DrawerProps as ElDrawerProps } from 'element-plus'
+import type { DrawerProps } from './src/types.ts'
 
-export const AeDrawer: SFCWithInstall<typeof Drawer> = withInstall(Drawer)
-export default AeDrawer
+export const AbDrawer: SFCWithInstall<typeof Drawer> = withInstall(Drawer)
+export default AbDrawer
 
 /**
  * Drawer 组件的 Props 类型定义
- * 继承 ElDrawer 的所有原生属性，并扩展自定义属性
+ * 继承 arco-drawer 的所有原生属性，并扩展自定义属性
  */
-export type DrawerProps = InstanceType<typeof Drawer>['$props'] & Partial<ElDrawerProps>
+export { DrawerProps }
 
 /**
  * Drawer 组件实例类型
@@ -35,6 +35,3 @@ export type DrawerSlots = {
   /** 底部插槽 */
   footer?: () => any
 }
-
-// 兼容旧的导出方式
-export { AeDrawer as Drawer }

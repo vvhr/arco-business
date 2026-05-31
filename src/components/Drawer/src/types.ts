@@ -1,5 +1,5 @@
-import type { ModalConfig as ArcoModalConfig } from '@arco-design/web-vue'
 import type { CSSProperties } from 'vue'
+import type { DrawerConfig as ArcoDrawerConfig } from '@arco-design/web-vue'
 
 export type DoneFn = () => void
 export type BeforeCloseFn = (done: DoneFn) => void
@@ -11,6 +11,8 @@ export type ScrollToOptions =
       top?: number | undefined
     }
   | undefined
+
+type StyleValue = string | CSSProperties
 
 type ModalConfigExcludeKeys =
   | 'closable'
@@ -28,17 +30,15 @@ type ModalConfigExcludeKeys =
   | 'defaultVisible'
   | 'bodyStyle'
 
-type StyleValue = string | CSSProperties
-
-type ModalComponentConfig = Partial<ArcoModalConfig> & {
+type DrawerComponentConfig = Partial<ArcoDrawerConfig> & {
   visible?: boolean
   defaultVisible?: boolean
   unmountOnClose?: boolean
 }
 
-export type ModalConfig = Omit<ModalComponentConfig, ModalConfigExcludeKeys>
+export type DrawerConfig = Omit<DrawerComponentConfig, ModalConfigExcludeKeys>
 
-export interface ModalProps extends ModalConfig {
+export interface DrawerProps extends DrawerConfig {
   /**
    * acro-design 实际为 visible，为保持系统统一性，使用 modelValue。
    */
@@ -48,25 +48,17 @@ export interface ModalProps extends ModalConfig {
    */
   title?: string
   /**
-   * 是否隐藏标题。
+   * 是否显示头部
    */
-  hideTitle?: boolean
+  header?: boolean
   /**
-   * 是否默认开启全屏。
+   * 抽屉位置
    */
-  fullscreen?: boolean
-  /**
-   * 显示全屏切换按钮。
-   */
-  showFullscreen?: boolean
+  placement?: 'top' | 'right' | 'bottom' | 'left'
   /**
    * 是否使用内置滚动条。
    */
   scrollable?: boolean
-  /**
-   * 使用内置滚动条时必须给滚动条设置一个最大高度。
-   */
-  scrollbarHeight?: string | number
   /**
    * 滚动条属性。
    */

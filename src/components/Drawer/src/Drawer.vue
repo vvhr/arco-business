@@ -1,161 +1,198 @@
-<script lang="ts">
-export default {
-  name: 'AeDrawer'
-}
-</script>
-
 <script setup lang="ts">
-import { ElDrawer, ElScrollbar } from 'element-plus'
+import { Drawer, Scrollbar } from '@arco-design/web-vue'
 import { computed, useAttrs, useSlots } from 'vue'
-import { Icon } from '@/components/Icon'
+import type { DrawerProps, ScrollToOptions } from './types'
+
+defineOptions({
+  name: 'AbDrawer',
+  inheritAttrs: false
+})
 
 const slots = useSlots()
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
+function mergeClassName(baseClass: string, className: unknown) {
+  const classList = Array.isArray(className)
+    ? className.flatMap(item => mergeClassName('', item))
+    : className
+      ? [className]
+      : []
+
+  return [baseClass, ...classList].filter(Boolean)
+}
+
+const props = withDefaults(defineProps<DrawerProps>(), {
+  modelValue: false,
+  placement: 'right',
+  title: '',
+  header: true,
+  width: '500px',
+  height: '250px',
+  mask: true,
+  unmountOnClose: true,
+  maskClosable: false,
+  renderToBody: true,
+  bodyClass: '',
+  escToClose: false,
+  scrollable: false,
+  scrollbarType: 'embed',
+  scrollbarOuterClass: '',
+  scrollbarOuterStyle: 'height: 100%'
+})
+const emit = defineEmits(['update:modelValue', 'scroll', 'close', 'open'])
+const visible = computed({
+  get() {
+    return props.modelValue
   },
-  title: {
-    type: String,
-    default: ''
-  },
-  direction: {
-    type: String as () => 'rtl' | 'ltr' | 'ttb' | 'btt',
-    default: 'rtl'
-  },
-  size: {
-    type: [String, Number],
-    default: '30%'
-  },
-  scrollable: {
-    type: Boolean,
-    default: true
+  set(value) {
+    emit('update:modelValue', value)
   }
 })
-const emit = defineEmits(['update:modelValue'])
 const getBindValue = computed(() => {
-  const delArr: string[] = ['title', 'direction', 'size', 'scrollable']
+  const delArr: string[] = [
+    // 排除modalValue 由 visible 替代
+    'modelValue',
+    'visible',
+    'defaultVisible',
+    'default-visible',
+    // 排除标题, 因为内部构造标题栏
+    'title',
+    'closable',
+    'hideCancel',
+    'hide-cancel',
+    'onBeforeOk',
+    'on-before-ok',
+    'onBeforeCancel',
+    'on-before-cancel',
+    'footer',
+    'okLoading',
+    'ok-loading',
+    'okButtonProps',
+    'ok-button-props',
+    'cancelButtonProps',
+    'cancel-button-props',
+    'cancelText',
+    'cancel-text',
+    'okText',
+    'ok-text',
+    // 排除扩展属性
+    'scrollable',
+    'scrollbarHeight',
+    'scrollbarType',
+    'scrollbarOuterClass',
+    'scrollbarOuterStyle',
+    // 排除扩展属性
+    'beforeClose'
+  ]
   const attrs = useAttrs()
-  const obj = { ...attrs, ...props }
+  const obj: any = { ...attrs, ...props }
   for (const key in obj) {
     if (delArr.indexOf(key) !== -1) {
       delete obj[key]
     }
   }
-  return obj
+  return {
+    ...obj,
+    // 不显示关闭按钮, 因为我们要自建标题栏
+    closable: false,
+    // 隐藏取消按钮, 因为我们要自建尾部栏
+    hideCancel: true,
+    // 最外层Class始终绑定我们的固定类名
+    class: mergeClassName('ab-drawer-overlay', obj.class),
+    // 是否有插槽
+    footer: slots.footer ? true : false
+  }
 })
 
-const onClose = () => {
-  emit('update:modelValue', false)
+const scrollbarRef = ref()
+
+const scrollbarStyle = computed(() => {
+  return {
+    height: '100%',
+    padding: 'var(--size-4)',
+    'overflow-y': 'auto',
+    boxSizing: 'border-box'
+  }
+})
+
+function handleClose() {
+  if (props.beforeClose !== undefined) {
+    props.beforeClose(() => {
+      emit('update:modelValue', false)
+    })
+  } else {
+    emit('update:modelValue', false)
+  }
 }
+
+function onClose() {
+  emit('close')
+}
+function onOpen() {
+  emit('open')
+}
+
+function getScrollbarRef() {
+  return scrollbarRef.value
+}
+
+function scrollTo(options?: ScrollToOptions, y?: number | undefined) {
+  return scrollbarRef.value?.scrollTo(options, y)
+}
+function scrollTop(top: number) {
+  return scrollbarRef.value?.scrollTop(top)
+}
+function scrollLeft(left: number) {
+  return scrollbarRef.value?.scrollLeft(left)
+}
+
+defineExpose({
+  getScrollbarRef,
+  scrollTo,
+  scrollTop,
+  scrollLeft
+})
 </script>
 
 <template>
-  <ElDrawer
+  <Drawer
     v-bind="getBindValue"
-    :direction="direction"
-    :size="size"
-    destroy-on-close
-    :close-on-click-modal="false"
-    :show-close="false"
-    class="ae-drawer"
-    @close="onClose"
+    v-model:visible="visible"
+    @open.prevent.stop="onOpen"
+    @close.prevent.stop="onClose"
   >
-    <template #header="{ close }">
-      <div class="flex justify-between items-center h-54px pl-15px pr-15px">
-        <div class="flex items-center gap-8px">
+    <template v-if="!!header" #header>
+      <div class="flex justify-between items-center w-full">
+        <div class="flex items-center">
           <slot name="title">
             {{ title }}
           </slot>
         </div>
-        <div class="drawer-actions">
+        <div class="flex flex-row items-center gap-1">
           <slot name="header-actions"></slot>
-          <div class="drawer-action-btn" @click="close">
-            <Icon icon="ep:close" />
+          <div class="ab-drawer-btn" @click="handleClose()">
+            <icon-close :size="16" />
           </div>
         </div>
       </div>
     </template>
 
-    <ElScrollbar v-if="scrollable" class="drawer-scrollbar">
-      <div class="drawer-content">
-        <slot></slot>
-      </div>
-    </ElScrollbar>
-    <div v-else class="drawer-body-no-scroll">
+    <Scrollbar
+      v-if="scrollable"
+      ref="scrollbarRef"
+      :style="scrollbarStyle"
+      :type="scrollbarType"
+      :outer-class="scrollbarOuterClass"
+      :outer-style="scrollbarOuterStyle"
+      @scroll="onScroll"
+    >
+      <slot></slot>
+    </Scrollbar>
+    <div v-else class="ab-drawer-body__no-scrollbar">
       <slot></slot>
     </div>
 
     <template v-if="slots.footer" #footer>
       <slot name="footer"></slot>
     </template>
-  </ElDrawer>
+  </Drawer>
 </template>
-
-<style lang="less">
-.ae-drawer {
-  > .el-drawer__header {
-    height: 54px;
-    padding: 0;
-    margin-bottom: 0 !important;
-    border-bottom: 1px solid var(--el-border-color-extra-light);
-    background-color: var(--el-bg-color);
-  }
-
-  > .el-drawer__body {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  > .el-drawer__footer {
-    padding: 15px;
-    background-color: var(--el-bg-color);
-    border-top: 1px solid var(--el-border-color-extra-light);
-  }
-
-  .drawer-scrollbar {
-    flex: 1;
-    height: 0;
-  }
-
-  .drawer-content {
-    padding: 15px;
-  }
-
-  .drawer-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .drawer-action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    border-radius: 4px;
-    color: var(--el-color-info);
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: var(--el-color-primary);
-      background-color: var(--el-fill-color-light);
-    }
-
-    &:active {
-      background-color: var(--el-fill-color);
-    }
-  }
-
-  .drawer-body-no-scroll {
-    flex: 1;
-    height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-}
-</style>
