@@ -3,7 +3,7 @@ import 'virtual:uno.css'
 
 // Import components
 import { AeForm } from './components/Form'
-import { AeIcon } from './components/Icon'
+import { AbIcon } from './components/Icon'
 import { AeTable } from './components/Table'
 import { AeUpload } from './components/Upload'
 import { AbModal } from './components/Modal'
@@ -27,7 +27,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AeIcon, AeTable, AeUpload, AbModal, AbDrawer, AeText, AeComboInput }
+export { AeForm, AbIcon, AeTable, AeUpload, AbModal, AbDrawer, AeText, AeComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -188,7 +188,7 @@ const install = (app: App, options?: InstallOptions) => {
   // 注册组件（所有组件都有 install 方法）
   const components = [
     AeForm,
-    AeIcon,
+    AbIcon,
     AeTable,
     AeUpload,
     AbModal,

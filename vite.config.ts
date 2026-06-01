@@ -29,7 +29,7 @@ async function generateGlobalDts() {
   // 定义所有组件名称
   const components = [
     'AeForm',
-    'AeIcon',
+    'AbIcon',
     'AeTable',
     'AeUpload',
     'AbModal',

@@ -12,7 +12,7 @@
 
       <div class="icon-grid">
         <div v-for="icon in iconList" :key="icon.name" class="icon-item">
-          <Icon :icon="icon.name" :size="32" />
+          <AbIcon :icon="icon.name" :size="32" />
           <span class="icon-name">{{ icon.label }}</span>
         </div>
       </div>
@@ -24,11 +24,11 @@
       </template>
 
       <div class="icon-sizes">
-        <Icon icon="ep:user" :size="16" />
-        <Icon icon="ep:user" :size="24" />
-        <Icon icon="ep:user" :size="32" />
-        <Icon icon="ep:user" :size="48" />
-        <Icon icon="ep:user" :size="64" />
+        <AbIcon icon="ep:user" :size="16" />
+        <AbIcon icon="ep:user" :size="24" />
+        <AbIcon icon="ep:user" :size="32" />
+        <AbIcon icon="ep:user" :size="48" />
+        <AbIcon icon="ep:user" :size="64" />
       </div>
     </el-card>
 
@@ -38,11 +38,11 @@
       </template>
 
       <div class="icon-colors">
-        <Icon icon="ep:star-filled" :size="32" color="#409eff" />
-        <Icon icon="ep:star-filled" :size="32" color="#67c23a" />
-        <Icon icon="ep:star-filled" :size="32" color="#e6a23c" />
-        <Icon icon="ep:star-filled" :size="32" color="#f56c6c" />
-        <Icon icon="ep:star-filled" :size="32" color="#909399" />
+        <AbIcon icon="ep:star-filled" :size="32" color="#409eff" />
+        <AbIcon icon="ep:star-filled" :size="32" color="#67c23a" />
+        <AbIcon icon="ep:star-filled" :size="32" color="#e6a23c" />
+        <AbIcon icon="ep:star-filled" :size="32" color="#f56c6c" />
+        <AbIcon icon="ep:star-filled" :size="32" color="#909399" />
       </div>
     </el-card>
 
@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@/components/Icon'
+import { AbIcon } from '@/index'
 
 const iconList = [
   { name: 'ep:user', label: '用户' },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, unref, type CSSProperties, type PropType } from 'vue'
-import { Icon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 
 const props = defineProps({
   label: {
@@ -111,7 +111,7 @@ function onTransitionEnd() {
         </div>
         <span v-if="subLabel" class="sub-title" :style="subLabelStyle">{{ subLabel }}</span>
       </div>
-      <Icon
+      <AbIcon
         v-if="toggleable"
         :icon="isExpanded ? 'ep:arrow-down-bold' : 'ep:arrow-up-bold'"
         class="ae-form-group-header__icon"

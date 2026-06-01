@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, unref, type PropType } from 'vue'
-import { Icon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 import { t } from '@/locale'
 
 /** 分割线相对标题的位置，对齐 el-divider 的 content-position */
@@ -129,7 +129,7 @@ function onTransitionEnd() {
           <span class="title">{{ label }}</span>
           <div class="toggle" @click="toggleable ? handleExpandChange() : undefined">
             <span class="toggle-text">{{ isExpanded ? toggleText : collapsedText }}</span>
-            <Icon
+            <AbIcon
               v-if="toggleable"
               :icon="isExpanded ? 'ep:hide' : 'ep:view'"
               size="14"

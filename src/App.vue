@@ -30,49 +30,47 @@
           </span>
         </template>
       </a-switch>
-      <img
-        src="https://img.howcat.cn/LxLGz5p-v_cQsTA0sP_oQ"
-        title="logo"
-        width="400px"
-        alt="logo"
-      />
+      <div style="background-color: var(--color-bg-1);width: 220px;margin: 20px auto;border-radius: 12px;">
+        <img :src="Logo" title="logo" width="200px" alt="logo" />
+      </div>
       <p class="subtitle">基于 Vue 3 + Arco Design Vue 的高级组件库</p>
     </header>
     <div style="background: var(--color-bg-1)">
-          <Tabs v-model:active-key="activeTab" justify type="capsule">
-      <TabPane title="🚀 快速开始" key="start">
-        <QuickStartExample v-if="activeTab === 'start'" />
-      </TabPane>
-      <TabPane title="📝 AeForm 表单组件" key="form">
-        <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
-      </TabPane>
-      <TabPane title="📊 AeTable 表格组件" key="table">
-        <TableExample v-if="activeTab === 'table'" />
-      </TabPane>
-      <TabPane title="🎨 AeIcon 图标组件" key="icon">
-        <IconExample v-if="activeTab === 'icon'" />
-      </TabPane>
-      <TabPane title="📄 AeUpload 文件上传" key="upload">
-        <UploadExample v-if="activeTab === 'upload'" />
-      </TabPane>
-      <TabPane title="💬 AbModal 对话框" key="modal">
-        <ModalExample v-if="activeTab === 'modal'" />
-      </TabPane>
-      <TabPane title="💬 AbDrawer 抽屉" key="drawer">
-        <DrawerExample v-if="activeTab === 'drawer'" />
-      </TabPane>
-      <TabPane title="💬 AeText 增强文本" key="text">
-        <TextExample v-if="activeTab === 'text'" />
-      </TabPane>
-      <TabPane title="🧩 AeComboInput 组合输入器" key="combo-input">
-        <ComboInputExample v-if="activeTab === 'combo-input'" />
-      </TabPane>
-    </Tabs>
+      <Tabs v-model:active-key="activeTab" justify type="capsule">
+        <TabPane title="🚀 快速开始" key="start">
+          <QuickStartExample v-if="activeTab === 'start'" />
+        </TabPane>
+        <TabPane title="📝 AeForm 表单组件" key="form">
+          <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
+        </TabPane>
+        <TabPane title="📊 AeTable 表格组件" key="table">
+          <TableExample v-if="activeTab === 'table'" />
+        </TabPane>
+        <TabPane title="🎨 AbIcon 图标组件" key="icon">
+          <IconExample v-if="activeTab === 'icon'" />
+        </TabPane>
+        <TabPane title="📄 AeUpload 文件上传" key="upload">
+          <UploadExample v-if="activeTab === 'upload'" />
+        </TabPane>
+        <TabPane title="💬 AbModal 对话框" key="modal">
+          <ModalExample v-if="activeTab === 'modal'" />
+        </TabPane>
+        <TabPane title="💬 AbDrawer 抽屉" key="drawer">
+          <DrawerExample v-if="activeTab === 'drawer'" />
+        </TabPane>
+        <TabPane title="💬 AeText 增强文本" key="text">
+          <TextExample v-if="activeTab === 'text'" />
+        </TabPane>
+        <TabPane title="🧩 AeComboInput 组合输入器" key="combo-input">
+          <ComboInputExample v-if="activeTab === 'combo-input'" />
+        </TabPane>
+      </Tabs>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import Logo from '@/assets/logo.png'
 import { ref, onMounted } from 'vue'
 import { Tabs, TabPane } from '@arco-design/web-vue'
 import FormExample from './examples/FormExample.vue'
@@ -171,7 +169,6 @@ const toggleTheme = (value: boolean) => {
   opacity: 0.9;
   margin: 0;
 }
-
 </style>
 
 <style>

@@ -59,7 +59,7 @@ setLocale('zh-CN')</code></pre>
       </template>
       <pre
         class="code-block"
-      ><code>import { AeForm, AeTable, AeIcon, AeEditor } from 'acro-business'
+      ><code>import { AeForm, AeTable, AbIcon } from 'acro-business'
 import 'acro-business/dist/style.css'</code></pre>
     </el-card>
 

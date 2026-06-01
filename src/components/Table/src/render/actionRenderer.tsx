@@ -3,7 +3,7 @@
  * @description 专门处理 action 类型列的渲染逻辑
  */
 import { ElButton, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
-import { Icon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 import type { TableColumn, TableProps, TableAction, TableColumnFn, TableEmits } from '../types'
 import { isHiddenAction, isDisabledAction, isLoadingAction } from '../utils'
 import type { VNode } from 'vue'
@@ -109,7 +109,7 @@ function renderActionButton(
 
   return (
     <ElButton onClick={() => handleClick(action.name, action.event)} {...buttonAttrs}>
-      {!action.noIcon && action.icon && <Icon icon={action.icon} size={14} />}
+      {!action.noIcon && action.icon && <AbIcon icon={action.icon} size={14} />}
       {!action.noLabel && action.label && <span>{action.label}</span>}
     </ElButton>
   )
@@ -164,7 +164,7 @@ function renderMoreDropdown(
             {...(column?.typeProps?.actionDropdown?.buttonAttrs || {})}
           > 
             {!column?.typeProps?.actionDropdown?.noIcon && (
-              <Icon icon={column?.typeProps?.actionDropdown?.icon ?? 'icon-park-outline:more'} size={column?.typeProps?.actionDropdown?.iconSize ?? 14} />
+              <AbIcon icon={column?.typeProps?.actionDropdown?.icon ?? 'icon-park-outline:more'} size={column?.typeProps?.actionDropdown?.iconSize ?? 14} />
             )}
             {!column?.typeProps?.actionDropdown?.noLabel && <span>{t('table.action.more')}</span>}
           </ElButton>
@@ -190,7 +190,7 @@ function renderDropdownItem(action: TableAction, ctx: ActionRenderContext) {
       command={action.name}
       disabled={isDisabledAction(action, row, index, props, column)}
     >
-      {action.icon && <Icon icon={action.icon} size={14} />}
+      {action.icon && <AbIcon icon={action.icon} size={14} />}
       <span>{action.label}</span>
     </ElDropdownItem>
   )

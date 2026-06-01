@@ -77,7 +77,7 @@ export function addIcon(name: string, data: IconData): void {
  *   }
  * })
  *
- * // 使用: <ae-icon icon="my-icons:home" />
+ * // 使用: <AbIcon icon="my-icons:home" />
  * ```
  */
 export function addIconCollection(collection: IconCollection): boolean {

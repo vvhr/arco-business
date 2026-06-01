@@ -1,6 +1,6 @@
 import { computed, defineComponent, h, ref, type VNode } from 'vue'
 import { textProps, textEmits } from './types'
-import { AeIcon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 import { ElMessage } from 'element-plus'
 import './text.less'
 
@@ -131,7 +131,7 @@ export default defineComponent({
       if (props.icon) {
         children.push(
           h(
-            AeIcon,
+            AbIcon,
             {
               key: 'icon',
               icon: props.icon,
@@ -187,7 +187,7 @@ export default defineComponent({
       if (props.copyable) {
         children.push(
           h(
-            AeIcon,
+            AbIcon,
             {
               key: 'copy',
               icon: props.copyIcon,

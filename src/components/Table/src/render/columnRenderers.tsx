@@ -3,7 +3,7 @@
  * @description 将不同类型的列渲染逻辑拆分为独立的渲染器
  */
 import { ElTag, ElMessage, ElIcon } from 'element-plus'
-import { Icon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 import DotTag from '@/components/Table/src/components/DotTag.vue'
 import SensitiveSwitch from '@/components/Table/src/components/SensitiveSwitch.vue'
 import { isArray } from '@/utils/is'
@@ -125,7 +125,7 @@ function renderDictViewType(
   if (viewType === 'tag') {
     const valueRender = dictItem?.icon ? (
       <ElTag {...tagProps} class="flex flex-row items-center gap-1">
-        <Icon icon={dictItem.icon} size={14} />
+        <AbIcon icon={dictItem.icon} size={14} />
         <span>{label}</span>
       </ElTag>
     ) : (

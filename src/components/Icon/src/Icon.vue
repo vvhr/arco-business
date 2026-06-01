@@ -1,38 +1,25 @@
-<script lang="ts">
-export default {
-  name: 'AeIcon'
-}
-</script>
-
 <script setup lang="ts">
-import { computed, unref } from 'vue'
-import { ElIcon } from 'element-plus'
+import { computed } from 'vue'
 import { Icon as IconifyIcon } from '@iconify/vue'
+import type { CSSProperties } from 'vue'
+import type { IconProps } from './types'
 
-const props = defineProps({
-  // icon name
-  icon: {
-    type: String,
-    required: true
-  },
-  // icon color
-  color: {
-    type: String
-  },
-  // icon size
-  size: {
-    type: [String, Number],
-    default: 16
-  }
+defineOptions({
+  name: 'AbIcon',
+  inheritAttrs: false
+})
+
+const props = withDefaults(defineProps<IconProps>(), {
+  size: 16
 })
 
 const isLocal = computed(() => props.icon.startsWith('svg-icon:'))
 
 const symbolId = computed(() => {
-  return unref(isLocal) ? `#icon-${props.icon.split('svg-icon:')[1]}` : props.icon
+  return isLocal.value ? `#icon-${props.icon.slice('svg-icon:'.length)}` : props.icon
 })
 
-const iconifyStyle = computed(() => {
+const iconStyle = computed<CSSProperties>(() => {
   const { color, size } = props
   return {
     fontSize: typeof size === 'number' ? `${size}px` : size,
@@ -42,11 +29,28 @@ const iconifyStyle = computed(() => {
 </script>
 
 <template>
-  <ElIcon :size="size" :color="color">
+  <span class="ab-icon" :style="iconStyle" v-bind="$attrs">
     <svg v-if="isLocal" aria-hidden="true">
-      <use :xlink:href="symbolId" />
+      <use :href="symbolId" />
     </svg>
 
-    <IconifyIcon v-else :icon="symbolId" :style="iconifyStyle" :class="$attrs.class" />
-  </ElIcon>
+    <IconifyIcon v-else :icon="symbolId" />
+  </span>
 </template>
+
+<style scoped lang="less">
+.ab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: inherit;
+  vertical-align: -0.125em;
+}
+
+.ab-icon svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+</style>

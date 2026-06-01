@@ -52,7 +52,7 @@
             />
             <!-- 非图片文件或图片加载失败 -->
             <div v-else class="ae-upload__file-icon" @click="item.data && handlePreview(item.data)">
-              <Icon
+              <AbIcon
                 :size="pictureFileIconSize"
                 :icon="getFileIcon(getFileUrl(item.data), getFileName(item.data))"
               />
@@ -190,7 +190,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import AeIcon, { Icon } from '@/components/Icon'
+import { AbIcon } from '@/components/Icon'
 import {
   ElMessage,
   ElImageViewer,
