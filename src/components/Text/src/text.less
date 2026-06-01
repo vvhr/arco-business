@@ -1,13 +1,14 @@
-.ae-text {
+.ab-text {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  line-height: var(--el-line-height-base);
-  color: var(--el-text-color-regular);
+  line-height: 1.5715;
+  color: var(--color-text-1);
   position: relative;
 
   // 定义截断行数变量
-  --ae-text-line-clamp: 1;
+  --ab-text-line-clamp: 1;
+  --ab-text-block-border-color: rgb(var(--primary-6));
 
   // 内联模式
   &--inline {
@@ -18,83 +19,123 @@
   &--block {
     display: flex;
     padding: 12px 16px;
-    background-color: var(--el-fill-color-light);
-    border-left: 4px solid var(--el-color-primary);
-    border-radius: 4px;
+    background-color: var(--color-fill-1);
+    border-left: 4px solid var(--ab-text-block-border-color);
+    border-radius: var(--border-radius-medium);
+  }
+
+  &--block-primary {
+    --ab-text-block-border-color: rgb(var(--primary-6));
+  }
+
+  &--block-success {
+    --ab-text-block-border-color: rgb(var(--success-6));
+  }
+
+  &--block-warning {
+    --ab-text-block-border-color: rgb(var(--warning-6));
+  }
+
+  &--block-danger {
+    --ab-text-block-border-color: rgb(var(--danger-6));
+  }
+
+  &--block-info {
+    --ab-text-block-border-color: var(--color-text-3);
   }
 
   // 圆点
   &__dot {
-    width: 8px;
-    height: 8px;
+    width: var(--ab-text-dot-size);
+    height: var(--ab-text-dot-size);
     border-radius: 50%;
     flex-shrink: 0;
     position: relative;
     transition: all 0.3s ease;
+    background-color: var(--ab-text-dot-color);
+    --ab-text-dot-size: 8px;
+    --ab-text-dot-halo-size: 14px;
+    --ab-text-dot-halo-hover-size: 16px;
+    --ab-text-dot-color: rgb(var(--primary-6));
+    --ab-text-dot-shadow-color: var(--color-primary-light-1);
 
     // 添加外圈光晕效果
     &::before {
       content: '';
+      display: none;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 14px;
-      height: 14px;
+      width: var(--ab-text-dot-halo-size);
+      height: var(--ab-text-dot-halo-size);
       border-radius: 50%;
       opacity: 0.2;
       transition: all 0.3s ease;
+      background-color: var(--ab-text-dot-color);
+    }
+
+    &--shadow {
+      box-shadow: 0 0 0 2px var(--ab-text-dot-shadow-color);
+
+      &::before {
+        display: block;
+      }
+    }
+
+    &--mini {
+      --ab-text-dot-size: 4px;
+      --ab-text-dot-halo-size: 8px;
+      --ab-text-dot-halo-hover-size: 10px;
+    }
+
+    &--small {
+      --ab-text-dot-size: 6px;
+      --ab-text-dot-halo-size: 10px;
+      --ab-text-dot-halo-hover-size: 12px;
+    }
+
+    &--medium {
+      --ab-text-dot-size: 8px;
+      --ab-text-dot-halo-size: 14px;
+      --ab-text-dot-halo-hover-size: 16px;
+    }
+
+    &--large {
+      --ab-text-dot-size: 10px;
+      --ab-text-dot-halo-size: 18px;
+      --ab-text-dot-halo-hover-size: 20px;
     }
 
     &--primary {
-      background-color: var(--el-color-primary);
-      box-shadow: 0 0 0 2px var(--el-color-primary-light-8);
-
-      &::before {
-        background-color: var(--el-color-primary);
-      }
+      --ab-text-dot-color: rgb(var(--primary-6));
+      --ab-text-dot-shadow-color: var(--color-primary-light-1);
     }
 
     &--success {
-      background-color: var(--el-color-success);
-      box-shadow: 0 0 0 2px var(--el-color-success-light-8);
-
-      &::before {
-        background-color: var(--el-color-success);
-      }
+      --ab-text-dot-color: rgb(var(--success-6));
+      --ab-text-dot-shadow-color: var(--color-success-light-1);
     }
 
     &--warning {
-      background-color: var(--el-color-warning);
-      box-shadow: 0 0 0 2px var(--el-color-warning-light-8);
-
-      &::before {
-        background-color: var(--el-color-warning);
-      }
+      --ab-text-dot-color: rgb(var(--warning-6));
+      --ab-text-dot-shadow-color: var(--color-warning-light-1);
     }
 
     &--danger {
-      background-color: var(--el-color-danger);
-      box-shadow: 0 0 0 2px var(--el-color-danger-light-8);
-
-      &::before {
-        background-color: var(--el-color-danger);
-      }
+      --ab-text-dot-color: rgb(var(--danger-6));
+      --ab-text-dot-shadow-color: var(--color-danger-light-1);
     }
 
     &--info {
-      background-color: var(--el-color-info);
-      box-shadow: 0 0 0 2px var(--el-color-info-light-8);
-
-      &::before {
-        background-color: var(--el-color-info);
-      }
+      --ab-text-dot-color: var(--color-text-3);
+      --ab-text-dot-shadow-color: var(--color-fill-3);
     }
 
     // 悬停效果
-    &:hover::before {
-      width: 16px;
-      height: 16px;
+    &--shadow:hover::before {
+      width: var(--ab-text-dot-halo-hover-size);
+      height: var(--ab-text-dot-halo-hover-size);
       opacity: 0.3;
     }
   }
@@ -116,18 +157,15 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-      -webkit-line-clamp: var(--ae-text-line-clamp);
+      -webkit-line-clamp: var(--ab-text-line-clamp);
     }
   }
 
   // 高亮元素
   &__highlight {
-    padding: 0 4px;
+    padding: 0 2px;
     margin: 0 1px;
-    background-color: var(--el-color-primary-light-8);
-    color: var(--el-color-primary-dark-2);
-    border: 1px solid var(--el-color-primary-light-9);
-    border-radius: 6px;
+    color: rgb(var(--primary-6));
     cursor: pointer;
     font-weight: 500;
     opacity: 1;
@@ -140,34 +178,34 @@
   // 展开/收起按钮
   &__expand {
     margin-left: 4px;
-    color: var(--el-color-primary);
+    color: rgb(var(--primary-6));
     cursor: pointer;
-    font-size: var(--el-font-size-small);
+    font-size: 12px;
     user-select: none;
     flex-shrink: 0;
     transition: all 0.2s;
 
     &:hover {
-      color: var(--el-color-primary-light-3);
+      color: var(--color-primary-light-4);
       text-decoration: underline;
     }
 
     &:active {
-      color: var(--el-color-primary-dark-2);
+      color: rgb(var(--primary-6));
     }
   }
 
   // 复制按钮
   &__copy {
     margin-left: 4px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
     cursor: pointer;
     flex-shrink: 0;
     transition: all 0.2s;
     opacity: 0.6;
 
     &:hover {
-      color: var(--el-color-primary);
+      color: rgb(var(--primary-6));
       opacity: 1;
     }
 
@@ -176,4 +214,3 @@
     }
   }
 }
-

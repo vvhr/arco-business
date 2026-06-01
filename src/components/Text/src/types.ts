@@ -1,12 +1,37 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue'
 
 /**
- * 圆点类型
+ * 文本状态
  */
-export type DotType = '' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
+export type TextStatus = 'primary' | 'success' | 'warning' | 'danger' | 'info'
 
 /**
- * AeText 组件的 Props 定义
+ * 圆点状态
+ */
+export type DotStatus = '' | TextStatus
+
+/**
+ * 圆点样式类型
+ */
+export type DotType = 'plain' | 'shadow'
+
+/**
+ * 圆点尺寸
+ */
+export type DotSize = 'mini' | 'small' | 'medium' | 'large'
+
+/**
+ * 引用块状态
+ */
+export type BlockStatus = TextStatus
+
+/**
+ * 高亮匹配配置
+ */
+export type HighlightPatterns = string[] | string
+
+/**
+ * AbText 组件的 Props 定义
  */
 export const textProps = {
   /**
@@ -38,10 +63,38 @@ export const textProps = {
     default: ''
   },
   /**
-   * 圆点类型 (为空时不显示)
+   * 圆点状态 (为空时不显示)
+   */
+  dotStatus: {
+    type: String as PropType<DotStatus>,
+    default: ''
+  },
+  /**
+   * 圆点样式类型：plain 无阴影，shadow 有阴影
    */
   dotType: {
     type: String as PropType<DotType>,
+    default: 'plain'
+  },
+  /**
+   * 圆点尺寸
+   */
+  dotSize: {
+    type: String as PropType<DotSize>,
+    default: 'medium'
+  },
+  /**
+   * 引用块左侧边框状态
+   */
+  blockStatus: {
+    type: String as PropType<BlockStatus>,
+    default: 'primary'
+  },
+  /**
+   * 文本字号，不设置时继承父级
+   */
+  fontSize: {
+    type: [String, Number] as PropType<string | number>,
     default: ''
   },
   /**
@@ -52,10 +105,10 @@ export const textProps = {
     default: false
   },
   /**
-   * 高亮文本数组
+   * 高亮文本数组，或使用英文逗号分隔的字符串
    */
   patterns: {
-    type: Array as PropType<string[]>,
+    type: [Array, String] as PropType<HighlightPatterns>,
     default: () => []
   },
   /**
@@ -112,7 +165,7 @@ export const textProps = {
    */
   copyIcon: {
     type: String,
-    default: 'ep:document-copy'
+    default: 'icon-park-outline:copy'
   },
   /**
    * 复制成功提示
@@ -124,12 +177,12 @@ export const textProps = {
 } as const
 
 /**
- * AeText 组件的 Props 类型
+ * AbText 组件的 Props 类型
  */
 export type TextProps = ExtractPropTypes<typeof textProps>
 
 /**
- * AeText 组件的 Emits 定义
+ * AbText 组件的 Emits 定义
  */
 export const textEmits = {
   /**
@@ -145,7 +198,6 @@ export const textEmits = {
 }
 
 /**
- * AeText 组件的 Emits 类型
+ * AbText 组件的 Emits 类型
  */
 export type TextEmits = typeof textEmits
-

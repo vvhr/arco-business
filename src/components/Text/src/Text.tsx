@@ -1,7 +1,8 @@
 import { computed, defineComponent, h, ref, type VNode } from 'vue'
 import { textProps, textEmits } from './types'
+import type { HighlightPatterns } from './types'
 import { AbIcon } from '@/components/Icon'
-import { ElMessage } from 'element-plus'
+import { Message } from '@arco-design/web-vue'
 import './text.less'
 
 /**
@@ -9,6 +10,16 @@ import './text.less'
  */
 function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function normalizePatterns(patterns: HighlightPatterns): string[] {
+  if (typeof patterns === 'string') {
+    return patterns
+      .split(',')
+      .map(pattern => pattern.trim())
+      .filter(Boolean)
+  }
+  return patterns
 }
 
 /**
@@ -26,7 +37,7 @@ function parseHighlightText(
   }
 
   // 过滤空字符串并转义特殊字符
-  const validPatterns = patterns.filter((p) => p && p.trim()).map((p) => escapeRegExp(p))
+  const validPatterns = patterns.filter(p => p && p.trim()).map(p => escapeRegExp(p))
 
   if (validPatterns.length === 0) {
     return [text]
@@ -38,12 +49,12 @@ function parseHighlightText(
 
   return parts.map((part, index) => {
     // 检查是否为高亮部分
-    if (part && validPatterns.some((pattern) => new RegExp(`^${pattern}$`).test(part))) {
+    if (part && validPatterns.some(pattern => new RegExp(`^${pattern}$`).test(part))) {
       return h(
         'span',
         {
           key: `hl-${index}`,
-          class: ['ae-text__highlight', hlClass].filter(Boolean).join(' '),
+          class: ['ab-text__highlight', hlClass].filter(Boolean).join(' '),
           style: hlStyle,
           onClick: () => onHlClick(part)
         },
@@ -79,8 +90,15 @@ async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+function normalizeFontSize(fontSize: string | number): string | undefined {
+  if (fontSize === '') {
+    return undefined
+  }
+  return typeof fontSize === 'number' ? `${fontSize}px` : fontSize
+}
+
 export default defineComponent({
-  name: 'AeText',
+  name: 'AbText',
   props: textProps,
   emits: textEmits,
   setup(props, { emit }) {
@@ -91,7 +109,7 @@ export default defineComponent({
     const contentNodes = computed(() => {
       return parseHighlightText(
         props.value,
-        props.patterns,
+        normalizePatterns(props.patterns),
         props.hlClass,
         props.hlStyle,
         (value: string) => emit('hlClick', value)
@@ -102,10 +120,10 @@ export default defineComponent({
     const handleCopy = async () => {
       const success = await copyToClipboard(props.value)
       if (success) {
-        ElMessage.success(props.copySuccessText)
+        Message.success(props.copySuccessText)
         emit('copy', props.value)
       } else {
-        ElMessage.error('复制失败')
+        Message.error('复制失败')
       }
     }
 
@@ -118,11 +136,16 @@ export default defineComponent({
       const children: VNode[] = []
 
       // 渲染圆点
-      if (props.dotType) {
+      if (props.dotStatus) {
         children.push(
           h('span', {
             key: 'dot',
-            class: ['ae-text__dot', `ae-text__dot--${props.dotType}`]
+            class: [
+              'ab-text__dot',
+              `ab-text__dot--${props.dotStatus}`,
+              `ab-text__dot--${props.dotType}`,
+              `ab-text__dot--${props.dotSize}`
+            ]
           })
         )
       }
@@ -135,7 +158,7 @@ export default defineComponent({
             {
               key: 'icon',
               icon: props.icon,
-              class: ['ae-text__icon', props.iconClass].filter(Boolean).join(' '),
+              class: ['ab-text__icon', props.iconClass].filter(Boolean).join(' '),
               style: props.iconStyle
             },
             null
@@ -144,15 +167,15 @@ export default defineComponent({
       }
 
       // 计算文本容器样式类
-      const contentClass = ['ae-text__content']
+      const contentClass = ['ab-text__content']
       if (props.truncate && !isExpanded.value) {
-        contentClass.push('ae-text__content--truncate')
+        contentClass.push('ab-text__content--truncate')
       }
 
       // 计算文本容器样式
       const contentStyle: Record<string, any> = {}
       if (typeof props.truncate === 'number' && !isExpanded.value) {
-        contentStyle['--ae-text-line-clamp'] = props.truncate
+        contentStyle['--ab-text-line-clamp'] = props.truncate
       }
 
       // 渲染文本内容
@@ -175,7 +198,7 @@ export default defineComponent({
             'span',
             {
               key: 'expand',
-              class: 'ae-text__expand',
+              class: 'ab-text__expand',
               onClick: toggleExpand
             },
             isExpanded.value ? props.collapseText : props.expandText
@@ -191,7 +214,7 @@ export default defineComponent({
             {
               key: 'copy',
               icon: props.copyIcon,
-              class: 'ae-text__copy',
+              class: 'ab-text__copy',
               onClick: handleCopy
             },
             null
@@ -200,10 +223,18 @@ export default defineComponent({
       }
 
       // 根据 block 属性决定使用的容器类
-      const rootClass = ['ae-text', props.block ? 'ae-text--block' : 'ae-text--inline']
+      const rootClass = [
+        'ab-text',
+        props.block ? 'ab-text--block' : 'ab-text--inline',
+        props.block && props.blockStatus ? `ab-text--block-${props.blockStatus}` : ''
+      ].filter(Boolean)
+      const rootFontSize = normalizeFontSize(props.fontSize)
 
-      return h('div', { class: rootClass }, children)
+      return h(
+        'div',
+        { class: rootClass, style: rootFontSize ? { fontSize: rootFontSize } : undefined },
+        children
+      )
     }
   }
 })
-

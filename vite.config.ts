@@ -34,7 +34,7 @@ async function generateGlobalDts() {
     'AeUpload',
     'AbModal',
     'AbDrawer',
-    'AeText',
+    'AbText',
     'AeComboInput'
   ]
 

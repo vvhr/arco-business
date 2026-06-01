@@ -58,7 +58,7 @@
         <TabPane title="💬 AbDrawer 抽屉" key="drawer">
           <DrawerExample v-if="activeTab === 'drawer'" />
         </TabPane>
-        <TabPane title="💬 AeText 增强文本" key="text">
+        <TabPane title="💬 AbText 增强文本" key="text">
           <TextExample v-if="activeTab === 'text'" />
         </TabPane>
         <TabPane title="🧩 AeComboInput 组合输入器" key="combo-input">

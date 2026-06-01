@@ -31,7 +31,7 @@ import Disclosure from './components/Disclosure.vue'
 import Blank from './components/Blank.vue'
 import { Upload } from '@/components/Upload'
 import { ComboInput } from '@/components/ComboInput'
-import { Text } from '@/components/Text'
+import AbText from '@/components/Text'
 import { dateRangeTypes } from '@/components/Form/src/constants'
 
 const defaultComponents: Recordable<Component, ComponentName> = {
@@ -42,7 +42,7 @@ const defaultComponents: Recordable<Component, ComponentName> = {
   /** 装饰类组件名 */
   Alert: ElAlert,
   Divider: ElDivider,
-  Text: Text,
+  Text: AbText,
   Image: ElImage,
   Result: ElResult,
   /** 输入类组件名 */

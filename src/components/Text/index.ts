@@ -2,10 +2,16 @@ import Text from './src/Text'
 import { withInstall } from '@/utils/install'
 import type { SFCWithInstall } from '@/utils/install'
 
-export const AeText: SFCWithInstall<typeof Text> = withInstall(Text)
-export default AeText
+export const AbText: SFCWithInstall<typeof Text> = withInstall(Text)
+export default AbText
 
-export type { TextProps, TextEmits, DotType } from './src/types'
-
-// 兼容旧的导出方式
-export { AeText as Text }
+export type {
+  TextProps,
+  TextEmits,
+  TextStatus,
+  DotStatus,
+  DotType,
+  DotSize,
+  HighlightPatterns,
+  BlockStatus
+} from './src/types'
