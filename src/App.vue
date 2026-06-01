@@ -61,7 +61,7 @@
         <TabPane title="💬 AbText 增强文本" key="text">
           <TextExample v-if="activeTab === 'text'" />
         </TabPane>
-        <TabPane title="🧩 AeComboInput 组合输入器" key="combo-input">
+        <TabPane title="🧩 AbComboInput 组合输入器" key="combo-input">
           <ComboInputExample v-if="activeTab === 'combo-input'" />
         </TabPane>
       </Tabs>

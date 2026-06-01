@@ -9,7 +9,7 @@ import { AeUpload } from './components/Upload'
 import { AbModal } from './components/Modal'
 import { AbDrawer } from './components/Drawer'
 import { AbText } from './components/Text'
-import { AeComboInput } from './components/ComboInput'
+import { AbComboInput } from './components/ComboInput'
 
 // Import version info
 import { VERSION_INFO, getVersionInfo, printVersionInfo } from './version'
@@ -27,7 +27,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AbIcon, AeTable, AeUpload, AbModal, AbDrawer, AbText, AeComboInput }
+export { AeForm, AbIcon, AeTable, AeUpload, AbModal, AbDrawer, AbText, AbComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -203,7 +203,7 @@ const install = (app: App, options?: InstallOptions) => {
     AbModal,
     AbDrawer,
     AbText,
-    AeComboInput
+    AbComboInput
   ]
   components.forEach(component => {
     app.use(component)

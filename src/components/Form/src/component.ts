@@ -30,7 +30,7 @@ import Group from './components/Group.vue'
 import Disclosure from './components/Disclosure.vue'
 import Blank from './components/Blank.vue'
 import { Upload } from '@/components/Upload'
-import { ComboInput } from '@/components/ComboInput'
+import AbComboInput from '@/components/ComboInput'
 import AbText from '@/components/Text'
 import { dateRangeTypes } from '@/components/Form/src/constants'
 
@@ -51,7 +51,7 @@ const defaultComponents: Recordable<Component, ComponentName> = {
   Checkbox: ElCheckboxGroup,
   CheckboxButton: ElCheckboxGroup,
   ColorPicker: ElColorPicker,
-  ComboInput: ComboInput,
+  ComboInput: AbComboInput,
   DatePicker: ElDatePicker,
   Input: ElInput,
   InputNumber: ElInputNumber,

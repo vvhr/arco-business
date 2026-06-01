@@ -1,5 +1,5 @@
 import { computed, defineComponent, h, ref, watch, type VNode, onBeforeUnmount } from 'vue'
-import { ElInput, ElSelect, ElDatePicker } from 'element-plus'
+import { Input, Select, DatePicker, RangePicker } from '@arco-design/web-vue'
 import {
   comboInputProps,
   comboInputEmits,
@@ -17,7 +17,7 @@ import {
 import './combo-input.less'
 
 export default defineComponent({
-  name: 'AeComboInput',
+  name: 'AbComboInput',
   props: comboInputProps,
   emits: comboInputEmits,
   setup(props, { emit }) {
@@ -132,7 +132,7 @@ export default defineComponent({
           'span',
           {
             key: `span-${index}`,
-            class: 'ae-combo-input__text'
+            class: 'ab-combo-input__text'
           },
           item.content || ''
         )
@@ -152,17 +152,22 @@ export default defineComponent({
 
       switch (item.tag) {
         case 'input':
-          return h(ElInput, {
+          return h(Input, {
             ...commonProps,
             ...item.componentProps
           } as any)
         case 'select':
-          return h(ElSelect, {
+          return h(Select, {
             ...commonProps,
             ...item.componentProps
           } as any)
         case 'date-picker':
-          return h(ElDatePicker, {
+          return h(DatePicker, {
+            ...commonProps,
+            ...item.componentProps
+          } as any)
+        case 'range-picker':
+          return h(RangePicker, {
             ...commonProps,
             ...item.componentProps
           } as any)
@@ -175,14 +180,14 @@ export default defineComponent({
       // 如果模板无效，返回空容器
       if (!isValidTemplate.value) {
         return h('div', {
-          class: ['ae-combo-input', `ae-combo-input--${props.size}`, 'ae-combo-input--empty']
+          class: ['ab-combo-input', `ab-combo-input--${props.size}`, 'ab-combo-input--empty']
         })
       }
 
       return h(
         'div',
         {
-          class: ['ae-combo-input', `ae-combo-input--${props.size}`]
+          class: ['ab-combo-input', `ab-combo-input--${props.size}`]
         },
         normalizedTemplates.value.map((item, index) => renderTemplateItem(item, index))
       )

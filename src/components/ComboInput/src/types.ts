@@ -1,80 +1,100 @@
-import type { ExtractPropTypes, PropType, CSSProperties } from 'vue'
+import type { ExtractPropTypes, PropType } from 'vue'
 
 /**
  * 组合模板项的标签类型
  */
-export type ComboTemplateTag = 'span' | 'select' | 'input' | 'date-picker'
+export type ComboTemplateTag = 'span' | 'select' | 'input' | 'date-picker' | 'range-picker'
+
+export type ComboInputSize = 'mini' | 'small' | 'medium' | 'large'
 
 /**
- * ElInput 常用属性
+ * Arco Input 常用属性
  */
 export interface InputComponentProps {
   placeholder?: string
-  clearable?: boolean
-  showPassword?: boolean
-  maxlength?: string | number
-  minlength?: string | number
+  allowClear?: boolean
+  maxLength?: number | { length: number; errorOnly?: boolean }
   showWordLimit?: boolean
-  prefixIcon?: string | object
-  suffixIcon?: string | object
-  rows?: number
-  type?: 'text' | 'textarea' | 'password' | 'number'
+  type?: 'text' | 'password'
   readonly?: boolean
-  autofocus?: boolean
-  autocomplete?: string
-  validateEvent?: boolean
-  inputStyle?: CSSProperties
-  formatter?: (value: string | number) => string
-  parser?: (value: string) => string
+  error?: boolean
+  inputAttrs?: Record<string, any>
+  prepend?: string
+  append?: string
 }
 
 /**
- * ElSelect 常用属性
+ * Arco Select 常用属性
  */
 export interface SelectComponentProps {
   placeholder?: string
-  clearable?: boolean
-  filterable?: boolean
+  allowClear?: boolean
+  allowSearch?: boolean
   multiple?: boolean
-  multipleLimit?: number
-  collapseTags?: boolean
-  collapseTagsTooltip?: boolean
+  limit?: number
   loading?: boolean
-  loadingText?: string
-  noMatchText?: string
-  noDataText?: string
-  popperClass?: string
-  remote?: boolean
-  remoteMethod?: (query: string) => void
   options?: Array<{ label: string; value: any; disabled?: boolean }>
   valueKey?: string
-  teleported?: boolean
-  persistent?: boolean
-  automaticDropdown?: boolean
-  fitInputWidth?: boolean
-  tagType?: 'success' | 'info' | 'warning' | 'danger'
+  popupContainer?: string | HTMLElement
+  bordered?: boolean
+  allowCreate?: boolean
+  filterOption?: boolean | ((inputValue: string, option: any) => boolean)
+  fallbackOption?: boolean | ((value: any) => any)
+  triggerProps?: Record<string, any>
+  fieldNames?: Record<string, string>
 }
 
 /**
- * ElDatePicker 常用属性
+ * Arco DatePicker 常用属性
  */
 export interface DatePickerComponentProps {
   placeholder?: string
-  startPlaceholder?: string
-  endPlaceholder?: string
-  clearable?: boolean
+  allowClear?: boolean
   format?: string
   valueFormat?: string
-  type?: 'year' | 'month' | 'date' | 'dates' | 'week' | 'datetime' | 'datetimerange' | 'daterange' | 'monthrange'
-  popperClass?: string
-  rangeSeparator?: string
-  defaultValue?: Date | [Date, Date]
-  defaultTime?: Date | [Date, Date]
-  editable?: boolean
-  shortcuts?: Array<{ text: string; value: Date | (() => Date) }>
+  mode?: 'date' | 'year' | 'quarter' | 'month' | 'week'
+  showTime?: boolean
+  showNowBtn?: boolean
+  showConfirm?: boolean
+  defaultValue?: Date | string | number
+  shortcuts?: Array<{
+    label: string | number
+    value: Date | string | number | (() => Date | string | number)
+  }>
   disabledDate?: (date: Date) => boolean
-  teleported?: boolean
-  unlinkPanels?: boolean
+  readonly?: boolean
+  error?: boolean
+  position?: 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br'
+  popupVisible?: boolean
+  defaultPopupVisible?: boolean
+  triggerProps?: Record<string, any>
+}
+
+/**
+ * Arco RangePicker 常用属性
+ */
+export interface RangePickerComponentProps {
+  placeholder?: string[]
+  allowClear?: boolean
+  format?: string
+  valueFormat?: string
+  mode?: 'date' | 'year' | 'quarter' | 'month' | 'week'
+  showTime?: boolean
+  showConfirm?: boolean
+  separator?: string
+  defaultValue?: Array<Date | string | number>
+  defaultPickerValue?: Array<Date | string | number>
+  shortcuts?: Array<{
+    label: string | number
+    value: Array<Date | string | number> | (() => Array<Date | string | number>)
+  }>
+  disabledDate?: (date: Date, type: 'start' | 'end') => boolean
+  readonly?: boolean
+  error?: boolean
+  position?: 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br'
+  popupVisible?: boolean
+  defaultPopupVisible?: boolean
+  triggerProps?: Record<string, any>
 }
 
 /**
@@ -89,6 +109,7 @@ export type ComponentPropsMap = {
   input: ComboComponentProps<InputComponentProps>
   select: ComboComponentProps<SelectComponentProps>
   'date-picker': ComboComponentProps<DatePickerComponentProps>
+  'range-picker': ComboComponentProps<RangePickerComponentProps>
   span: never
 }
 
@@ -148,8 +169,8 @@ export const comboInputProps = {
    * 尺寸
    */
   size: {
-    type: String as PropType<'small' | 'default' | 'large'>,
-    default: 'default'
+    type: String as PropType<ComboInputSize>,
+    default: 'medium'
   },
   /**
    * 输入防抖延迟时间（毫秒），0 表示不防抖

@@ -5,17 +5,17 @@
       <p>增强文本显示，支持前置图标、圆点、引用块，支持高亮文字匹配和交互</p>
     </div>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>基础用法</span>
       </template>
       <div class="demo-item">
         <AbText value="这是一段简单的文本内容" font-size="14px" />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>带图标的文本</span>
       </template>
       <div class="demo-item">
@@ -36,10 +36,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>带圆点的文本</span>
       </template>
       <div class="demo-item">
@@ -69,10 +69,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>圆点尺寸</span>
       </template>
       <div class="demo-item">
@@ -92,10 +92,10 @@
       <div class="demo-item">
         <AbText dot-status="primary" dot-size="large" value="large 尺寸" style="font-size: 14px" />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>引用块样式</span>
       </template>
       <div class="demo-item">
@@ -117,10 +117,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>文本高亮</span>
       </template>
       <div class="demo-item">
@@ -145,10 +145,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>高亮点击事件</span>
       </template>
       <div class="demo-item">
@@ -162,10 +162,10 @@
       <div v-if="clickedText" class="click-result">
         <el-tag type="success">您点击了：{{ clickedText }}</el-tag>
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>自定义高亮样式</span>
       </template>
       <div class="demo-item">
@@ -176,10 +176,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>🆕 文本截断与展开</span>
       </template>
       <div class="demo-item">
@@ -207,10 +207,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>🆕 复制功能</span>
       </template>
       <div class="demo-item">
@@ -236,10 +236,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>组合使用</span>
       </template>
       <div class="demo-item">
@@ -278,10 +278,10 @@
           style="font-size: 14px"
         />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card feature-card">
-      <template #header>
+    <Card class="demo-card feature-card">
+      <template #title>
         <span>✨ 核心特性</span>
       </template>
       <ul class="feature-list">
@@ -297,13 +297,14 @@
         <li>📋 支持一键复制文本</li>
         <li>🔧 灵活的功能组合</li>
       </ul>
-    </el-card>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { AbText } from '@/index'
+import { Card } from '@arco-design/web-vue'
 import { Message } from '@arco-design/web-vue'
 
 const clickedText = ref('')

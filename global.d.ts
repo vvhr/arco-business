@@ -9,7 +9,7 @@ declare module 'vue' {
     AbModal: typeof import('acro-business')['AbModal']
     AbDrawer: typeof import('acro-business')['AbDrawer']
     AbText: typeof import('acro-business')['AbText']
-    AeComboInput: typeof import('acro-business')['AeComboInput']
+    AbComboInput: typeof import('acro-business')['AbComboInput']
   }
 }
 

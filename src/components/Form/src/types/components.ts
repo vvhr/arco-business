@@ -27,7 +27,7 @@ export type DecoratorName = 'Divider' | 'Alert' | 'Image' | 'Result' | 'Text'
  * - Checkbox: 多选框组件，采用el-checkbox-group组件渲染，根据componentProps.options属性渲染el-checkbox
  * - CheckboxButton: 多选框按钮组件，采用el-checkbox-group组件渲染，根据componentProps.options属性渲染el-checkbox-button
  * - ColorPicker: 颜色选择器组件，采用el-color-picker组件渲染，支持原生所有属性功能
- * - ComboInput: 组合输入组件，采用ae-combo-input组件渲染
+ * - ComboInput: 组合输入组件，采用ab-combo-input组件渲染
  * - DatePicker: 日期选择器组件，采用el-date-picker组件渲染，支持原生所有属性功能
  * - Editor: 富文本组件，采用ae-editor组件渲染
  * - Input: 输入框组件，采用el-input组件渲染，支持原生所有属性功能

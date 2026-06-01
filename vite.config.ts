@@ -35,7 +35,7 @@ async function generateGlobalDts() {
     'AbModal',
     'AbDrawer',
     'AbText',
-    'AeComboInput'
+    'AbComboInput'
   ]
 
   // 生成组件声明（使用 Element Plus 的模式）

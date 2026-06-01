@@ -15,7 +15,7 @@ const MAX_CACHE_SIZE = 100
 /**
  * 输入性组件的标签列表
  */
-const INPUT_TAGS: ReadonlyArray<string> = ['select', 'input', 'date-picker']
+const INPUT_TAGS: ReadonlyArray<string> = ['select', 'input', 'date-picker', 'range-picker']
 
 /**
  * 判断是否为输入性组件
