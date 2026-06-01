@@ -110,6 +110,7 @@ export function useComponent(
         width: '100%'
       },
       ...getPlaceholderText(column, componentConfigs),
+      ...setCascaderProps(column),
       ...componentProps,
       ...setAttrsOptions(row, index, column, componentProps, formModel, props),
       disabled: isDisabled(props, column, row, index),
@@ -177,7 +178,9 @@ function getPlaceholderText(
 ) {
   const needInputPlaceholder = ['AutoComplete', 'Input', 'InputNumber', 'InputTag', 'Mention']
   const needSelectPlaceholder = ['Cascader', 'DatePicker', 'Select', 'TimePicker', 'TreeSelect']
+  const needRangePlaceholder = ['RangePicker']
   const componentName = column.editProps?.component || 'Input'
+  const componentProps = column.editProps?.componentProps || {}
   const component = componentConfigs[componentName]
 
   if (needInputPlaceholder.includes(componentName) || component?.needInputPlaceholder) {
@@ -188,12 +191,33 @@ function getPlaceholderText(
 
   if (needSelectPlaceholder.includes(componentName) || component?.needSelectPlaceholder) {
     const selectPlaceholder = getPlaceholder(t('form.placeholder.select'), column?.label || '')
+    if (componentName === 'TimePicker' && componentProps.type === 'time-range') {
+      return {
+        placeholder: [selectPlaceholder, selectPlaceholder]
+      }
+    }
     return {
       placeholder: selectPlaceholder
     }
   }
 
+  if (needRangePlaceholder.includes(componentName)) {
+    const rangePlaceholder = getPlaceholder(t('form.placeholder.select'), column?.label || '')
+    return {
+      placeholder: [rangePlaceholder, rangePlaceholder]
+    }
+  }
+
   return {}
+}
+
+function setCascaderProps(column: TableColumn) {
+  if (column.editProps?.component !== 'Cascader' || column.editProps?.componentProps?.pathMode !== undefined) {
+    return {}
+  }
+  return {
+    pathMode: true
+  }
 }
 
 /** 执行 _v_componentProps，获取行上下文相关的动态组件属性。 */

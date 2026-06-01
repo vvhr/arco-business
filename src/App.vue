@@ -50,6 +50,9 @@
         <TabPane title="📝 AeForm 表单组件" key="form">
           <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
         </TabPane>
+        <TabPane title="📝 AbForm 表单组件" key="ab-form">
+          <FormExample2 v-if="activeTab === 'ab-form'" />
+        </TabPane>
         <TabPane title="📊 AbTable 表格组件" key="table">
           <TableExample v-if="activeTab === 'table'" />
         </TabPane>
@@ -81,6 +84,7 @@ import Logo from '@/assets/logo.png'
 import { ref, onMounted } from 'vue'
 import { Tabs, TabPane } from '@arco-design/web-vue'
 import FormExample from './examples/FormExample.vue'
+import FormExample2 from './examples/FormExample2.vue'
 import TableExample from './examples/TableExample.vue'
 import IconExample from './examples/IconExample.vue'
 import UploadExample from './examples/UploadExample.vue'

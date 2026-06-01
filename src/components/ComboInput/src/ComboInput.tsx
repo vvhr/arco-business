@@ -67,19 +67,11 @@ export default defineComponent({
         const templateChanged = newTemplate !== oldTemplate
 
         if (templateChanged) {
-          // template 变化时，重新初始化模型
+          // template 变化时，优先按外部值重建内部模型，避免首次挂载覆盖 modelValue。
           const newNormalizedTemplates = normalizeTemplate(newTemplate)
-          const newModel = initTemplateModel(newNormalizedTemplates)
-          templateModel.value = newModel
-
-          // 触发更新
-          isInternalUpdate = true
-          const newValue = assembleModelToValue(templateModel.value, newNormalizedTemplates)
-          emit('update:modelValue', newValue)
-          // 使用 nextTick 或 setTimeout 重置标志
-          setTimeout(() => {
-            isInternalUpdate = false
-          }, 0)
+          templateModel.value = newModelValue
+            ? parseValueToModel(newModelValue, newNormalizedTemplates)
+            : initTemplateModel(newNormalizedTemplates)
         } else if (newModelValue !== undefined) {
           // 只有 modelValue 变化时，解析值到模型
           const currentValue = assembleModelToValue(templateModel.value, normalizedTemplates.value)

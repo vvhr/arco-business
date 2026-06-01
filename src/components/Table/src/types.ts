@@ -384,7 +384,7 @@ export interface TableFormComponentProps {
   options?: TableColumnFn<any[]> | any[]
   fieldNames?: TableOptionKeys
   style?: CSSProperties | string
-  placeholder?: string
+  placeholder?: string | string[]
   /** 额外双向绑定字段映射。 */
   vBinds?: Recordable<string, string>
   [key: string]: any

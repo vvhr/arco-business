@@ -227,7 +227,7 @@ export function parseValueToModel(value: string, templates: ComboTemplate[]): Te
   separators.forEach((sep, index) => {
     if (sep) {
       // 转义特殊字符
-      const escapedSep = sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const escapedSep = sep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s*')
       regexPattern += escapedSep
     }
     if (index < propOrder.length) {
@@ -246,7 +246,7 @@ export function parseValueToModel(value: string, templates: ComboTemplate[]): Te
     if (match) {
       // 将捕获的值赋给对应的 prop
       propOrder.forEach((prop, index) => {
-        model[prop] = match[index + 1] ?? ''
+        model[prop] = normalizeParsedValue(prop, match[index + 1] ?? '', templates)
       })
     }
   } catch {
@@ -254,6 +254,29 @@ export function parseValueToModel(value: string, templates: ComboTemplate[]): Te
   }
 
   return model
+}
+
+function normalizeParsedValue(prop: string, value: string, templates: ComboTemplate[]) {
+  const template = templates.find(item => item.prop === prop)
+  if (template?.tag !== 'select') {
+    return value
+  }
+  const componentProps = template.componentProps as any
+  const options = componentProps?.options
+  if (!Array.isArray(options)) {
+    return value
+  }
+  const fieldNames = {
+    label: 'label',
+    value: 'value',
+    ...(componentProps?.fieldNames || {})
+  }
+  const option = options.find(item => {
+    const optionLabel = item?.[fieldNames.label]
+    const optionValue = item?.[fieldNames.value]
+    return String(optionValue) === value || String(optionLabel) === value
+  })
+  return option ? option[fieldNames.value] : value
 }
 
 /**
