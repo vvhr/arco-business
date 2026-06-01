@@ -21,7 +21,7 @@
           <Button @click="handleUpdate">模拟动态赋值</Button>
         </div>
       </template>
-      <Upload
+      <AbUpload
         v-model="basicFiles"
         :upload="handleUpload"
         :disabled="disabled"
@@ -51,7 +51,7 @@
           <Button @click="handleUpdate">模拟动态赋值</Button>
         </div>
       </template>
-      <Upload
+      <AbUpload
         v-model="basicFiles"
         :upload="handleUpload"
         :disabled="disabled"
@@ -72,7 +72,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button, Card, Message, Radio, RadioGroup } from '@arco-design/web-vue'
-import Upload from '@/components/Upload'
+import { AbUpload } from '@/index'
 import type { UploadFile, UploadRawFile } from '@/components/Upload'
 
 const disabled = ref(false)
