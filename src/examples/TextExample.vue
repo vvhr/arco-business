@@ -160,7 +160,7 @@
         />
       </div>
       <div v-if="clickedText" class="click-result">
-        <el-tag type="success">您点击了：{{ clickedText }}</el-tag>
+        <Tag color="green">您点击了：{{ clickedText }}</Tag>
       </div>
     </Card>
 
@@ -304,8 +304,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { AbText } from '@/index'
-import { Card } from '@arco-design/web-vue'
-import { Message } from '@arco-design/web-vue'
+import { Card, Message, Tag } from '@arco-design/web-vue'
 
 const clickedText = ref('')
 

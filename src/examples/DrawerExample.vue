@@ -68,7 +68,7 @@ const handlePrint = () => {
       <h2>高级抽屉</h2>
     </div>
     <Card>
-      <template #header>
+      <template #title>
         <div class="card-header">
           <span>使用示例</span>
         </div>
@@ -159,7 +159,7 @@ const handlePrint = () => {
         </ul>
         <div>
           <h4>内容区域滚动测试：</h4>
-          <div style="background: var(--el-fill-color-light)">
+          <div style="background: var(--color-fill-2)">
             <p v-for="i in 30" :key="i">这是第 {{ i }} 行内容，用于测试滚动效果</p>
           </div>
         </div>

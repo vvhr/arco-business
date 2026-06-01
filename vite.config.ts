@@ -3,8 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { ArcoResolver } from 'unplugin-vue-components/resolvers';
+import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 import UnoCSS from 'unocss/vite'
 import dts from 'vite-plugin-dts'
 
@@ -38,7 +37,7 @@ async function generateGlobalDts() {
     'AbComboInput'
   ]
 
-  // 生成组件声明（使用 Element Plus 的模式）
+  // 生成组件声明
   const declarations = components
     .map(name => `    ${name}: typeof import('acro-business')['${name}']`)
     .join('\n')
@@ -69,7 +68,7 @@ export default defineConfig({
     }),
     AutoImport({
       imports: ['vue', '@vueuse/core'],
-      resolvers: [ElementPlusResolver(), ArcoResolver()],
+      resolvers: [ArcoResolver()],
       dts: 'types/auto-imports.d.ts',
       eslintrc: {
         enabled: true,
@@ -78,9 +77,9 @@ export default defineConfig({
       }
     }),
     Components({
-      // 只包含 Element Plus 组件，排除所有自定义组件
+      // 只解析 Arco 组件，排除所有自定义组件
       dirs: [], // 不扫描任何目录
-      resolvers: [ElementPlusResolver(), ArcoResolver({ sideEffect: true })],
+      resolvers: [ArcoResolver({ sideEffect: true })],
       dts: 'types/components.d.ts'
     }),
     dts({
@@ -137,12 +136,11 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['vue', 'element-plus', '@arco-design/web-vue', '@iconify/vue', '@vueuse/core', 'lodash-es', 'dayjs'],
+      external: ['vue', '@arco-design/web-vue', '@iconify/vue', '@vueuse/core', 'lodash-es', 'dayjs'],
       output: {
         globals: {
           vue: 'Vue',
           '@arco-design/web-vue': 'ArcoDesignVue',
-          'element-plus': 'ElementPlus',
           '@iconify/vue': 'IconifyVue',
           '@vueuse/core': 'VueUse',
           'lodash-es': '_',

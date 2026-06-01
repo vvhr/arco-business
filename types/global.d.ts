@@ -1,5 +1,5 @@
 declare global {
-  type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
+  type ArRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
   interface Fn<T = any> {
     (...arg: T[]): T
   }

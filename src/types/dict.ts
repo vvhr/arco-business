@@ -10,10 +10,10 @@ export type DictItem = {
   hidden?: boolean
   useful?: Useful[]
   children?: DictItem[]
-  // el-tag原生事项
+  // 标签渲染属性
   type?: 'primary' | 'success' | 'info' | 'warning' | 'danger' | ''
   color?: string // 定义颜色样式
-  icon?: string // 定义图标(仅支持iconify图标, 不支持element-plus图标)
+  icon?: string // 定义图标(仅支持 iconify 图标)
   hit?: boolean
   effect?: 'dark' | 'light' | 'plain'
   round?: boolean

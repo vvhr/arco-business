@@ -4,7 +4,7 @@ export * from './rules'
 
 export type Recordable<T = any, K extends PropertyKey = string> = Record<K, T>
 export type Nullable<T> = T | null
-export type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
+export type ArRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
 export interface Fn<T = any> {
   (...arg: T[]): T
 }

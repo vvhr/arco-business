@@ -2,7 +2,7 @@
 // 用户可以在项目中引用此文件来获得全局类型支持
 
 declare global {
-  type ElRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
+  type ArRef<T extends HTMLElement = HTMLDivElement> = Nullable<T>
   interface Fn<T = any> {
     (...arg: T[]): T
   }

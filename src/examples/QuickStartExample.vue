@@ -1,7 +1,7 @@
 <template>
   <div class="demo-section">
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>📦 安装</span>
       </template>
       <pre class="code-block"><code>npm install acro-business
@@ -9,30 +9,26 @@
 yarn add acro-business
 # 或
 pnpm add acro-business</code></pre>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>🔧 完整引入</span>
       </template>
       <pre class="code-block"><code>import { createApp } from 'vue'
 import App from './App.vue'
-/** 引入 Element Plus */
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
 
 /** 引入 AcroBusiness 组件库 */
 import AcroBusiness from 'acro-business'
 import 'acro-business/dist/style.css'
 
 const app = createApp(App)
-app.use(ElementPlus)
 app.use(AcroBusiness)
 app.mount('#app')</code></pre>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>🌍 国际化配置</span>
       </template>
       <div class="type-support-content">
@@ -51,20 +47,20 @@ setLocale('en-US')
 setLocale('zh-CN')</code></pre>
         <p class="tip">💡 全局配置后，所有组件都会自动使用设置的语言，无需在每个组件中单独配置</p>
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>📝 按需引入</span>
       </template>
       <pre
         class="code-block"
       ><code>import { AbForm, AbTable, AbIcon } from 'acro-business'
 import 'acro-business/dist/style.css'</code></pre>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>🎯 TypeScript 全局组件类型支持</span>
       </template>
       <div class="type-support-content">
@@ -81,10 +77,10 @@ import 'acro-business/dist/style.css'</code></pre>
         ><code>/// &lt;reference types="acro-business/global" /&gt;</code></pre>
         <p class="tip">💡 配置后重启 IDE，即可在 Vue 文件中直接使用组件并获得完整的类型提示</p>
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>💡 使用示例（完整引入）</span>
       </template>
       <pre class="code-block"><code>&lt;template&gt;
@@ -117,10 +113,10 @@ const tableData = ref([
   { name: '张三' }
 ])
 &lt;/script&gt;</code></pre>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>📦 使用示例（按需引入）</span>
       </template>
       <pre class="code-block"><code>&lt;template&gt;
@@ -144,9 +140,13 @@ const formSchemas: FormSchema[] = [
   }
 ]
 &lt;/script&gt;</code></pre>
-    </el-card>
+    </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Card } from '@arco-design/web-vue'
+</script>
 
 <style scoped>
 .demo-section {

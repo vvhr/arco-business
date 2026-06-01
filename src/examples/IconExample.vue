@@ -5,8 +5,8 @@
       <p>基于 Iconify 的图标组件，支持海量图标库</p>
     </div>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>常用图标示例</span>
       </template>
 
@@ -16,10 +16,10 @@
           <span class="icon-name">{{ icon.label }}</span>
         </div>
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>不同尺寸</span>
       </template>
 
@@ -30,10 +30,10 @@
         <AbIcon icon="ep:user" :size="48" />
         <AbIcon icon="ep:user" :size="64" />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
+    <Card class="demo-card">
+      <template #title>
         <span>不同颜色</span>
       </template>
 
@@ -44,10 +44,10 @@
         <AbIcon icon="ep:star-filled" :size="32" color="#f56c6c" />
         <AbIcon icon="ep:star-filled" :size="32" color="#909399" />
       </div>
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card feature-card">
-      <template #header>
+    <Card class="demo-card feature-card">
+      <template #title>
         <span>✨ 核心特性</span>
       </template>
       <ul class="feature-list">
@@ -57,12 +57,13 @@
         <li>⚡ 按需加载，性能优秀</li>
         <li>🔄 支持旋转、翻转等变换</li>
       </ul>
-    </el-card>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { AbIcon } from '@/index'
+import { Card } from '@arco-design/web-vue'
 
 const iconList = [
   { name: 'ep:user', label: '用户' },

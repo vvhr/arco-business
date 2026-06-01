@@ -30,7 +30,6 @@
     /* Type definitions */
     "types": [
       "vite/client",
-      "element-plus/global",
       "node",
       "vue"
     ]
