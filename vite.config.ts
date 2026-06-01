@@ -30,7 +30,7 @@ async function generateGlobalDts() {
   const components = [
     'AeForm',
     'AbIcon',
-    'AeTable',
+    'Table',
     'AbUpload',
     'AbModal',
     'AbDrawer',
@@ -67,7 +67,7 @@ async function compileBeautyStyles() {
 
   try {
     // 使用 lessc 命令编译 less 文件
-    await execAsync(`npx lessc ${lessFile} ${outputFile}`)
+    await execAsync(`npx lessc "${lessFile}" "${outputFile}"`)
     console.log('✓ Compiled element-plus-beauty.less to dist/element-plus-beauty.css')
   } catch (error) {
     console.error('✗ Failed to compile element-plus-beauty.less:', error)

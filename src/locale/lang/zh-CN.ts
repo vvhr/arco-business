@@ -106,24 +106,24 @@ const zhCN: LocaleConfig = {
   
   console: {
     table: {
-      rowKeyRequired: '[AeTable] 启用选择功能时需要设置 rowKey 属性',
-      columnMissingKey: '[AeTable] 列 {label} 缺少 key 属性，请添加 key',
-      unknownColumnType: '[AeTable] 未知的列类型: {type}',
+      rowKeyRequired: '[Table] 启用选择功能时需要设置 rowKey 属性',
+      columnMissingKey: '[Table] 列 {label} 缺少 key 属性，请添加 key',
+      unknownColumnType: '[Table] 未知的列类型: {type}',
       dictTypePropsRequired:
-        '[AeTable] 列使用了 dict 类型但未配置 typeProps，无法正常解析字典。请检查列配置',
+        '[Table] 列使用了 dict 类型但未配置 typeProps，无法正常解析字典。请检查列配置',
       sensitiveTypeRequired:
-        '[AeTable] 列使用了 sensitive 类型，但未设置 sensitiveType 或 sensitiveRegex 属性，请检查列配置',
-      noDesensitizationMethod: '[AeTable] 不存在 {type} 类型的脱敏方法',
-      actionTypeRequired: '[AeTable] 列使用了 action 类型，但未配置 actions 属性，请检查列配置',
-      actionEventError: '[AeTable] 操作按钮事件执行错误',
-      actionNotFound: '[AeTable] dropdownActions 中不存在操作: {command}',
-      componentExists: '[AeTable] 组件 {name} 已存在，将被覆盖',
-      componentNotExist: '[AeTable] 注册组件数组策略失败，因为组件 {name} 不存在',
-      configExists: '[AeTable] 组件配置 {name} 已存在，将被覆盖',
-      componentRegistered: '[AeTable] 通过 imports 属性导入的组件 {name} 已成功注册！',
-      editFieldRequired: '[AeTable] 编辑组件未设置 field 属性，请检查列配置',
+        '[Table] 列使用了 sensitive 类型，但未设置 sensitiveType 或 sensitiveRegex 属性，请检查列配置',
+      noDesensitizationMethod: '[Table] 不存在 {type} 类型的脱敏方法',
+      actionTypeRequired: '[Table] 列使用了 action 类型，但未配置 actions 属性，请检查列配置',
+      actionEventError: '[Table] 操作按钮事件执行错误',
+      actionNotFound: '[Table] dropdownActions 中不存在操作: {command}',
+      componentExists: '[Table] 组件 {name} 已存在，将被覆盖',
+      componentNotExist: '[Table] 注册组件数组策略失败，因为组件 {name} 不存在',
+      configExists: '[Table] 组件配置 {name} 已存在，将被覆盖',
+      componentRegistered: '[Table] 通过 imports 属性导入的组件 {name} 已成功注册！',
+      editFieldRequired: '[Table] 编辑组件未设置 field 属性，请检查列配置',
       editComponentError:
-        '[AeTable] 配置错误，请检查 column.editProps.component 是否正确，请检查列配置'
+        '[Table] 配置错误，请检查 column.editProps.component 是否正确，请检查列配置'
     },
     form: {
       componentNotExist: '[AeForm] {type} 类型组件配置异常，组件 {component} 不存在',

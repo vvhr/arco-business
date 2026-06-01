@@ -1,14 +1,17 @@
-/**
- * 可编辑列渲染器
- * @description 处理编辑模式下的列渲染
- */
-import { ElFormItem } from 'element-plus'
-import type { TableColumn, TableProps, TableEmits, TableSlots, TableFormComponentName } from '../types'
+import { FormItem } from '@arco-design/web-vue'
+import type {
+  TableColumn,
+  TableEmits,
+  TableFormComponentName,
+  TableProps,
+  TableSlots
+} from '../types'
 import type { TableFormImportItemConfig } from '@/types/imports'
 import { useComponent } from '../hook/useComponent'
 import type { Component, VNode } from 'vue'
 import { logger } from '@/locale'
 
+/** 编辑态单元格渲染上下文。 */
 export interface EditableRenderContext {
   props: TableProps
   slots: TableSlots
@@ -20,9 +23,7 @@ export interface EditableRenderContext {
   componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>
 }
 
-/**
- * 渲染可编辑列
- */
+/** 渲染 Arco FormItem 包裹的编辑组件。 */
 export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefined {
   const { props, slots, emit, column, row, index, components, componentConfigs } = ctx
 
@@ -35,24 +36,12 @@ export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefi
     setComponentProps,
     setComponentEvent,
     setInsideRenders
-  } = useComponent(
-    props,
-    slots,
-    emit,
-    row,
-    index,
-    column,
-    props.form,
-    components,
-    componentConfigs
-  )
+  } = useComponent(props, slots, emit, row, index, column, props.form, components, componentConfigs)
 
-  // 验证 field
   if (!field) {
     logger.warn('console.table.editFieldRequired', undefined, column)
   }
 
-  // 渲染编辑组件
   const renderEditComponent = () => {
     const AnyComponent = getAnyComponent()
 
@@ -73,22 +62,14 @@ export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefi
     )
   }
 
-  return (
-    <ElFormItem {...formItemProps}>
-      {{
-        default: () => renderEditComponent()
-      }}
-    </ElFormItem>
-  )
+  return <FormItem {...formItemProps}>{{ default: () => renderEditComponent() }}</FormItem>
 }
 
-/**
- * 渲染错误占位符
- */
+/** 编辑组件注册缺失时的占位提示。 */
 function renderErrorPlaceholder(column: TableColumn): VNode {
   return (
-    <div class="ae-table-edit-error" style="color: #f56c6c; font-size: 12px;">
-      组件配置错误: {column.editProps?.component || 'Unknown'}
+    <div class="ab-table-edit-error" style="color: rgb(var(--danger-6)); font-size: 12px;">
+      No Found: {column.editProps?.component || 'Unknown'}
     </div>
   )
 }

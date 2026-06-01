@@ -1,45 +1,9 @@
-export interface ElTableEventHanders {
-  handleSelectionChange: (selection: Recordable[]) => void
-  handleCurrentChange: (currentRow: any) => void
+/** Table 内部事件处理器集合，供拆分 hooks 时复用。 */
+export interface TableEventHandlers {
+  /** Arco selection-change 事件桥接。 */
+  handleSelectionChange: (rowKeys: (string | number)[]) => void
+  /** Arco row-click 事件桥接。 */
   handleRowClick: (row: Recordable) => void
-}
-
-/**
- * ElButtonProps
- * @description el-button原生属性
- * @remarks
- * - `type`: 按钮类型
- * - `size`: 按钮尺寸
- * - `plain`: 按钮是否朴素
- * - `text`: 按钮是否文字按钮
- * - `bg`: 按钮是否背景按钮
- * - `link`: 按钮是否链接按钮
- * - `round`: 按钮是否圆角按钮
- * - `circle`: 按钮是否圆形按钮
- * - `dashed`: 按钮是否虚线按钮
- */
-export interface ElButtonProps {
-  type?: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | ''
-  size?: 'large' | 'default' | 'small'
-  plain?: boolean
-  text?: boolean
-  bg?: boolean
-  link?: boolean
-  round?: boolean
-  circle?: boolean
-  /**
-   * Element Plus > `2.13.3`。
-   */
-  dashed?: boolean
-  /**
-   * Element Plus > `2.13.7`。
-   */
-  color?: string
-}
-
-export type OptionKeys = {
-  label?: string // 自定义标题字段名
-  value?: string // 自定义取值字段名
-  children?: string // 自定义子级字段名
-  disabled?: string // 自定义禁用字段名
+  /** Arco change 事件桥接，当前主要处理拖拽排序。 */
+  handleTableChange: (data: Recordable[], extra: any) => void
 }

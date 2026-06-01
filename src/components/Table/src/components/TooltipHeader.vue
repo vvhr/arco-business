@@ -1,48 +1,70 @@
 <template>
-  <div class="tooltip-header flex flex-col w-full" style="line-height: 1">
-    <span class="tooltip-header-title">{{ title }}</span>
-    <el-tooltip v-if="subtitle" :content="subtitle" :disabled="!isOverflow" placement="top">
+  <div class="ab-table-tooltip-header">
+    <span class="ab-table-tooltip-header__title">{{ title }}</span>
+    <Tooltip v-if="subLabel" :content="subLabel" :disabled="!isOverflow" position="top">
       <div
-        ref="subtitleRef"
-        class="tooltip-header-subtitle font-400 text-nowrap text-ellipsis overflow-hidden mt-1"
-        style="font-size: clamp(12px, calc(1em - 1px), 16px)"
+        ref="subLabelRef"
+        class="ab-table-tooltip-header__subtitle"
         @mouseenter="checkOverflowOnHover"
       >
-        {{ subtitle }}
+        {{ subLabel }}
       </div>
-    </el-tooltip>
+    </Tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { Tooltip } from '@arco-design/web-vue'
 
-interface Props {
-  title: string
-  subtitle?: string
-}
+const props = defineProps<{
+  title?: string
+  subLabel?: string
+}>()
 
-const props = defineProps<Props>()
-
-const subtitleRef = ref<HTMLElement>()
+const subLabelRef = ref<HTMLElement>()
 const isOverflow = ref(false)
 const hasChecked = ref(false)
 
-// 只在鼠标悬停时检测溢出，避免不必要的计算
-const checkOverflowOnHover = () => {
-  if (!subtitleRef.value || !props.subtitle || hasChecked.value) return
+function checkOverflowOnHover() {
+  if (!subLabelRef.value || !props.subLabel || hasChecked.value) return
 
-  const element = subtitleRef.value
+  const element = subLabelRef.value
   isOverflow.value = element.scrollWidth > element.clientWidth
   hasChecked.value = true
 }
 
-// 当 subtitle 变化时重置检测状态
 watch(
-  () => props.subtitle,
+  () => props.subLabel,
   () => {
     hasChecked.value = false
     isOverflow.value = false
   }
 )
 </script>
+
+<style scoped lang="less">
+.ab-table-tooltip-header {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  line-height: 1;
+
+  &__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__subtitle {
+    color: var(--color-text-3);
+    font-size: clamp(12px, calc(1em - 1px), 16px);
+    font-weight: 400;
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+</style>

@@ -1,77 +1,85 @@
-<script setup lang="ts">
-import type { PropType } from 'vue'
-
-defineProps({
-  value: {
-    type: String,
-    default: ''
-  },
-  type: {
-    type: String as PropType<'primary' | 'success' | 'info' | 'warning' | 'danger'>,
-    default: 'primary'
-  },
-  color: {
-    type: String,
-    default: ''
-  },
-  hit: {
-    type: Boolean,
-    default: false
-  },
-  effect: {
-    type: String as PropType<'dark' | 'light' | 'plain'>,
-    default: 'dark'
-  },
-  round: {
-    type: Boolean,
-    default: false
-  }
-})
-</script>
-
 <template>
-  <el-tag :effect="effect" :hit="hit" round class="dot-tag" :type="type">
-    <span class="dot-tag__dot" :class="{ [type]: true }"></span>
-    <span class="dot-tag__text">{{ value }}</span>
-  </el-tag>
+  <Tag
+    :color="tagColor"
+    :bordered="hit || effect === 'plain'"
+    :class="['ab-table-dot-tag', `is-${effect}`, { 'is-round': round }]"
+    :style="{ '--ab-dot-color': dotColor }"
+  >
+    <span class="ab-table-dot-tag__dot"></span>
+    <span class="ab-table-dot-tag__text">{{ value }}</span>
+  </Tag>
 </template>
 
+<script setup lang="ts">
+import { computed } from 'vue'
+import { Tag } from '@arco-design/web-vue'
+
+const props = withDefaults(
+  defineProps<{
+  value: string
+  type?: 'primary' | 'success' | 'info' | 'warning' | 'danger'
+    color?: string
+    hit?: boolean
+    effect?: 'dark' | 'light' | 'plain'
+    round?: boolean
+  }>(),
+  {
+    value: '',
+    type: 'primary',
+    color: '',
+    hit: false,
+    effect: 'dark',
+    round: false
+  }
+)
+
+const colorMap = {
+  primary: 'arcoblue',
+  success: 'green',
+  info: 'gray',
+  warning: 'orange',
+  danger: 'red'
+}
+
+const cssColorMap = {
+  primary: 'rgb(var(--primary-6))',
+  success: 'rgb(var(--success-6))',
+  info: 'rgb(var(--gray-6))',
+  warning: 'rgb(var(--warning-6))',
+  danger: 'rgb(var(--danger-6))'
+}
+
+const tagColor = computed(() => props.color || colorMap[props.type])
+const dotColor = computed(() => props.color || cssColorMap[props.type])
+</script>
+
 <style scoped lang="less">
-.dot-tag {
-  display: flex;
-  flex-direction: row;
+.ab-table-dot-tag {
+  display: inline-flex;
   align-items: center;
   width: fit-content;
-  .dot-tag__text {
-    color: #878787;
+
+  &.is-round {
+    border-radius: 999px;
   }
-  .dot-tag__dot {
+
+  &.is-plain {
+    background: transparent;
+  }
+
+  &__text {
+    color: var(--color-text-2);
+  }
+
+  &__dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: var(--ab-dot-color);
+    box-shadow: 0 0 4px var(--ab-dot-color);
     display: inline-block;
+    flex: 0 0 auto;
     margin-right: 4px;
-
-    &.primary {
-      background-color: var(--el-color-primary);
-      box-shadow: 0 0 4px var(--el-color-primary-light-3);
-    }
-    &.success {
-      background-color: var(--el-color-success);
-      box-shadow: 0 0 4px var(--el-color-success-light-3);
-    }
-    &.info {
-      background-color: var(--el-color-info);
-      box-shadow: 0 0 4px var(--el-color-info-light-3);
-    }
-    &.warning {
-      background-color: var(--el-color-warning);
-      box-shadow: 0 0 4px var(--el-color-warning-light-3);
-    }
-    &.danger {
-      background-color: var(--el-color-danger);
-      box-shadow: 0 0 4px var(--el-color-danger-light-3);
-    }
   }
 }
 </style>

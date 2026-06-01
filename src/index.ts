@@ -4,7 +4,7 @@ import 'virtual:uno.css'
 // Import components
 import { AeForm } from './components/Form'
 import { AbIcon } from './components/Icon'
-import { AeTable } from './components/Table'
+import { Table } from './components/Table'
 import { AbUpload } from './components/Upload'
 import { AbModal } from './components/Modal'
 import { AbDrawer } from './components/Drawer'
@@ -27,7 +27,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AbIcon, AeTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
+export { AeForm, AbIcon, Table, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -69,27 +69,34 @@ export type {
 
 // Table
 export type {
-  TableDefineProps,
-  TableInstance,
-  TableSlots,
-  TableEmits,
-  TableProps,
-  TableExpose,
-  TablePagination,
+  TableAction,
+  TableChangeExtra,
   TableColumn,
+  TableColumnDraggable,
+  TableColumnEditProps,
+  TableColumnExpand,
   TableColumnFn,
+  TableColumnIndex,
+  TableColumnSelect,
   TableColumnType,
   TableColumnTypeProps,
-  TableColumnEditProps,
+  TableDefineProps,
+  TableEmits,
+  TableExpose,
+  TableFormAutoRules,
+  TableFormComponentEventFn,
+  TableFormComponentEvents,
   TableFormComponentName,
   TableFormComponentProps,
-  TableAction,
-  TableSlotDefault,
-  TableFormComponentEvents,
-  TableFormComponentEventFn,
-  TableFormInsidePropsRenders,
   TableFormInsidePropsRender,
-  TableFormAutoRules
+  TableFormInsidePropsRenders,
+  TableInstance,
+  TablePagination,
+  TableProps,
+  TableRawInstance,
+  TableSize,
+  TableSlotDefault,
+  TableSlots
 } from './components/Table'
 
 // Icon
@@ -195,7 +202,16 @@ export interface InstallOptions {
 // Install
 const install = (app: App, options?: InstallOptions) => {
   // 注册组件（所有组件都有 install 方法）
-  const components = [AeForm, AbIcon, AeTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput]
+  const components = [
+    AeForm,
+    AbIcon,
+    Table,
+    AbUpload,
+    AbModal,
+    AbDrawer,
+    AbText,
+    AbComboInput
+  ]
   components.forEach(component => {
     app.use(component)
   })

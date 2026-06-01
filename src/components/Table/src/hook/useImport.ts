@@ -1,81 +1,68 @@
-import type { TableFormComponentName as ComponentName } from '../types'
+import { computed } from 'vue'
 import type {
   TableFormImportItem as ImportItem,
   TableFormImportItemConfig as ImportItemConfig
 } from '@/types/imports'
-import type { Component } from 'vue'
-import { shallowReactive } from 'vue'
-import { defaultComponents, defaultArrayStrategies } from '../component'
+import type { TableFormComponentName as ComponentName } from '../types'
+import { defaultArrayStrategies, defaultComponents } from '../component'
 import { globalTableImports } from '@/utils/imports'
 import { logger } from '@/locale'
 
-type Components = Partial<Recordable<Component, ComponentName>>
-type ComponentConfigs = Partial<Recordable<ImportItemConfig, ComponentName>>
-
-/**
- * use Import
- * @description 使用全局注册和局部注册的组件库和组件配置
- * @param localImports 局部注册的组件列表，优先级高于全局注册
- */
-export function useImport(localImports: ImportItem[] = []) {
-  /**
-   * 组件库（合并优先级：局部注册 > 全局注册 > 默认组件）
-   */
-  const components = shallowReactive<Components>({
-    ...defaultComponents,
-    ...globalTableImports.components
+/** 合并默认、全局和局部的编辑组件注册表。 */
+export function useImport(imports: ImportItem[]) {
+  const components = computed(() => {
+    return {
+      ...defaultComponents,
+      ...globalTableImports.components,
+      ...localRegister(imports).components
+    } as Partial<Recordable<any, ComponentName>>
   })
 
-  /**
-   * 组件配置（合并优先级：局部注册 > 全局注册）
-   */
-  const componentConfigs = shallowReactive<ComponentConfigs>({
-    ...globalTableImports.componentConfigs
+  const componentConfigs = computed(() => {
+    return {
+      ...globalTableImports.componentConfigs,
+      ...localRegister(imports).componentConfigs
+    } as Partial<Recordable<ImportItemConfig, ComponentName>>
   })
 
-  /**
-   * 组件值初始化为数组的策略（合并优先级：局部注册 > 全局注册 > 默认策略）
-   */
-  const arrayStrategies = shallowReactive<
-    Partial<Record<ComponentName, (cps: Recordable) => boolean>>
-  >({
-    ...defaultArrayStrategies,
-    ...globalTableImports.arrayStrategies
+  const arrayStrategies = computed(() => {
+    return {
+      ...defaultArrayStrategies,
+      ...globalTableImports.arrayStrategies,
+      ...localRegister(imports).arrayStrategies
+    }
   })
 
-  // 注册局部组件（覆盖全局注册的同名组件）
-  const loggerRecords = {
-    componentExists: [],
-    componentRegistered: []
+  return {
+    components,
+    componentConfigs,
+    arrayStrategies
   }
-  localImports.forEach(item => {
-    if (components[item.name]) {
-      loggerRecords.componentExists.push(item.name)
+}
+
+/** 将当前 Table 传入的 imports 转换为组件、配置和数组策略映射。 */
+function localRegister(imports: ImportItem[]) {
+  const components: Recordable = {}
+  const componentConfigs: Recordable = {}
+  const arrayStrategies: Recordable = {}
+
+  imports.forEach(item => {
+    if (!item.name || !item.component) {
+      logger.warn('console.table.componentNotExist', { name: item.name || '' })
+      return
     }
     components[item.name] = item.component
-
     if (item.config) {
       componentConfigs[item.name] = item.config
     }
-
     if (item.isArrayFn) {
       arrayStrategies[item.name] = item.isArrayFn
     }
-    loggerRecords.componentRegistered.push(item.name)
   })
-  if (loggerRecords.componentExists.length) {
-    logger.warn('console.table.componentExists', {
-      name: loggerRecords.componentExists.join(', ')
-    })
-  }
-  if (loggerRecords.componentRegistered.length) {
-    logger.success('console.table.componentRegistered', {
-      name: loggerRecords.componentRegistered.join(', ')
-    })
-  }
+
   return {
     components,
-    arrayStrategies,
-    componentConfigs
+    componentConfigs,
+    arrayStrategies
   }
 }

@@ -1,26 +1,18 @@
-/**
- * 列渲染器
- * @description 将不同类型的列渲染逻辑拆分为独立的渲染器
- */
-import { ElTag, ElMessage, ElIcon } from 'element-plus'
+import { Message, Tag } from '@arco-design/web-vue'
 import { AbIcon } from '@/components/Icon'
-import DotTag from '@/components/Table/src/components/DotTag.vue'
-import SensitiveSwitch from '@/components/Table/src/components/SensitiveSwitch.vue'
+import DotTag from '../components/DotTag.vue'
+import SensitiveSwitch from '../components/SensitiveSwitch.vue'
 import { isArray } from '@/utils/is'
 import { formatAmount, formatDate, formatSensitive } from '@/utils/format'
 import { copyToClipboard } from '@/utils/copy'
-import type { TableColumn, TableProps } from '../types'
+import type { TableColumn, TableEmits, TableProps } from '../types'
 import type { DictItem } from '@/types/dict'
 import type { UseDictTools } from '@/utils/dict'
 import type { VNode } from 'vue'
-import { CopyDocument } from '@element-plus/icons-vue'
-import { isCopyable, isClickable } from '../utils'
-import type { TableEmits } from '../types'
+import { isClickable, isCopyable } from '../utils'
 import { t, logger } from '@/locale'
 
-/**
- * 渲染上下文
- */
+/** 展示态列渲染器共享上下文。 */
 export interface RenderContext {
   props: TableProps
   column: TableColumn
@@ -33,26 +25,21 @@ export interface RenderContext {
   emit: TableEmits
 }
 
-/**
- * 渲染结果
- */
+/** 展示态列渲染器统一返回结构。 */
 export interface RenderResult {
   value: string | number
   valueRender?: VNode | string | number
 }
 
-/**
- * 字典列渲染器
- */
+/** 渲染字典列，支持普通数组字典、树形字典、tag 和 dot-tag。 */
 export function renderDictColumn(ctx: RenderContext): RenderResult | string {
   const { column, value, emptyValue, dictTools } = ctx
 
   if (!column.typeProps) {
     logger.warn('console.table.dictTypePropsRequired', undefined, column)
-    return { value: value || emptyValue }
+    return { value: value ?? emptyValue }
   }
 
-  // 获取字典选项
   let dictOptions: DictItem[] = []
   if (column.typeProps.dictOptions !== undefined) {
     dictOptions = isArray(column.typeProps.dictOptions) ? column.typeProps.dictOptions : []
@@ -60,7 +47,6 @@ export function renderDictColumn(ctx: RenderContext): RenderResult | string {
     dictOptions = dictTools.getDictOptions(column.typeProps.dictName)
   }
 
-  // 树形字典处理
   if (column.typeProps.dictIsTree) {
     const label = dictTools.getTreeDictItemLabel(
       dictOptions,
@@ -72,81 +58,74 @@ export function renderDictColumn(ctx: RenderContext): RenderResult | string {
     return label ? { value: label } : emptyValue
   }
 
-  // 普通字典处理
   let label: string
-  // 如果value是数组
   if (isArray(value)) {
-    const labels = []
-    value.forEach((val, index) => {
-      const dictItem = dictOptions.find(item => item.value === val)
-      const _label = dictItem?.label || val
-      labels.push(_label)
-    })
-    label = labels.join(', ')
+    label = value
+      .map(val => {
+        const dictItem = dictOptions.find(item => item.value === val)
+        return dictItem?.label || val
+      })
+      .join(', ')
   } else {
     const dictItem = dictOptions.find(item => item.value === value)
     label = dictItem?.label || value
     if (!dictItem && !value) {
       return emptyValue
     }
-    // 自定义渲染
     if (column.typeProps.dictViewRender !== undefined) {
       return {
         value: label,
         valueRender: column.typeProps.dictViewRender(ctx.originValue, label, dictItem)
       }
     }
-    // 样式渲染
     if (column.typeProps.dictViewType && column.typeProps.dictViewType !== 'text') {
       return renderDictViewType(column.typeProps.dictViewType, label, dictItem)
     }
   }
 
-
   return { value: label || emptyValue }
 }
 
-/**
- * 字典视图类型渲染
- */
+/** 按展示类型生成字典标签节点。 */
 function renderDictViewType(
   viewType: 'tag' | 'dot-tag',
   label: string,
   dictItem?: DictItem
 ): RenderResult {
-  const tagProps = {
-    color: dictItem?.color || '',
-    type: dictItem?.type || 'primary',
-    hit: dictItem?.hit || false,
-    effect: dictItem?.effect || 'light',
-    round: dictItem?.round || false
-  }
+  const color = dictItem?.color || getArcoTagColor(dictItem?.type)
 
   if (viewType === 'tag') {
     const valueRender = dictItem?.icon ? (
-      <ElTag {...tagProps} class="flex flex-row items-center gap-1">
+      <Tag color={color} class="ab-table-tag">
         <AbIcon icon={dictItem.icon} size={14} />
         <span>{label}</span>
-      </ElTag>
+      </Tag>
     ) : (
-      <ElTag {...tagProps}>{label}</ElTag>
+      <Tag color={color}>{label}</Tag>
     )
     return { value: label, valueRender }
   }
 
-  if (viewType === 'dot-tag') {
-    return {
-      value: label,
-      valueRender: <DotTag {...tagProps} value={label} />
-    }
+  return {
+    value: label,
+    valueRender: <DotTag color={color} value={label} />
   }
-
-  return { value: label }
 }
 
-/**
- * 金额列渲染器
- */
+/** 将旧项目语义色映射为 Arco Tag 可识别的颜色。 */
+function getArcoTagColor(type?: string) {
+  const colorMap: Record<string, string> = {
+    primary: 'arcoblue',
+    success: 'green',
+    warning: 'orange',
+    danger: 'red',
+    error: 'red',
+    info: 'gray'
+  }
+  return type ? colorMap[type] || type : 'arcoblue'
+}
+
+/** 渲染金额列，复用项目级金额格式化能力。 */
 export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
   const { column, value, emptyValue } = ctx
 
@@ -174,9 +153,7 @@ export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
   }
 }
 
-/**
- * 日期列渲染器
- */
+/** 渲染日期列，复用项目级日期格式化能力。 */
 export function renderDateColumn(ctx: RenderContext): RenderResult | string {
   const { column, value, emptyValue } = ctx
 
@@ -188,9 +165,7 @@ export function renderDateColumn(ctx: RenderContext): RenderResult | string {
   return { value: formatDate(value, dateFormat) || emptyValue }
 }
 
-/**
- * 敏感信息列渲染器
- */
+/** 渲染敏感信息列，支持内置类型和自定义正则。 */
 export function renderSensitiveColumn(ctx: RenderContext): RenderResult | string {
   const { column, originValue, emptyValue } = ctx
 
@@ -198,14 +173,12 @@ export function renderSensitiveColumn(ctx: RenderContext): RenderResult | string
     return emptyValue
   }
 
-  // 优先使用自定义正则
   const sensitiveRegex = column.typeProps?.sensitiveRegex
   if (sensitiveRegex && isArray(sensitiveRegex) && sensitiveRegex.length === 2) {
     const cryptoValue = formatSensitive(originValue, sensitiveRegex[0], sensitiveRegex[1])
     return { value: cryptoValue }
   }
 
-  // 使用预设类型
   if (column.typeProps?.sensitiveType) {
     return renderSensitiveByType(
       column.typeProps.sensitiveType,
@@ -218,9 +191,7 @@ export function renderSensitiveColumn(ctx: RenderContext): RenderResult | string
   return emptyValue
 }
 
-/**
- * 根据类型渲染敏感信息
- */
+/** 根据内置敏感类型生成脱敏值和可选悬停查看组件。 */
 function renderSensitiveByType(
   type: 'phone' | 'idCard' | 'email',
   originValue: string,
@@ -242,30 +213,22 @@ function renderSensitiveByType(
   return {
     value: cryptoValue,
     valueRender: (
-      <SensitiveSwitch
-        originValue={originValue}
-        cryptoValue={cryptoValue}
-        enable={enableHover}
-      />
+      <SensitiveSwitch originValue={originValue} cryptoValue={cryptoValue} enable={enableHover} />
     )
   }
 }
 
-/**
- * 包装值（添加复制、点击功能）
- */
+/** 给展示值追加复制、点击、对齐和省略等 Table 自建能力。 */
 export function wrapValueWithFeatures(
   ctx: RenderContext,
   result: RenderResult | string | VNode
 ): VNode | string | number {
   const { props, column, row, index, emit } = ctx
 
-  // 如果是字符串，直接返回
   if (typeof result === 'string') {
     return result
   }
 
-  // 如果是 VNode，直接返回
   if (typeof result === 'object' && 'type' in result) {
     return result
   }
@@ -274,7 +237,6 @@ export function wrapValueWithFeatures(
   const copyable = isCopyable(props, column, row, index)
   const clickable = isClickable(props, column, row, index)
 
-  // 如果没有特殊功能，直接返回
   if (!copyable && !clickable) {
     return valueRender !== undefined ? valueRender : value
   }
@@ -283,7 +245,6 @@ export function wrapValueWithFeatures(
     return valueRender !== undefined ? valueRender : value
   }
 
-  // 构建样式类
   const ellipsis = column.ellipsis ?? props.ellipsis ?? false
   const align = column.align ?? props.align ?? 'left'
   const rowClassAlign =
@@ -291,7 +252,6 @@ export function wrapValueWithFeatures(
   const textClassEllipsis = ellipsis ? 'text-ellipsis overflow-hidden text-nowrap' : ''
   const textClickable = clickable ? 'clickable-text' : ''
 
-  // 复制处理
   const onClickCopy = () => {
     if (!copyable) return
 
@@ -302,18 +262,17 @@ export function wrapValueWithFeatures(
 
     copyToClipboard(copyValue).then(res => {
       if (res) {
-        ElMessage.success(t('table.copy.success'))
+        Message.success(t('table.copy.success'))
       } else {
-        ElMessage.error(t('table.copy.failed'))
+        Message.error(t('table.copy.failed'))
       }
     })
   }
 
-  // 点击处理
   const onClickValue = () => {
     if (!clickable) return
 
-    const columnKey = column.key || column.field
+    const columnKey = column.key || column.field || ''
     emit('value-click', columnKey, row)
 
     if (column.clickMethod !== undefined) {
@@ -322,16 +281,17 @@ export function wrapValueWithFeatures(
   }
 
   return (
-    <div
-      class={`ae-table-cell-value w-full flex flex-row items-center gap-2.5 ${rowClassAlign}`}
-    >
+    <div class={`ab-table-cell-value w-full flex flex-row items-center gap-2.5 ${rowClassAlign}`}>
       {copyable && (
-        <ElIcon class="ae-table-cell-value__icon copyable-icon" onClick={() => onClickCopy()}>
-          <CopyDocument />
-        </ElIcon>
+        <AbIcon
+          icon="icon-park-outline:copy"
+          class="ab-table-cell-value__icon copyable-icon"
+          size={15}
+          onClick={() => onClickCopy()}
+        />
       )}
       <div
-        class={`ae-table-cell-value__text flex-1 ${textClassEllipsis} ${textClickable}`}
+        class={`ab-table-cell-value__text flex-1 ${textClassEllipsis} ${textClickable}`}
         onClick={() => onClickValue()}
       >
         {valueRender || value}

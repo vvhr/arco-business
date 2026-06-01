@@ -1,14 +1,17 @@
-/**
- * 操作列渲染器
- * @description 专门处理 action 类型列的渲染逻辑
- */
-import { ElButton, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus'
+import { Button, Doption, Dropdown } from '@arco-design/web-vue'
 import { AbIcon } from '@/components/Icon'
-import type { TableColumn, TableProps, TableAction, TableColumnFn, TableEmits } from '../types'
-import { isHiddenAction, isDisabledAction, isLoadingAction } from '../utils'
+import type {
+  TableAction,
+  TableColumn,
+  TableColumnFn,
+  TableEmits,
+  TableProps
+} from '../types'
+import { isDisabledAction, isHiddenAction, isLoadingAction } from '../utils'
 import type { VNode } from 'vue'
 import { t, logger } from '@/locale'
 
+/** 操作列渲染上下文。 */
 export interface ActionRenderContext {
   props: TableProps
   column: TableColumn
@@ -17,67 +20,62 @@ export interface ActionRenderContext {
   emit: TableEmits
 }
 
-/**
- * 渲染操作列
- */
+/** 渲染操作列按钮和更多菜单。 */
 export function renderActionColumn(ctx: ActionRenderContext): VNode | string {
-  const { column, row, index, props, emit } = ctx
+  const { column, row, index, props } = ctx
+  const actions = resolveActions(ctx)
 
-  if (!column.typeProps?.actions || !Array.isArray(column.typeProps.actions) || column.typeProps.actions.length === 0) {
+  if (!actions.length) {
     logger.warn('console.table.actionTypeRequired', undefined, column)
     return props.emptyValue || '-'
   }
 
-  // 过滤可见按钮
-  const visibleActions = column.typeProps.actions.filter(
-    action => !isHiddenAction(action, row, index, props, column)
-  )
-
-  // 分类按钮
+  const visibleActions = actions.filter(action => !isHiddenAction(action, row, index, props, column))
   const { normalActions, dropdownActions } = categorizeActions(visibleActions)
   const showMoreButton = dropdownActions.length > 1
   const showSingleButton = dropdownActions.length === 1
-  // 对齐方式
   const align = column.align ?? props.align ?? 'left'
   const rowClassAlign = getAlignClass(align)
-
-  // 事件处理器
   const handlers = createActionHandlers(ctx, dropdownActions)
 
   return (
-    <div class={`ae-table-cell-value w-full flex flex-row items-center gap-2 ${rowClassAlign}`}>
-      {normalActions.length > 0 && normalActions.map(action => renderActionButton(action, handlers.handleClick, ctx))}
+    <div class={`ab-table-cell-value w-full flex flex-row items-center gap-2 ${rowClassAlign}`}>
+      {normalActions.length > 0 &&
+        normalActions.map(action => renderActionButton(action, handlers.handleClick, ctx))}
       {showMoreButton && renderMoreDropdown(column, dropdownActions, handlers.handleCommand, ctx)}
       {showSingleButton && renderActionButton(dropdownActions[0]!, handlers.handleClick, ctx)}
     </div>
   )
 }
 
-/**
- * 分类按钮（普通按钮 vs 下拉按钮）
- */
+/** 解析静态或动态操作项。 */
+function resolveActions(ctx: ActionRenderContext) {
+  const { column, row, index, props } = ctx
+  const actions = column.typeProps?.actions
+  if (Array.isArray(actions)) {
+    return actions
+  }
+  if (typeof actions === 'function') {
+    return actions(row, index, column, props.form, props.excontext, props.editable) || []
+  }
+  return []
+}
+
+/** 根据 dropdown 策略拆分常规按钮和下拉按钮。 */
 function categorizeActions(actions: TableAction[]) {
   const dropdownActions = actions.filter(
     action => action.dropdown && ['always', 'auto'].includes(action.dropdown)
   )
-  const normalActions = actions.filter(
-    action => !action.dropdown || action.dropdown === 'never'
-  )
-
+  const normalActions = actions.filter(action => !action.dropdown || action.dropdown === 'never')
   return { normalActions, dropdownActions }
 }
 
-/**
- * 创建事件处理器
- */
+/** 创建操作按钮点击与下拉命令处理器。 */
 function createActionHandlers(ctx: ActionRenderContext, dropdownActions: TableAction[]) {
   const { row, index, column, props, emit } = ctx
 
   const handleClick = (name: string, event?: TableColumnFn<void>) => {
-    // 发送表格 action 事件
-    emit('action', { name: name, row: row, index: index })
-
-    // 执行用户自定义事件
+    emit('action', { name, row, index })
     try {
       event?.(row, index, column, props.form, props.excontext, props.editable)
     } catch (e) {
@@ -85,21 +83,20 @@ function createActionHandlers(ctx: ActionRenderContext, dropdownActions: TableAc
     }
   }
 
-  const handleCommand = (command: string) => {
-    const findAction = dropdownActions.find(action => action.name === command)
+  const handleCommand = (command: string | number | Record<string, any> | undefined) => {
+    const commandName = String(command)
+    const findAction = dropdownActions.find(action => action.name === commandName)
     if (findAction) {
       handleClick(findAction.name, findAction.event)
     } else {
-      logger.warn('console.table.actionNotFound', { command }, column)
+      logger.warn('console.table.actionNotFound', { command: commandName }, column)
     }
   }
 
   return { handleClick, handleCommand }
 }
 
-/**
- * 渲染单个操作按钮
- */
+/** 渲染单个操作按钮。 */
 function renderActionButton(
   action: TableAction,
   handleClick: (name: string, event?: TableColumnFn<void>) => void,
@@ -108,97 +105,84 @@ function renderActionButton(
   const buttonAttrs = getButtonAttrs(action, ctx)
 
   return (
-    <ElButton onClick={() => handleClick(action.name, action.event)} {...buttonAttrs}>
-      {!action.noIcon && action.icon && <AbIcon icon={action.icon} size={14} />}
+    <Button onClick={() => handleClick(action.name, action.event)} {...buttonAttrs}>
+      {!action.noIcon && action.icon && <AbIcon icon={action.icon} size={14} class="mr-1" />}
       {!action.noLabel && action.label && <span>{action.label}</span>}
-    </ElButton>
+    </Button>
   )
 }
 
-/**
- * 获取按钮属性
- */
+/** 合并操作按钮属性并转换旧 type 语义到 Arco Button。 */
 function getButtonAttrs(action: TableAction, ctx: ActionRenderContext) {
   const { row, index, props, column } = ctx
-
   const buttonAttrs: any = {
-    type: 'default',
+    type: 'secondary',
     ...(action.buttonAttrs || {}),
     disabled: isDisabledAction(action, row, index, props, column),
     loading: isLoadingAction(action, row, index, props, column)
   }
 
-  // 根据 action.type 设置按钮样式
   switch (action.type) {
     case 'primary':
       buttonAttrs.type = 'primary'
       break
     case 'second':
-      buttonAttrs.type = 'primary'
-      buttonAttrs.plain = true
+      buttonAttrs.type = 'outline'
       break
     default:
-      buttonAttrs.type = 'default'
+      buttonAttrs.type = buttonAttrs.type || 'secondary'
       break
   }
 
   return buttonAttrs
 }
 
-/**
- * 渲染"更多"下拉菜单
- */
+/** 渲染更多操作下拉菜单。 */
 function renderMoreDropdown(
   column: TableColumn,
   dropdownActions: TableAction[],
-  handleCommand: (command: string) => void,
+  handleCommand: (command: string | number | Record<string, any> | undefined) => void,
   ctx: ActionRenderContext
 ) {
   return (
-    <ElDropdown onCommand={(command: string) => handleCommand(command)}>
+    <Dropdown trigger="click" onSelect={handleCommand}>
       {{
         default: () => (
-          <ElButton
-            type="default"
-            size={column?.typeProps?.actionDropdown?.size ?? 'default'}
+          <Button
+            type="secondary"
+            size={column?.typeProps?.actionDropdown?.size ?? 'medium'}
             {...(column?.typeProps?.actionDropdown?.buttonAttrs || {})}
-          > 
+          >
             {!column?.typeProps?.actionDropdown?.noIcon && (
-              <AbIcon icon={column?.typeProps?.actionDropdown?.icon ?? 'icon-park-outline:more'} size={column?.typeProps?.actionDropdown?.iconSize ?? 14} />
+              <AbIcon
+                icon={column?.typeProps?.actionDropdown?.icon ?? 'icon-park-outline:more'}
+                size={column?.typeProps?.actionDropdown?.iconSize ?? 14}
+                class="mr-1"
+              />
             )}
             {!column?.typeProps?.actionDropdown?.noLabel && <span>{t('table.action.more')}</span>}
-          </ElButton>
+          </Button>
         ),
-        dropdown: () => (
-          <ElDropdownMenu>
-            {dropdownActions.map(action => renderDropdownItem(action, ctx))}
-          </ElDropdownMenu>
-        )
+        content: () => dropdownActions.map(action => renderDropdownItem(action, ctx))
       }}
-    </ElDropdown>
+    </Dropdown>
   )
 }
 
-/**
- * 渲染下拉菜单项
- */
+/** 渲染更多菜单中的单个操作项。 */
 function renderDropdownItem(action: TableAction, ctx: ActionRenderContext) {
   const { row, index, props, column } = ctx
-
   return (
-    <ElDropdownItem
-      command={action.name}
-      disabled={isDisabledAction(action, row, index, props, column)}
-    >
-      {action.icon && <AbIcon icon={action.icon} size={14} />}
-      <span>{action.label}</span>
-    </ElDropdownItem>
+    <Doption value={action.name} disabled={isDisabledAction(action, row, index, props, column)}>
+      <div class="ab-table-action-option">
+        {action.icon && <AbIcon icon={action.icon} size={14}/>}
+        <span class="ml-1">{action.label}</span>
+      </div>
+    </Doption>
   )
 }
 
-/**
- * 获取对齐样式类
- */
+/** 将列对齐方式转换为 flex justify class。 */
 function getAlignClass(align: 'left' | 'center' | 'right'): string {
   const alignMap = {
     left: 'justify-start',

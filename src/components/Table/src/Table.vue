@@ -1,133 +1,29 @@
 <script lang="tsx">
 import {
-  defineComponent,
-  ref,
   computed,
+  defineComponent,
   onMounted,
   onUnmounted,
-  unref,
-  type PropType,
-  type VNode
+  ref,
+  unref
 } from 'vue'
-import { ElTable, TableColumnCtx, ElForm } from 'element-plus'
-import type { TableProps, TableColumn, Pagination } from './types'
-import type { TableFormImportItem } from '@/types/imports'
-import type { ElTableEventHanders } from './internal-types'
-import type { DictMap } from '@/types/dict'
+import type {
+  TableColumn,
+  TableColumnSelect,
+  TableProps,
+  TableRawInstance
+} from './types'
 import { renderPagination } from './render/RenderPagination'
 import { renderTable } from './render/RenderTable'
 import { usePagination } from './hook/usePagination'
-import { findColumnByField, findColumnByKey } from './utils'
-import { formatAmount } from '@/utils/format'
-import { useDict, UseDictTools } from '@/utils/dict'
+import { useDict, type UseDictTools } from '@/utils/dict'
 import { useImport } from './hook/useImport'
 import { logger } from '@/locale'
-import {
-  DEFAULT_PAGE_INDEX,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_EMPTY_VALUE,
-  DEFAULT_ROW_KEY
-} from './constants'
+import { tableProps } from './props'
+
 export default defineComponent({
-  name: 'AeTable',
-  props: {
-    modelValue: {
-      type: Array as PropType<Recordable[]>,
-      default: () => []
-    },
-    columns: {
-      type: Array as PropType<TableColumn[]>,
-      default: () => []
-    },
-    form: {
-      type: Object as PropType<Recordable>,
-      default: () => ({})
-    },
-    excontext: {
-      type: Object as PropType<Recordable>,
-      default: () => ({})
-    },
-    dict: {
-      type: Object as PropType<DictMap>,
-      default: () => ({})
-    },
-    editable: {
-      type: Boolean,
-      default: false
-    },
-    page: {
-      type: Number,
-      default: DEFAULT_PAGE_INDEX
-    },
-    pageSize: {
-      type: Number,
-      default: DEFAULT_PAGE_SIZE
-    },
-    ellipsis: {
-      type: Boolean,
-      default: false
-    },
-    total: {
-      type: Number,
-      default: 0
-    },
-    pagination: {
-      type: Object as PropType<Pagination | undefined | false | null>,
-      default: (): Pagination | undefined => undefined
-    },
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    align: {
-      type: String as PropType<'left' | 'center' | 'right'>,
-      default: 'left'
-    },
-    headerAlign: {
-      type: String as PropType<'left' | 'center' | 'right'>,
-      default: 'left'
-    },
-    size: {
-      type: String as PropType<'small' | 'default' | 'large'>,
-      default: 'default'
-    },
-    rowKey: {
-      type: String,
-      default: DEFAULT_ROW_KEY
-    },
-    emptyValue: {
-      type: String,
-      default: DEFAULT_EMPTY_VALUE
-    },
-    // 自适应高度和宽度
-    adaptive: {
-      type: Boolean,
-      default: false
-    },
-    // 是否显示合计行
-    showSummary: {
-      type: Boolean,
-      default: false
-    },
-    // 自定义合计行逻辑
-    summaryMethod: {
-      type: Function as PropType<TableProps['summaryMethod']>,
-      default: null
-    },
-    // 强制组件重新渲染的key
-    freshKey: {
-      type: Number,
-      default: 0
-    },
-    /**
-     * 加载扩展组件（局部注册，优先级高于全局注册）
-     * @description 您可以通过此属性来按需加载一些组件，局部注册的组件会覆盖全局注册的同名组件
-     */
-    imports: {
-      type: Array as PropType<TableFormImportItem[]>,
-      default: () => []
-    }
-  },
+  name: 'Table',
+  props: tableProps,
   emits: [
     'update:modelValue',
     'update:editable',
@@ -139,24 +35,20 @@ export default defineComponent({
     'current-change',
     'row-click',
     'value-click',
-    'action'
+    'action',
+    'drag-change'
   ],
-  setup(props, { attrs, slots, emit, expose }) {
+  setup(rawProps, { attrs, slots, emit, expose }) {
+    const props = rawProps as unknown as TableProps
     const { components, componentConfigs } = useImport(props.imports)
-
-    // 声明 elTableRef 实例
-    const elTableRef = ref<ComponentRef<typeof ElTable>>()
-    const elFormRef = ref<ComponentRef<typeof ElForm>>()
-    const selections = ref<Recordable[]>([])
-    const currentRowRef = ref<Recordable>()
+    const tableRef = ref<TableRawInstance>()
+    const formRef = ref<any>()
+    const selectedKeys = ref<(string | number)[]>([])
     const dictTools: UseDictTools = useDict(props.dict)
-    // 声明分页器的属性
-    const { pageSizeRef, currentPageRef, pagination, watchPage } = usePagination(props, emit)
-    // 监听分页器属性
+    const { pageSizeRef, currentPageRef, pagination, watchPage } = usePagination(props as any, emit as any)
     const stopWatchPage = watchPage()
 
-    // 清洗需要透传给el-table的属性
-    const elTableAttrs = computed(() => {
+    const tableAttrs = computed(() => {
       const allAttrs: Recordable = { ...attrs, ...props }
       const cleanProps = [
         'modelValue',
@@ -168,14 +60,18 @@ export default defineComponent({
         'pageSize',
         'ellipsis',
         'pagination',
-        'selections',
-        'selectionKeys',
         'emptyValue',
         'adaptive',
+        'showSummary',
         'summaryMethod',
+        'summarySpanMethod',
         'freshKey',
         'dict',
-        'imports'
+        'imports',
+        'indexable',
+        'selectable',
+        'expandable',
+        'draggable'
       ]
       cleanProps.forEach(prop => {
         delete allAttrs[prop]
@@ -183,112 +79,54 @@ export default defineComponent({
       return allAttrs
     })
 
-    function summaryMethodLocal(param: { columns: TableColumnCtx<any>[]; data: any[] }) {
-      // 如果已定定义了summaryMethod，则使用自定义的逻辑
-      if (props.summaryMethod !== null) {
-        return props.summaryMethod(param)
-      }
-      // 否则使根据props.columns自动生成
-      const { columns, data } = param
-      const sums: (string | VNode)[] = []
-      columns.forEach((column, index) => {
-        if (!column.property && !column.columnKey) {
-          sums[index] = props.emptyValue
-          return
+    const tableData = computed(() => {
+      const selectableConfig =
+        props.selectable && typeof props.selectable === 'object'
+          ? (props.selectable as TableColumnSelect)
+          : undefined
+      return props.modelValue.map((row, index) => {
+        const clone: Recordable = {
+          ...row,
+          __abRaw: row
         }
-        const findColumn = column.columnKey
-          ? findColumnByKey(props.columns, column.columnKey)
-          : findColumnByField(props.columns, column.property)
-        if (findColumn && findColumn.summable) {
-          const values = column.property ? data.map(item => Number(item[column.property])) : []
-          if (findColumn.summaryMethod !== undefined) {
-            sums[index] = findColumn.summaryMethod(values)
-            return
-          }
-          // 是否是金额类型
-          if (findColumn.type === 'amount') {
-            const count = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!Number.isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0)
-            const {
-              amountThousand = false,
-              amountDecimal = true,
-              amountDigits = 2,
-              amountUnit = '',
-              amountUnitPosition = 'right'
-            } = findColumn.typeProps || {}
-            sums[index] = formatAmount(count, {
-              amountThousand,
-              amountDecimal,
-              amountDigits,
-              amountUnit,
-              amountUnitPosition,
-              defaultValue: props.emptyValue
-            })
-            return
-          }
-          // 其他情况
-          if (!values.every(value => Number.isNaN(value))) {
-            sums[index] = `${values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!Number.isNaN(value)) {
-                return prev + curr
-              } else {
-                return prev
-              }
-            }, 0)}`
-          } else {
-            sums[index] = props.emptyValue
-          }
-        } else {
-          sums[index] = props.emptyValue
-          return
+        if (!Reflect.has(row, 'disabled') && selectableConfig?.selectable) {
+          clone.disabled = selectableConfig.selectable(
+            row,
+            index,
+            {} as TableColumn,
+            props.form,
+            props.excontext,
+            props.editable
+          ) === false
         }
+        return clone
       })
-      return sums
-    }
+    })
 
     onMounted(() => {
-      emit('register', elTableRef.value)
+      emit('register', tableRef.value)
     })
+
     onUnmounted(() => {
       stopWatchPage()
     })
 
-    const elTableHanders: ElTableEventHanders = {
-      handleSelectionChange: (selection: Recordable[]) => {
-        selections.value = selection
-        emit('selection-change', selection)
-      },
-      handleCurrentChange: (currentRow: Recordable) => {
-        currentRowRef.value = currentRow
-        emit('current-change', currentRow)
-      },
-      handleRowClick: (row: Recordable) => {
-        currentRowRef.value = row
-        emit('row-click', row)
-      }
-    }
-
     function updateSelections(rows: Recordable[]) {
-      selections.value = rows
       if (!props.rowKey) {
         logger.warn('console.table.rowKeyRequired')
         return
       }
-      if (rows.length) {
-        elTableRef.value!.clearSelection()
-        rows.forEach(item => {
-          elTableRef.value.toggleRowSelection(item, true, true)
-        })
-      } else {
-        elTableRef.value!.clearSelection()
+      const keys = rows.map(row => row[props.rowKey]).filter(key => key !== undefined)
+      updateSelectionKeys(keys)
+    }
+
+    function updateSelectionKeys(keys: (string | number)[]) {
+      if (!props.rowKey) {
+        logger.warn('console.table.rowKeyRequired')
+        return
       }
+      selectedKeys.value = keys
+      emit('selection-change', getRowsBySelectedKeys(props.modelValue, props.rowKey, keys))
     }
 
     function handlePageChange(currentPage: number, pageSize: number) {
@@ -299,47 +137,53 @@ export default defineComponent({
       if (!props.editable) {
         return true
       }
-      if (!elFormRef.value) {
+      if (!formRef.value) {
         return true
       }
-      try {
-        await elFormRef.value.validate()
-        return true
-      } catch {
-        return false
-      }
+      const errors = await formRef.value.validate()
+      return !errors
     }
 
     function resetValidate() {
-      unref(elFormRef)?.clearValidate()
+      unref(formRef)?.clearValidate?.()
+    }
+
+    function getRowsBySelectedKeys(rows: Recordable[], rowKey: string, keys: (string | number)[]) {
+      const keySet = new Set(keys)
+      return rows.filter(row => keySet.has(row[rowKey]))
     }
 
     expose({
       updateSelections,
+      updateSelectionKeys,
       validate,
       resetValidate
     })
 
     return () => (
-      <div class={`ae-table ${props.adaptive ? 'is-adaptive' : ''}`} ref="aeTableRef">
+      <div class={`ab-table ${props.adaptive ? 'is-adaptive' : ''}`}>
         {renderTable(
-          props,
-          slots,
-          emit,
-          currentRowRef,
+          props as any,
+          slots as any,
+          emit as any,
           pageSizeRef,
           currentPageRef,
-          elTableRef,
-          elFormRef,
-          elTableAttrs,
-          elTableHanders,
-          selections,
-          summaryMethodLocal,
+          tableRef,
+          formRef,
+          tableAttrs,
+          selectedKeys,
+          tableData as any,
           dictTools,
-          components,
-          componentConfigs
+          components.value,
+          componentConfigs.value
         )}
-        {renderPagination(props, pageSizeRef, currentPageRef, pagination, handlePageChange)}
+        {renderPagination(
+          props as any,
+          pageSizeRef,
+          currentPageRef,
+          pagination as any,
+          handlePageChange
+        )}
       </div>
     )
   }
@@ -347,46 +191,66 @@ export default defineComponent({
 </script>
 
 <style lang="less">
-.ae-table {
+.ab-table {
   width: 100%;
 
   &.is-adaptive {
     height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    width: 100%;
 
-    // 仅修改顶层的子级表单样式, 避免影响嵌套的子级表单样式
-    > .ae-table-form {
+    > .ab-table-form {
       flex: 1;
-      width: 100%;
-      height: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
 
-      > .ae-table-main {
-        height: 100%;
+      > .arco-form-item {
+        margin-bottom: 0;
+      }
+
+      .ab-table-body {
+        flex: 1;
+        min-height: 0;
       }
     }
 
-    // 仅修改顶层的表格样式, 避免影响嵌套的子级表格样式
-    > .ae-table-main {
+    > .ab-table-body,
+    .ab-table-form > .ab-table-body {
       flex: 1;
-      width: 100%;
-      height: 0;
+      min-height: 0;
     }
+
+    .ab-table-main {
+      height: 100%;
+    }
+
+    .arco-table,
+    .arco-spin,
+    .arco-spin-children,
+    .arco-table-container {
+      height: 100%;
+      min-height: 0;
+    }
+  }
+
+  .ab-table-body {
+    width: 100%;
   }
 
   .copyable-icon {
     cursor: pointer;
-    color: #959595;
+    color: var(--color-text-3);
     transition: color 0.1s ease-in;
 
     &:hover {
-      color: var(--el-color-primary);
+      color: rgb(var(--primary-6));
     }
   }
 
   .clickable-text {
-    color: var(--el-color-primary);
+    color: rgb(var(--primary-6));
     cursor: pointer;
     max-width: fit-content;
 
@@ -395,57 +259,60 @@ export default defineComponent({
     }
   }
 
-  .el-table__body {
-    .ae-table-column-editable {
-      padding: 4px 0;
-    }
+  .ab-table-cell-value {
+    min-width: 0;
   }
 
-  .el-table__cell {
-    .cell {
-      // 优化el-form-item样式, 使其上下空白相等
-      > .el-form-item {
-        margin-bottom: 15px;
-        margin-top: 15px;
+  .ab-table-column-editable {
+    .arco-table-cell {
+      padding: 4px 8px;
+    }
+    .arco-form-item {
+      margin-bottom: 0;
+      > .arco-form-item-label-col {
+        padding-right: 0;
+        width: 12px;
+        flex: none;
       }
-
-      > .ae-table-cell-value {
-        // 移除el-button默认的相邻间距
-        .el-button + .el-button {
-          margin-left: 0;
+      > .arco-form-item-wrapper-col {
+        &.arco-col {
+          flex: 1;
+          width: 0;
         }
       }
     }
-  }
 
-  .has-append {
-    .el-table__append-wrapper {
-      overflow: hidden;
-      border-top: 1px solid #f2f3f5;
-      height: 42px;
+    .arco-form-item-message {
+      min-height: 14px;
+      font-size: 12px;
     }
   }
 
-  .ae-table-append {
-    position: absolute;
-    bottom: 0;
+  .ab-table-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ab-table-action-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ab-table-append-selection {
     width: 100%;
-    z-index: 2;
-
-    .ae-table-append-selection {
-      padding: 10px 15px;
-      width: 100%;
-      border-top: 1px solid #f2f3f6;
-      background: white;
-
-      > .total {
-        color: var(--el-color-primary);
-      }
+    background: var(--color-bg-1);
+    > .total {
+      color: rgb(var(--primary-6));
     }
   }
 
-  .ae-table-pagination {
+  .ab-table-pagination {
     padding: 15px 0;
+    display: flex;
+    justify-content: flex-end;
+    flex: 0 0 auto;
   }
 }
 </style>

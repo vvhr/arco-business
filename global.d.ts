@@ -4,7 +4,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AeForm: typeof import('acro-business')['AeForm']
     AbIcon: typeof import('acro-business')['AbIcon']
-    AeTable: typeof import('acro-business')['AeTable']
+    Table: typeof import('acro-business')['Table']
     AbUpload: typeof import('acro-business')['AbUpload']
     AbModal: typeof import('acro-business')['AbModal']
     AbDrawer: typeof import('acro-business')['AbDrawer']

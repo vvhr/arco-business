@@ -1,34 +1,56 @@
-import Table from './src/Table.vue'
+import TableComponent from './src/Table.vue'
 import { withInstall } from '@/utils/install'
 import type { SFCWithInstall } from '@/utils/install'
-import type { TableExpose } from './src/types'
+import type { DefineComponent } from 'vue'
+import type { TableExpose, TableProps } from './src/types'
 
-export const AeTable: SFCWithInstall<typeof Table> = withInstall(Table)
-export default AeTable
+/** Table 在模板和全局组件声明中暴露的 props 类型。 */
+type TablePublicProps = Partial<Omit<TableProps, 'onSelectionChange' | 'onRowClick' | 'onChange'>> & {
+  onSelectionChange?: (value: Recordable[]) => any
+  onPageChange?: (value: { page: number; pageSize: number }) => any
+  onCurrentChange?: (currentRow: Recordable) => any
+  onRowClick?: (row: Recordable) => any
+  onValueClick?: (key: string, row: Recordable) => any
+  onAction?: (event: { name: string; row: Recordable; index: number }) => any
+  onDragChange?: (value: Recordable[]) => any
+}
 
-export type TableDefineProps = InstanceType<typeof Table>['$props']
-export type TableInstance = InstanceType<typeof Table> & TableExpose
+type TablePublicComponent = DefineComponent<TablePublicProps>
+
+export const Table: SFCWithInstall<TablePublicComponent> = withInstall(
+  TableComponent as unknown as TablePublicComponent
+)
+export default Table
+
+/** Table 公开 props 类型，供业务侧按组件入参复用。 */
+export type TableDefineProps = TablePublicProps
+/** Table 组件实例类型，包含组件暴露方法。 */
+export type TableInstance = InstanceType<TablePublicComponent> & TableExpose
 export type {
-  TableSlots,
-  TableEmits,
-  TableProps,
-  TableExpose,
-  Pagination as TablePagination,
+  TableAction,
+  TableChangeExtra,
   TableColumn,
+  TableColumnDraggable,
+  TableColumnExpand,
   TableColumnFn,
+  TableColumnIndex,
+  TableColumnSelect,
   TableColumnType,
   TableColumnTypeProps,
   TableColumnEditProps,
+  TableEmits,
+  TableExpose,
+  TableFormAutoRules,
+  TableFormComponentEventFn,
+  TableFormComponentEvents,
   TableFormComponentName,
   TableFormComponentProps,
-  TableAction,
-  TableSlotDefault,
-  TableFormComponentEvents,
-  TableFormComponentEventFn,
-  TableFormInsidePropsRenders,
   TableFormInsidePropsRender,
-  TableFormAutoRules
+  TableFormInsidePropsRenders,
+  TablePagination,
+  TableProps,
+  TableRawInstance,
+  TableSize,
+  TableSlotDefault,
+  TableSlots
 } from './src/types'
-
-// 兼容旧的导出方式
-export { AeTable as Table }

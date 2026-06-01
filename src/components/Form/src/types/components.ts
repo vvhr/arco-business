@@ -41,7 +41,7 @@ export type DecoratorName = 'Divider' | 'Alert' | 'Image' | 'Result' | 'Text'
  * - Select: 下拉选择框组件，采用el-select组件渲染，根据componentProps.options属性渲染el-option
  * - Slider: 滑块组件，采用el-slider组件渲染，支持原生所有属性功能
  * - Switch: 开关组件，采用el-switch组件渲染，支持原生所有属性功能
- * - Table: 表格组件，采用ae-table组件渲染
+ * - Table: 表格组件，采用 Table 组件渲染
  * - TimePicker: 时间选择器组件，采用el-time-picker组件渲染，支持原生所有属性功能
  * - TimeSelect: 时间选择器组件，采用el-time-select组件渲染，支持原生所有属性功能
  * - Transfer: 穿梭框组件，采用el-transfer组件渲染，支持原生所有属性功能

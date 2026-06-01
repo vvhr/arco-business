@@ -1,20 +1,34 @@
-import type { TableProps, Pagination } from '../types'
-import { ElPagination } from 'element-plus'
-import { unref, Ref } from 'vue'
+import { Pagination } from '@arco-design/web-vue'
+import { unref, type Ref } from 'vue'
+import type { TablePagination, TableProps } from '../types'
+
+/** 渲染独立 Arco Pagination，并桥接 page/pageSize 双向绑定。 */
 export function renderPagination(
   props: TableProps,
   pageSizeRef: Ref<number>,
   currentPageRef: Ref<number>,
-  pagination: Ref<Pagination>,
+  pagination: Ref<TablePagination>,
   handlePageChange: (page: number, pageSize: number) => void
 ) {
-  return props.pagination ? (
-    <ElPagination
-      v-model:pageSize={pageSizeRef.value}
-      v-model:currentPage={currentPageRef.value}
-      class="ae-table-pagination"
-      {...unref(pagination)}
-      onChange={handlePageChange}
-    ></ElPagination>
-  ) : undefined
+  if (!props.pagination) {
+    return undefined
+  }
+
+  return (
+    <div class="ab-table-pagination">
+      <Pagination
+        current={currentPageRef.value}
+        pageSize={pageSizeRef.value}
+        {...unref(pagination)}
+        onUpdate:current={(page: number) => {
+          currentPageRef.value = page
+        }}
+        onUpdate:pageSize={(pageSize: number) => {
+          pageSizeRef.value = pageSize
+        }}
+        onChange={(page: number) => handlePageChange(page, pageSizeRef.value)}
+        onPageSizeChange={(pageSize: number) => handlePageChange(currentPageRef.value, pageSize)}
+      />
+    </div>
+  )
 }

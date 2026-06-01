@@ -1,29 +1,23 @@
-import {
+import type {
+  TableColumn,
   TableEmits,
+  TableFormComponentName,
   TableProps,
   TableSlotDefault,
-  TableColumn,
-  TableFormComponentName,
   TableSlots
 } from '../types'
+import type { TableColumnData } from '@arco-design/web-vue'
 import type { TableFormImportItemConfig } from '@/types/imports'
-import {
-  ElTableColumn,
-  ElRadio
-} from 'element-plus'
-import TooltipHeader from '@/components/Table/src/components/TooltipHeader.vue'
+import TooltipHeader from '../components/TooltipHeader.vue'
 import { getSlot } from '@/utils/get'
-import {
-  setIndex,
-  isHidden,
-  isEditable
-} from '../utils'
-import type { Ref, Component } from 'vue'
+import { getColumnKey, getRawRecord, isEditable, isHidden, setIndex } from '../utils'
+import type { Component, Ref } from 'vue'
 import type { UseDictTools } from '@/utils/dict'
+import { get } from 'lodash-es'
 import {
-  renderDictColumn,
   renderAmountColumn,
   renderDateColumn,
+  renderDictColumn,
   renderSensitiveColumn,
   wrapValueWithFeatures,
   type RenderContext
@@ -32,288 +26,238 @@ import { renderActionColumn } from './actionRenderer'
 import { renderEditableColumn } from './editableRenderer'
 import { logger } from '@/locale'
 
+/** 将 TableColumn 递归转换为 Arco TableColumnData。 */
 export function renderTableColumns(
   props: TableProps,
   slots: TableSlots,
   emit: TableEmits,
-  currentRowRef: Ref<Recordable>,
   pageSizeRef: Ref<number>,
   pageRef: Ref<number>,
   dictTools: UseDictTools,
   components: Partial<Recordable<Component, TableFormComponentName>>,
   componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>
 ) {
-  if (props.columns && props.columns.length) {
-    // 获取有效的列
-    const validColumns = props.columns.filter(column => {
-      const visible = column.visible === undefined ? true : column.visible
-      return visible ? !isHidden(props, column) : false
-    })
-    // 判断是否存在expand列
-    const expandColumn = validColumns.find(column => column.type === 'expand')
-    // 判断是否存在selection列
-    const selectionColumn = validColumns.find(column => column.type === 'selection')
-    // 判断是否存在单选列
-    const radioColumn = validColumns.find(column => column.type === 'radio')
+  const validColumns = getValidColumns(props, props.columns || [])
+  const columns: TableColumnData[] = []
 
-    // 单选列渲染
-    const renderRadioColumn = (column: TableColumn) => {
-      return radioColumn ? (
-        <ElTableColumn
-          label={column.label || ''}
-          align={column.align || props.align || 'center'}
-          headerAlign={column.headerAlign || props.headerAlign || 'center'}
-          width={column.width || 50}
-          column-key={column.key || 'radio'}
-        >
-          {{
-            default: (data: TableSlotDefault) => {
-              const isSelected = props.rowKey
-                ? currentRowRef.value[props.rowKey] === data.row[props.rowKey]
-                : false
-              const onChangeSelected = () => {
-                currentRowRef.value = data.row
-              }
-              return <ElRadio model-value={isSelected} onChange={onChangeSelected} />
-            }
-          }}
-        </ElTableColumn>
-      ) : undefined
-    }
-    // 复选列渲染
-    const renderSelectionColumn = (column: TableColumn) => {
-      const setSelectable = (row: any, index: number) => {
-        return column.typeProps?.selectable !== undefined
-          ? column.typeProps?.selectable(row, index, column, props.form, props.excontext, props.editable)
-          : true
+  if (props.indexable) {
+    columns.push(renderIndexColumn(props, pageSizeRef, pageRef))
+  }
+
+  columns.push(...validColumns.map(column => renderTableColumn(column)))
+
+  return columns
+
+  /** 构建跨页递增的序号列。 */
+  function renderIndexColumn(
+    props: TableProps,
+    pageSizeRef: Ref<number>,
+    pageRef: Ref<number>
+  ): TableColumnData {
+    const config = typeof props.indexable === 'object' ? props.indexable : {}
+    return {
+      dataIndex: '__abIndex',
+      title: config.label ?? '序号',
+      width: config.width ?? 70,
+      minWidth: config.minWidth ?? 70,
+      fixed: config.fixed,
+      align: config.align ?? 'center',
+      render: ({ record, rowIndex }) => {
+        const rawRow = getRawRecord(record)
+        if (rawRow?.__abSummary) {
+          return rawRow.__abIndex || props.emptyValue
+        }
+        return setIndex(rowIndex, pageSizeRef.value || 10, pageRef.value || 1)
       }
+    }
+  }
 
-      return selectionColumn ? (
-        <ElTableColumn
-          label={column.label || ''}
-          type="selection"
-          reserveSelection={column.typeProps?.reserveSelection || false}
-          align={column.align || props.align || 'center'}
-          headerAlign={column.headerAlign || props.headerAlign || 'center'}
-          width={column.width || 50}
-          selectable={setSelectable}
-          column-key={column.key || 'selection'}
-        />
-      ) : undefined
+  /** 构建普通列或多级表头列。 */
+  function renderTableColumn(column: TableColumn): TableColumnData {
+    const columnKey = getColumnKey(column)
+    if (!columnKey) {
+      logger.warn('console.table.columnMissingKey', { label: column.label || '' }, column)
     }
-    // 展开列渲染
-    const renderExpandColumn = (column: TableColumn) => {
-      return expandColumn ? (
-        <ElTableColumn
-          label={column.label || ''}
-          type="expand"
-          width={column.width || 50}
-          align={column.align || props.align || 'center'}
-          headerAlign={column.headerAlign || props.headerAlign || 'center'}
-          column-key={column.key || 'expand'}
-        >
-          {{
-            default: (data: TableSlotDefault) => getSlot(slots, 'expand', data)
-          }}
-        </ElTableColumn>
-      ) : undefined
-    }
-    // 渲染列的default插槽
-    const renderTableColumnDefault = (column: TableColumn, row: Recordable, index: number) => {
-      // 1. 编辑模式
-      if (isEditable(props, column, row, index)) {
-        return renderEditableColumn({
-          props,
-          slots,
-          emit,
-          column,
-          row,
-          index,
-          components,
-          componentConfigs
-        })
+
+    if (column.children && column.children.length > 0) {
+      const validChildColumns = getValidColumns(props, column.children)
+      return {
+        align: column.align || props.align || 'center',
+        title: () => renderHeader(column, columnKey),
+        children: validChildColumns.map(child => renderTableColumn(child)),
+        ...(column.columnAttrs || {})
       }
-
-      // 2. 显示模式
-      return renderDisplayColumn(column, row, index)
     }
 
-    /**
-     * 渲染显示模式的列
-     */
-    const renderDisplayColumn = (column: TableColumn, row: Recordable, index: number) => {
-      const emptyValue = column.emptyValue || props.emptyValue || ''
-      const value = column.field ? row[column.field] : ''
-      const originValue = value
+    const ellipsis = column.ellipsis ?? props.ellipsis ?? false
+    const tooltip = column.tooltip ?? ellipsis
+    const columnAttrs: TableColumnData = {
+      dataIndex: column.field || column.key || '',
+      title: () => renderHeader(column, columnKey),
+      align: column.align || props.align || 'center',
+      fixed: column.fixed,
+      width: column.width,
+      minWidth: column.minWidth,
+      ellipsis,
+      tooltip,
+      render: ({ record, column: arcoColumn, rowIndex }) => {
+        const rawRow = getRawRecord(record)
+        if (rawRow?.__abSummary) {
+          return renderSummaryCell(column, rawRow)
+        }
+        return (
+          getSlot(slots, column.field || column.key || '', createSlotData(rawRow, arcoColumn, rowIndex)) ||
+          renderTableColumnDefault(column, rawRow, rowIndex)
+        )
+      },
+      ...(column.columnAttrs || {})
+    }
 
-      // 构建渲染上下文
-      const ctx: RenderContext = {
+    if (isEditable(props, column, {}, null)) {
+      columnAttrs.bodyCellClass = mergeCellClass(columnAttrs.bodyCellClass, 'ab-table-column-editable')
+    } else {
+      columnAttrs.bodyCellClass = mergeCellClass(columnAttrs.bodyCellClass, 'ab-table-column')
+    }
+
+    return columnAttrs
+  }
+
+  /** 渲染表头，优先级为插槽、headerRender、默认 TooltipHeader。 */
+  function renderHeader(column: TableColumn, columnKey: string) {
+    return (
+      getSlot(slots, `${columnKey}--header`) ||
+      getSlot(slots, `${columnKey}-header`) ||
+      column.headerRender?.({}, null, column, props.form, props.excontext, props.editable) || (
+        <TooltipHeader title={column.label} subLabel={column.subLabel} />
+      )
+    )
+  }
+
+  /** 构建列插槽入参，保持与旧自建渲染引擎一致的 $index。 */
+  function createSlotData(
+    row: Recordable,
+    column: TableColumnData,
+    rowIndex: number
+  ): TableSlotDefault {
+    return {
+      row,
+      column,
+      rowIndex,
+      $index: rowIndex
+    }
+  }
+
+  /** 根据编辑态决定渲染编辑组件或展示态内容。 */
+  function renderTableColumnDefault(column: TableColumn, row: Recordable, index: number) {
+    if (isEditable(props, column, row, index)) {
+      return renderEditableColumn({
         props,
+        slots,
+        emit,
         column,
         row,
         index,
-        value,
-        originValue,
-        emptyValue,
-        dictTools,
-        emit
-      }
-
-      // 处理默认类型（无类型或 default 类型）
-      if (column.type === 'default' || !column.type) {
-        // 优先使用 render 函数
-        if (column.render !== undefined) {
-          return column.render(row, index, column, props.form, props.excontext, props.editable)
-        }
-
-        // 使用 formatter 函数
-        if (column.formatter !== undefined) {
-          const formattedValue = column.formatter(row, index, column, props.form, props.excontext, props.editable)
-          return wrapValueWithFeatures(ctx, { value: formattedValue })
-        }
-
-        // 返回原始值
-        return wrapValueWithFeatures(ctx, { value: value || emptyValue })
-      }
-
-      // 根据类型渲染
-      const result = renderByType(ctx)
-      return wrapValueWithFeatures(ctx, result)
+        components,
+        componentConfigs
+      })
     }
 
-    /**
-     * 根据列类型渲染
-     */
-    const renderByType = (ctx: RenderContext) => {
-      const { column, emptyValue } = ctx
-
-      switch (column.type) {
-        case 'dict':
-          return renderDictColumn(ctx)
-
-        case 'amount':
-          return renderAmountColumn(ctx)
-
-        case 'date':
-          return renderDateColumn(ctx)
-
-        case 'sensitive':
-          return renderSensitiveColumn(ctx)
-
-        case 'action':
-          return renderActionColumn({
-            props: ctx.props,
-            column: ctx.column,
-            row: ctx.row,
-            index: ctx.index,
-            emit: ctx.emit
-          })
-
-        default:
-          logger.warn('console.table.unknownColumnType', { type: column.type }, column)
-          return { value: emptyValue }
-      }
-    }
-    // 渲染列
-    const renderTableColumn = (column: TableColumn) => {
-      const columnKey = column.key || column.field
-      // 如果缺少key则警告
-      if (!columnKey) {
-        logger.warn('console.table.columnMissingKey', { label: column.label || '' }, column)
-      }
-      // 序号列
-      if (column?.type === 'index') {
-        const getIndex = (index: number) => {
-          if (column.typeProps?.index !== undefined) {
-            return column.typeProps?.index
-          } else {
-            return setIndex(
-              column.typeProps?.reserveIndex || true,
-              index,
-              pageSizeRef.value || 10,
-              pageRef.value || 1
-            )
-          }
-        }
-        return (
-          <ElTableColumn
-            type="index"
-            index={(index: number) => getIndex(index)}
-            align={column.align ?? props.align ?? 'center'}
-            headerAlign={column.headerAlign ?? props.headerAlign ?? 'center'}
-            fixed={column.fixed ?? false}
-            label={column.label ?? ''}
-            width={column.width ?? 70}
-            minWidth={column.minWidth ?? 70}
-            column-key={column.key ?? 'index'}
-          />
-        )
-      }
-      // 是否是多级表头的父级
-      if (column.children && column.children.length > 0) {
-        // 获取有效的列
-        const validChildColumns = column.children.filter(column => {
-          const visible = column.visible === undefined ? true : column.visible
-          return visible ? !isHidden(props, column) : false
-        })
-        return (
-          <ElTableColumn
-            align={column.align || props.align || 'center'}
-            headerAlign={column.headerAlign || props.headerAlign || 'center'}
-            className={'ae-table-column-parent'}
-          >
-            {{
-              default: () => renderColumns(validChildColumns),
-              header: () =>
-                getSlot(slots, `${columnKey}--header`) || (
-                  <TooltipHeader title={column.label} subtitle={column.subLabel} />
-                )
-            }}
-          </ElTableColumn>
-        )
-      } else {
-        const columnAttrs = {
-          showOverflowTooltip: column.ellipsis || props.ellipsis || false,
-          align: column.align || props.align || 'center',
-          headerAlign: column.headerAlign || props.headerAlign || 'center',
-          fixed: column.fixed || false,
-          width: column.width || '',
-          minWidth: column.minWidth || '',
-          prop: column.field || '',
-          ...(column.columnAttrs || {}),
-          className: isEditable(props, column, {}, null) ? 'ae-table-column-editable' : 'ae-table-column'
-        }
-        return (
-          <ElTableColumn {...columnAttrs}>
-            {{
-              default: (data: TableSlotDefault) =>
-                getSlot(slots, column.field, data) ||
-                renderTableColumnDefault(column, data.row, data.$index),
-              header: () =>
-                getSlot(slots, `${columnKey}-header`) ||
-                column.headerRender?.({}, null, column, props.form, props.excontext, props.editable) || (
-                  <TooltipHeader title={column.label} subtitle={column.subLabel} />
-                )
-            }}
-          </ElTableColumn>
-        )
-      }
-    }
-    // 循环渲染列
-    const renderColumns = (columns: TableColumn[]) => {
-      return columns
-        .filter(column => !(column.type && ['expand', 'selection', 'radio'].includes(column.type)))
-        .map(column => renderTableColumn(column))
-    }
-
-    // 返回所有列
-    return [
-      ...[renderRadioColumn(radioColumn)],
-      ...[renderSelectionColumn(selectionColumn)],
-      ...[renderExpandColumn(expandColumn)]
-    ].concat([renderColumns(validColumns)])
-  } else {
-    // console.log('[AeTable]:组件的columns为空，无法渲染表格！')
-    return undefined
+    return renderDisplayColumn(column, row, index)
   }
+
+  /** 渲染合计单元格，只读取 summary 数据，不进入编辑态或业务渲染器。 */
+  function renderSummaryCell(column: TableColumn, row: Recordable) {
+    const dataIndex = column.field || column.key || ''
+    if (!dataIndex) {
+      return props.emptyValue
+    }
+    return get(row, dataIndex) ?? props.emptyValue
+  }
+
+  /** 执行业务类型、formatter、render 与空值逻辑。 */
+  function renderDisplayColumn(column: TableColumn, row: Recordable, index: number) {
+    const emptyValue = column.emptyValue || props.emptyValue || ''
+    const value = column.field ? get(row, column.field) : ''
+    const originValue = value
+    const ctx: RenderContext = {
+      props,
+      column,
+      row,
+      index,
+      value,
+      originValue,
+      emptyValue,
+      dictTools,
+      emit
+    }
+
+    if (column.type === 'default' || !column.type) {
+      if (column.render !== undefined) {
+        return column.render(row, index, column, props.form, props.excontext, props.editable)
+      }
+
+      if (column.formatter !== undefined) {
+        const formattedValue = column.formatter(
+          row,
+          index,
+          column,
+          props.form,
+          props.excontext,
+          props.editable
+        )
+        return wrapValueWithFeatures(ctx, { value: formattedValue as any })
+      }
+
+      return wrapValueWithFeatures(ctx, { value: value ?? emptyValue })
+    }
+
+    const result = renderByType(ctx)
+    return wrapValueWithFeatures(ctx, result)
+  }
+
+  /** 按 column.type 分派到内置业务渲染器。 */
+  function renderByType(ctx: RenderContext) {
+    const { column, emptyValue } = ctx
+
+    switch (column.type) {
+      case 'dict':
+        return renderDictColumn(ctx)
+      case 'amount':
+        return renderAmountColumn(ctx)
+      case 'date':
+        return renderDateColumn(ctx)
+      case 'sensitive':
+        return renderSensitiveColumn(ctx)
+      case 'action':
+        return renderActionColumn({
+          props: ctx.props,
+          column: ctx.column,
+          row: ctx.row,
+          index: ctx.index,
+          emit: ctx.emit
+        })
+      default:
+        logger.warn('console.table.unknownColumnType', { type: column.type }, column)
+        return { value: emptyValue }
+    }
+  }
+}
+
+/** 过滤被 visible/hidden 排除的列。 */
+function getValidColumns(props: TableProps, columns: TableColumn[]) {
+  return columns.filter(column => {
+    const visible = column.visible === undefined ? true : column.visible
+    return visible ? !isHidden(props, column) : false
+  })
+}
+
+/** 合并 Arco bodyCellClass，兼容函数和静态 class。 */
+function mergeCellClass(origin: any, extra: string) {
+  if (!origin) {
+    return extra
+  }
+  if (typeof origin === 'function') {
+    return (record: Recordable) => [origin(record), extra]
+  }
+  return [origin, extra]
 }

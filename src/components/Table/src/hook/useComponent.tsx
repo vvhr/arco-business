@@ -1,25 +1,25 @@
-import { isExistAttr, isFunction } from '@/utils/is'
 import { defineComponent } from 'vue'
-import { get } from 'lodash-es'
 import type { Component } from 'vue'
-import {
-  TableProps,
-  TableSlots,
-  TableEmits,
+import { get } from 'lodash-es'
+import { isExistAttr, isFunction } from '@/utils/is'
+import { setReactiveValue } from '@/utils/set'
+import { getAutoRulesMap } from '@/utils/rules'
+import { getPlaceholder } from '@/locale/utils'
+import { t } from '@/locale'
+import { isDisabled } from '../utils'
+import type {
   TableColumn,
+  TableColumnFn,
+  TableEmits,
   TableFormComponentName,
   TableFormComponentProps,
-  TableFormComponentEventFn,
-  TableFormInsidePropsRenders
+  TableFormInsidePropsRenders,
+  TableProps,
+  TableSlots
 } from '../types'
 import type { TableFormImportItemConfig } from '@/types/imports'
-import { setReactiveValue } from '@/utils/set'
-import type { FormItemRule } from 'element-plus'
-import { getAutoRulesMap } from '@/utils/rules'
-import { isDisabled } from '@/components/Table/src/utils.ts'
-import { t } from '@/locale'
-import { getPlaceholder } from '@/locale/utils'
 
+/** 为编辑态单元格生成组件、v-model、属性、事件和内部插槽。 */
 export function useComponent(
   props: TableProps,
   slots: TableSlots,
@@ -34,10 +34,16 @@ export function useComponent(
   const componentName = column?.editProps?.component || 'Input'
   const field = column.editProps?.field || column.field
   const freshKey = `${column.key || field}-${index}-${column.editProps?.componentProps?.freshKey || 0}`
+  const rules = getFormItemRules()
   const formItemProps = {
-    prop: `${index}.${field}`,
-    rules: getFormItemRules()
+    label: '',
+    hideLabel: !hasRequiredRule(rules, column.editProps?.formItemProps?.autoRules),
+    field: `${index}.${field}`,
+    ...(column.editProps?.formItemProps || {}),
+    rules
   }
+
+  /** 从注册表中解析当前列配置的编辑组件。 */
   const getAnyComponent = () => {
     if (isExistAttr(components, componentName)) {
       return components[componentName] as ReturnType<typeof defineComponent>
@@ -45,9 +51,7 @@ export function useComponent(
     return undefined
   }
 
-  /**
-   * 为组件构造双向绑定
-   */
+  /** 生成编辑组件的双向绑定，支持主字段和 vBinds 扩展字段。 */
   function setModelValue() {
     const bindings: Record<string, any> = {}
     if (field) {
@@ -55,10 +59,10 @@ export function useComponent(
         ? componentConfigs[componentName]?.modelValueKey || 'modelValue'
         : 'modelValue'
 
-        bindings[modelValueKey] = get(row, field)
-        bindings[`onUpdate:${modelValueKey}`] = (value: any) => {
-          setReactiveValue(row, field, value)
-        }
+      bindings[modelValueKey] = get(row, field)
+      bindings[`onUpdate:${modelValueKey}`] = (value: any) => {
+        setReactiveValue(row, field, value)
+      }
     }
     if (column.editProps?.componentProps?.vBinds) {
       Object.entries(column.editProps.componentProps.vBinds).forEach(([propName, fieldPath]) => {
@@ -73,15 +77,15 @@ export function useComponent(
     return bindings
   }
 
+  /** 合并手写 rules 与 autoRules 生成 Arco FormItem 校验规则。 */
   function getFormItemRules() {
-    // 如果已定义autoRules
     if (column.editProps?.formItemProps?.autoRules?.length) {
-      const rules: FormItemRule[] = []
+      const rules: any[] = []
       const autoRulesMap = getAutoRulesMap()
       column.editProps.formItemProps.autoRules.forEach((ruleName: string) => {
         if (autoRulesMap[ruleName] !== undefined) {
           const rule = Object.assign({}, autoRulesMap[ruleName])
-          rule.message = rule.message.replace('{label}', column.label || column.field)
+          rule.message = rule.message.replace('{label}', column.label || column.field || '')
           rules.push(rule)
         }
       })
@@ -92,64 +96,53 @@ export function useComponent(
     return column.editProps?.formItemProps?.rules || []
   }
 
-  /**
-   * 本函数会构造一个新的组件属性对象绑定给组件
-   */
+  /** 判断当前编辑单元格是否包含必填规则，用于决定是否保留必填符号占位。 */
+  function hasRequiredRule(rules: any, autoRules: string[] = []) {
+    const ruleList = Array.isArray(rules) ? rules : rules ? [rules] : []
+    return ruleList.some(rule => rule?.required) || autoRules.some(isRequiredAutoRule)
+  }
+
+  /** 生成编辑组件属性。 */
   function setComponentProps(): Recordable {
-    let compProps: Recordable = {}
-    compProps = {
+    const componentProps = column.editProps?.componentProps || {}
+    const compProps: Recordable = {
       style: {
         width: '100%'
       },
-      // 自动添加placeholder
-      ...getPlaceholderText(column, props, componentConfigs),
-      // 注入组件属性
-      ...(column.editProps?.componentProps || {}),
-      // 自动处理选项
-      ...setAttrsOptions(
-        row,
-        index,
-        column,
-        column.editProps?.componentProps || {},
-        formModel,
-        props
-      ),
-      // 自动处理时间范围组件的默认时间
-      ...setDateRangeDefaultTime(column, column.editProps?.componentProps || {}),
-      // 是否禁用
+      ...getPlaceholderText(column, componentConfigs),
+      ...componentProps,
+      ...setAttrsOptions(row, index, column, componentProps, formModel, props),
       disabled: isDisabled(props, column, row, index),
-      // 合并动态componentProps属性
       ...getDynamicComponentProps(column, formModel, props)
     }
-    // 删除optionKeys属性
-    delete compProps.optionKeys
+
+    delete compProps.vBinds
     return compProps
   }
 
-  /**
-   * 本函数会构造一个新的组件事件对象绑定给组件
-   */
+  /** 将组件事件配置包装成带行上下文的事件处理函数。 */
   function setComponentEvent(): Recordable {
-    if (column.editProps?.componentEvent) {
-      const compEvents = {}
-      Object.keys(column.editProps?.componentEvent).forEach(eventName => {
-        const eventFn = column.editProps?.componentEvent[eventName]
-        if (isFunction(eventFn)) {
-          compEvents[eventName] = getComponentEventFunction(
-            eventFn,
-            row,
-            index,
-            column,
-            formModel,
-            props.excontext
-          )
-        }
-      })
-      return compEvents
+    if (!column.editProps?.componentEvent) {
+      return {}
     }
-    return {}
+    const compEvents = {}
+    Object.keys(column.editProps.componentEvent).forEach(eventName => {
+      const eventFn = column.editProps?.componentEvent?.[eventName]
+      if (isFunction(eventFn)) {
+        compEvents[eventName] = getComponentEventFunction(
+          eventFn,
+          row,
+          index,
+          column,
+          formModel,
+          props.excontext
+        )
+      }
+    })
+    return compEvents
   }
 
+  /** 将 insideProps.renders 转换为 Vue 插槽对象。 */
   function setInsideRenders(): Recordable {
     const slotObj: Recordable = {}
     const insideRenders: TableFormInsidePropsRenders = column.editProps?.insideProps?.renders || {}
@@ -177,9 +170,13 @@ export function useComponent(
   }
 }
 
-function getPlaceholderText(column: TableColumn, props: TableProps, componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>) {
-  const needInputPlaceholder = ['Autocomplete', 'Editor', 'Input', 'InputNumber', 'Mention']
-  const needSelectPlaceholder = ['Cascader', 'DatePicker', 'Select', 'TimePicker', 'TimeSelect']
+/** 按组件类型自动生成输入或选择类 placeholder。 */
+function getPlaceholderText(
+  column: TableColumn,
+  componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>
+) {
+  const needInputPlaceholder = ['AutoComplete', 'Input', 'InputNumber', 'InputTag', 'Mention']
+  const needSelectPlaceholder = ['Cascader', 'DatePicker', 'Select', 'TimePicker', 'TreeSelect']
   const componentName = column.editProps?.component || 'Input'
   const component = componentConfigs[componentName]
 
@@ -192,9 +189,6 @@ function getPlaceholderText(column: TableColumn, props: TableProps, componentCon
   if (needSelectPlaceholder.includes(componentName) || component?.needSelectPlaceholder) {
     const selectPlaceholder = getPlaceholder(t('form.placeholder.select'), column?.label || '')
     return {
-      startPlaceholder: t('form.placeholder.startDate'),
-      endPlaceholder: t('form.placeholder.endDate'),
-      rangeSeparator: '-',
       placeholder: selectPlaceholder
     }
   }
@@ -202,6 +196,7 @@ function getPlaceholderText(column: TableColumn, props: TableProps, componentCon
   return {}
 }
 
+/** 执行 _v_componentProps，获取行上下文相关的动态组件属性。 */
 function getDynamicComponentProps(column: TableColumn, formModel: Recordable, props: TableProps) {
   if (isFunction(column.editProps?._v_componentProps)) {
     return column.editProps?._v_componentProps({}, null, column, formModel, props.excontext, props.editable) || {}
@@ -209,10 +204,7 @@ function getDynamicComponentProps(column: TableColumn, formModel: Recordable, pr
   return {}
 }
 
-/**
- * 解析componentProps中关于options属性并用于透传到组件的属性上
- * @description 组件本身支持options属性时才需要处理
- */
+/** 解析 options 和 fieldNames，兼容静态和动态选项。 */
 function setAttrsOptions(
   row: Recordable,
   index: number,
@@ -221,66 +213,37 @@ function setAttrsOptions(
   formModel: Recordable,
   props: TableProps
 ) {
-  // 必须拥有options属性
-  if (Reflect.has(componentProps, 'options')) {
-    // 选项键名
-    const optionKeys = {
-      disabled: 'disabled',
-      children: 'children',
-      value: 'value',
-      label: 'label',
-      ...(componentProps?.optionKeys || {}),
-      ...(componentProps?.props || {})
-    }
-    if (typeof componentProps.options === 'function') {
-      return {
-        options: componentProps.options(row, index, column, formModel, props.excontext, props.editable),
-        props: optionKeys
-      }
-    }
-    // 是否是数组
-    if (Array.isArray(componentProps.options)) {
-      return {
-        options: componentProps.options,
-        props: optionKeys
-      }
+  if (!Reflect.has(componentProps, 'options')) {
+    return {}
+  }
+  const fieldNames = {
+    disabled: 'disabled',
+    children: 'children',
+    value: 'value',
+    label: 'label',
+    ...(componentProps?.fieldNames || {})
+  }
+  if (typeof componentProps.options === 'function') {
+    return {
+      options: componentProps.options(row, index, column, formModel, props.excontext, props.editable),
+      fieldNames
     }
   }
-  return {}
-}
-export const dateRangeTypes = [
-  'years',
-  'months',
-  'dates',
-  'datetimerange',
-  'daterange',
-  'monthrange',
-  'yearrange'
-]
-/**
- * 日期范围组件的默认时间
- * @description 组件自动为时间范围组件添加起始和截止时间的时分秒
- */
-function setDateRangeDefaultTime(column: TableColumn, componentProps: TableFormComponentProps) {
-  const componentName = column.editProps?.component || 'Input'
-  // 组件类型检查
-  if (componentName === 'DatePicker') {
-    // 组件属性检查
-    if (componentProps.type && dateRangeTypes.includes(componentProps.type)) {
-      if (componentProps.defaultTime) {
-        return {
-          defaultTime: componentProps.defaultTime
-        }
-      } else {
-        return {
-          defaultTime: [new Date().setHours(0, 0, 0, 0), new Date().setHours(23, 59, 59, 999)]
-        }
-      }
+  if (Array.isArray(componentProps.options)) {
+    return {
+      options: componentProps.options,
+      fieldNames
     }
   }
   return {}
 }
 
+/** 判断 autoRules 中是否包含必填类规则。 */
+function isRequiredAutoRule(ruleName: string) {
+  return ['isRequired', 'isRequiredArray'].includes(ruleName)
+}
+
+/** 包装组件事件函数，补齐行、列、form 和扩展上下文。 */
 function getComponentEventFunction(
   eventValue: any,
   row: Recordable,
@@ -289,10 +252,9 @@ function getComponentEventFunction(
   form: Recordable,
   excontext: Recordable
 ) {
-  // 是否是方法
   if (typeof eventValue === 'function') {
     return (event: any) =>
-      eventValue(event, row, index, column, form, excontext) as TableFormComponentEventFn<any>
+      eventValue(event, row, index, column, form, excontext) as TableColumnFn<any>
   }
   return () => undefined
 }

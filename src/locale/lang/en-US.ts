@@ -106,29 +106,29 @@ const enUS: LocaleConfig = {
   
   console: {
     table: {
-      rowKeyRequired: '[AeTable] rowKey is required when selection is enabled',
-      columnMissingKey: '[AeTable] column {label} is missing key, please add key to column',
-      unknownColumnType: '[AeTable] Unknown column type: {type}',
+      rowKeyRequired: '[Table] rowKey is required when selection is enabled',
+      columnMissingKey: '[Table] column {label} is missing key, please add key to column',
+      unknownColumnType: '[Table] Unknown column type: {type}',
       dictTypePropsRequired:
-        '[AeTable] Column used "dict" type but did not configure "typeProps", unable to parse the dictionary normally. Please check the column',
+        '[Table] Column used "dict" type but did not configure "typeProps", unable to parse the dictionary normally. Please check the column',
       sensitiveTypeRequired:
-        '[AeTable] Column used "sensitive" type, but "sensitiveType" or "sensitiveRegex" attributes were not set, please check the column',
-      noDesensitizationMethod: '[AeTable] There is no desensitization method for type {type}',
+        '[Table] Column used "sensitive" type, but "sensitiveType" or "sensitiveRegex" attributes were not set, please check the column',
+      noDesensitizationMethod: '[Table] There is no desensitization method for type {type}',
       actionTypeRequired:
-        '[AeTable] The column uses "action" type, but "actions" property is not configured, please check the column',
-      actionEventError: '[AeTable] Action event error',
-      actionNotFound: '[AeTable] dropdownActions does not contain action: {command}',
-      componentExists: '[AeTable] The component {name} already exists and will be overwritten',
+        '[Table] The column uses "action" type, but "actions" property is not configured, please check the column',
+      actionEventError: '[Table] Action event error',
+      actionNotFound: '[Table] dropdownActions does not contain action: {command}',
+      componentExists: '[Table] The component {name} already exists and will be overwritten',
       componentNotExist:
-        '[AeTable] Failed to register component array strategy because the component {name} does not exist',
+        '[Table] Failed to register component array strategy because the component {name} does not exist',
       configExists:
-        '[AeTable] The component configuration {name} already exists and will be overwritten',
+        '[Table] The component configuration {name} already exists and will be overwritten',
       componentRegistered:
-        '[AeTable] The component {name} imported via the imports property has been successfully registered!',
+        '[Table] The component {name} imported via the imports property has been successfully registered!',
       editFieldRequired:
-        '[AeTable] The edit component has not set the field property. please check column',
+        '[Table] The edit component has not set the field property. please check column',
       editComponentError:
-        '[AeTable] Configuration error, please check if "column.editProps.component" is correct, please check column'
+        '[Table] Configuration error, please check if "column.editProps.component" is correct, please check column'
     },
     form: {
       componentNotExist:

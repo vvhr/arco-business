@@ -141,10 +141,10 @@ export function formatAmount(
   // 4. 添加单位
   if (amountUnit) {
     if (amountUnitPosition === 'left') {
-      formattedNumber = `${amountUnit}${formattedNumber}`
+      formattedNumber = `${amountUnit} ${formattedNumber}`
     } else {
       // 'right'
-      formattedNumber = `${formattedNumber}${amountUnit}`
+      formattedNumber = `${formattedNumber} ${amountUnit}`
     }
   }
 

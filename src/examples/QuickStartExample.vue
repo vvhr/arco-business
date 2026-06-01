@@ -59,7 +59,7 @@ setLocale('zh-CN')</code></pre>
       </template>
       <pre
         class="code-block"
-      ><code>import { AeForm, AeTable, AbIcon } from 'acro-business'
+      ><code>import { AeForm, Table, AbIcon } from 'acro-business'
 import 'acro-business/dist/style.css'</code></pre>
     </el-card>
 
@@ -90,7 +90,7 @@ import 'acro-business/dist/style.css'</code></pre>
       <pre class="code-block"><code>&lt;template&gt;
   &lt;!-- ✅ 全局注册后可直接使用，无需导入组件 --&gt;
   &lt;AeForm :model="formModel" :schemas="formSchemas" /&gt;
-  &lt;AeTable :columns="columns" v-model="tableData" /&gt;
+  &lt;Table :columns="columns" v-model="tableData" /&gt;
 &lt;/template&gt;
 
 &lt;script setup lang="ts"&gt;
