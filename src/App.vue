@@ -50,7 +50,7 @@
         <TabPane title="📝 AeForm 表单组件" key="form">
           <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
         </TabPane>
-        <TabPane title="📊 Table 表格组件" key="table">
+        <TabPane title="📊 AbTable 表格组件" key="table">
           <TableExample v-if="activeTab === 'table'" />
         </TabPane>
         <TabPane title="🎨 AbIcon 图标组件" key="icon">

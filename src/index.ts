@@ -4,7 +4,7 @@ import 'virtual:uno.css'
 // Import components
 import { AeForm } from './components/Form'
 import { AbIcon } from './components/Icon'
-import { Table } from './components/Table'
+import { AbTable } from './components/Table'
 import { AbUpload } from './components/Upload'
 import { AbModal } from './components/Modal'
 import { AbDrawer } from './components/Drawer'
@@ -27,7 +27,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AbIcon, Table, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
+export { AeForm, AbIcon, AbTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -205,7 +205,7 @@ const install = (app: App, options?: InstallOptions) => {
   const components = [
     AeForm,
     AbIcon,
-    Table,
+    AbTable,
     AbUpload,
     AbModal,
     AbDrawer,

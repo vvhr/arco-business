@@ -6,7 +6,7 @@
     </div>
 
     <Card class="demo-card" title="序号列">
-      <Table
+      <AbTable
         v-model="pagedRows"
         v-model:page="indexPage"
         v-model:page-size="indexPageSize"
@@ -21,7 +21,7 @@
     </Card>
 
     <Card class="demo-card" title="多选列">
-      <Table
+      <AbTable
         ref="selectionTableRef"
         v-model="selectionRows"
         :columns="simpleColumns"
@@ -44,7 +44,7 @@
     </Card>
 
     <Card class="demo-card" title="单选列">
-      <Table
+      <AbTable
         ref="radioTableRef"
         v-model="radioRows"
         :columns="simpleColumns"
@@ -66,7 +66,7 @@
     </Card>
 
     <Card class="demo-card" title="树形数据">
-      <Table
+      <AbTable
         v-model="treeRows"
         :columns="treeColumns"
         :form="{}"
@@ -78,7 +78,7 @@
     </Card>
 
     <Card class="demo-card" title="展开列">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="simpleColumns"
         :form="{}"
@@ -94,11 +94,11 @@
             <span>{{ row.remark }}</span>
           </div>
         </template>
-      </Table>
+      </AbTable>
     </Card>
 
     <Card class="demo-card" title="拖拽行">
-      <Table
+      <AbTable
         v-model="draggableRows"
         :columns="simpleColumns"
         :form="{}"
@@ -116,7 +116,7 @@
     </Card>
 
     <Card class="demo-card" title="多级表头">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="groupColumns"
         :form="{}"
@@ -127,7 +127,7 @@
     </Card>
 
     <Card class="demo-card" title="表头副标题">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="subtitleColumns"
         :form="{}"
@@ -138,7 +138,7 @@
     </Card>
 
     <Card class="demo-card" title="长表头与长内容 Tooltip">
-      <Table
+      <AbTable
         v-model="tooltipRows"
         :columns="tooltipStressColumns"
         :form="{}"
@@ -149,7 +149,7 @@
     </Card>
 
     <Card class="demo-card" title="内置格式化">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="formatColumns"
         :form="{}"
@@ -160,7 +160,7 @@
     </Card>
 
     <Card class="demo-card" title="复制与点击">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="interactiveColumns"
         :form="{}"
@@ -178,7 +178,7 @@
           <Button @click="toggleLoading">刷新</Button>
         </Space>
       </template>
-      <Table
+      <AbTable
         v-model="toolbarRows"
         :columns="simpleColumns"
         :form="{}"
@@ -192,7 +192,7 @@
 
     <Card class="demo-card" title="指定高度">
       <div class="fixed-height-frame">
-        <Table
+        <AbTable
           v-model="heightRows"
           :columns="simpleColumns"
           :form="{}"
@@ -213,7 +213,7 @@
         </Space>
       </template>
       <div class="adaptive-height-frame">
-        <Table
+        <AbTable
           v-model="heightRows"
           :columns="simpleColumns"
           :form="{}"
@@ -228,7 +228,7 @@
     </Card>
 
     <Card class="demo-card" title="合计行">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="summaryColumns"
         :form="{}"
@@ -240,7 +240,7 @@
     </Card>
 
     <Card class="demo-card" title="多选与合计行共存">
-      <Table
+      <AbTable
         v-model="summarySelectionRows"
         :columns="summaryColumns"
         :form="{}"
@@ -253,7 +253,7 @@
     </Card>
 
     <Card class="demo-card" title="内置操作列">
-      <Table
+      <AbTable
         v-model="basicRows"
         :columns="actionColumns"
         :form="{}"
@@ -268,7 +268,7 @@
       <template #extra>
         <Button type="primary" @click="validateEditable">校验</Button>
       </template>
-      <Table
+      <AbTable
         ref="editableTableRef"
         v-model="editableRows"
         :columns="editableColumns"
@@ -289,7 +289,7 @@
 import { computed, ref } from 'vue'
 import { Button, Card, Message, Space, Switch } from '@arco-design/web-vue'
 import {
-  Table,
+  AbTable,
   type TableColumn,
   type TableColumnSelect,
   type TableInstance

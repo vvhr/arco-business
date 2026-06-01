@@ -17,10 +17,10 @@ type TablePublicProps = Partial<Omit<TableProps, 'onSelectionChange' | 'onRowCli
 
 type TablePublicComponent = DefineComponent<TablePublicProps>
 
-export const Table: SFCWithInstall<TablePublicComponent> = withInstall(
+export const AbTable: SFCWithInstall<TablePublicComponent> = withInstall(
   TableComponent as unknown as TablePublicComponent
 )
-export default Table
+export default AbTable
 
 /** Table 公开 props 类型，供业务侧按组件入参复用。 */
 export type TableDefineProps = TablePublicProps
