@@ -17,7 +17,7 @@ import {
   ElTreeSelect,
   ElInputTag
 } from 'element-plus'
-import { Upload } from '@/components/Upload'
+import AbUpload from '@/components/Upload'
 
 const defaultComponents: Recordable<Component, TableFormComponentName> = {
   /** 输入类组件名 */
@@ -36,7 +36,7 @@ const defaultComponents: Recordable<Component, TableFormComponentName> = {
   TimePicker: ElTimePicker,
   TimeSelect: ElTimeSelect,
   TreeSelect: ElTreeSelect,
-  Upload: Upload
+  Upload: AbUpload
 }
 
 /**

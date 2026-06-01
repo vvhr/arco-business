@@ -1,41 +1,33 @@
 <template>
-  <div class="ae-upload" :class="`ae-upload--${size}`">
+  <div class="ab-upload" :class="`ab-upload--${size}`">
     <!-- 示例图和模板 -->
-    <div v-if="examples?.length || templates?.length" class="ae-upload__header">
-      <span v-if="examples?.length" class="ae-upload__link" @click="handleViewExamples">
+    <div v-if="examples?.length || templates?.length" class="ab-upload__header">
+      <span v-if="examples?.length" class="ab-upload__link" @click="handleViewExamples">
         查看示例
       </span>
-      <el-dropdown v-if="templates?.length" @command="handleDownloadTemplate">
-        <span class="ae-upload__link">
+      <Dropdown v-if="templates?.length" @select="handleDownloadTemplate">
+        <span class="ab-upload__link">
           下载模板
-          <el-icon class="el-icon--right">
-            <arrow-down />
-          </el-icon>
+          <IconDown class="ab-upload__link-icon" />
         </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item
-              v-for="(template, index) in templates"
-              :key="index"
-              :command="template"
-            >
-              {{ template.name }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
+        <template #content>
+          <Doption v-for="(template, index) in templates" :key="index" :value="template">
+            {{ template.name }}
+          </Doption>
         </template>
-      </el-dropdown>
+      </Dropdown>
     </div>
 
     <!-- 文件列表 -->
-    <div class="ae-upload__list" :class="`ae-upload__list--${listType}`">
+    <div class="ab-upload__list" :class="`ab-upload__list--${listType}`">
       <!-- picture 模式 -->
       <template v-if="listType === 'picture'">
         <div
           v-for="item in internalFileList"
           :key="item.uid"
-          class="ae-upload__item ae-upload__item--picture"
+          class="ab-upload__item ab-upload__item--picture"
         >
-          <div class="ae-upload__item-content">
+          <div class="ab-upload__item-content">
             <!-- 图片预览 -->
             <img
               v-if="
@@ -46,61 +38,57 @@
               :src="getFileUrl(item.data)"
               alt=""
               :style="{ objectFit: objectFit }"
-              class="ae-upload__image"
+              class="ab-upload__image"
               @click="handlePreview(item.data!)"
               @error="handleImageError(item)"
             />
             <!-- 非图片文件或图片加载失败 -->
-            <div v-else class="ae-upload__file-icon" @click="item.data && handlePreview(item.data)">
+            <div v-else class="ab-upload__file-icon" @click="item.data && handlePreview(item.data)">
               <AbIcon
                 :size="pictureFileIconSize"
                 :icon="getFileIcon(getFileUrl(item.data), getFileName(item.data))"
               />
-              <div class="ae-upload__file-name">{{ item.data ? getFileName(item.data) : '' }}</div>
+              <div class="ab-upload__file-name">{{ item.data ? getFileName(item.data) : '' }}</div>
             </div>
 
             <!-- loading 状态 -->
-            <div v-if="item.status === 'uploading'" class="ae-upload__loading">
-              <el-icon class="is-loading">
-                <Loading />
-              </el-icon>
+            <div v-if="item.status === 'uploading'" class="ab-upload__loading">
+              <IconLoading class="ab-upload__spin" :size="24" />
             </div>
 
             <!-- hover 遮罩 -->
-            <div v-if="item.status === 'success'" class="ae-upload__mask">
-              <el-icon v-if="previewable" @click="item.data && handlePreview(item.data)">
-                <ZoomIn />
-              </el-icon>
-              <el-icon
+            <div v-if="item.status === 'success'" class="ab-upload__mask">
+              <IconZoomIn
+                v-if="previewable"
+                :size="20"
+                @click="item.data && handlePreview(item.data)"
+              />
+              <IconDownload
                 v-if="downloadable && disabled"
+                :size="20"
                 @click="item.data && handleDownload(item.data)"
-              >
-                <Download />
-              </el-icon>
-              <el-icon v-if="!disabled" @click="handleRemove(item)">
-                <Delete />
-              </el-icon>
+              />
+              <IconDelete v-if="!disabled" :size="20" @click="handleRemove(item)" />
             </div>
           </div>
         </div>
         <!-- 非编辑模式且无任何文件时 -->
-        <div v-if="disabled && internalFileList.length === 0" class="ae-upload__item ae-upload__item--picture">
+        <div
+          v-if="disabled && internalFileList.length === 0"
+          class="ab-upload__item ab-upload__item--picture"
+        >
           <div class="flex flex-col items-center justify-center h-full gap-1 is-empty">
-            <el-icon :size="pictureFileIconSize">
-              <Picture />
-            </el-icon>
+            <IconFileImage :size="pictureFileIconSize" />
             <span class="empty-text">{{ t('upload.empty') }}</span>
           </div>
         </div>
         <!-- 上传按钮 -->
         <div
           v-if="showUploadButton"
-          class="ae-upload__trigger ae-upload__trigger--picture"
+          class="ab-upload__trigger ab-upload__trigger--picture"
           @click="handleTriggerClick"
         >
-          <el-icon :size="iconSize">
-            <Plus />
-          </el-icon>
+          <IconPlus :size="iconSize" />
         </div>
       </template>
 
@@ -109,42 +97,48 @@
         <div
           v-for="item in internalFileList"
           :key="item.uid"
-          class="ae-upload__item ae-upload__item--text"
+          class="ab-upload__item ab-upload__item--text"
         >
-          <Icon
-            class="ae-upload__item-icon"
+          <AbIcon
+            class="ab-upload__item-icon"
             :size="listFileIconSize"
             :icon="getFileIcon(getFileUrl(item.data), getFileName(item.data))"
           />
-          <span class="ae-upload__item-name">
+          <span class="ab-upload__item-name">
             {{ item.data ? getFileName(item.data) : '' }}
           </span>
-          <el-icon v-if="item.status === 'uploading'" class="ae-upload__item-loading is-loading">
-            <Loading />
-          </el-icon>
-          <div v-if="item.status === 'success'" class="ae-upload__item-actions">
-            <el-icon
+          <IconLoading
+            v-if="item.status === 'uploading'"
+            class="ab-upload__item-loading ab-upload__spin"
+            :size="16"
+          />
+          <div v-if="item.status === 'success'" class="ab-upload__item-actions">
+            <IconZoomIn
               v-if="previewable"
-              class="ae-upload__item-action"
+              class="ab-upload__item-action"
+              :size="16"
               @click="item.data && handlePreview(item.data)"
-            >
-              <ZoomIn />
-            </el-icon>
-            <el-icon
+            />
+            <IconDownload
               v-if="downloadable && disabled"
-              class="ae-upload__item-action"
+              class="ab-upload__item-action"
+              :size="16"
               @click="item.data && handleDownload(item.data)"
-            >
-              <Download />
-            </el-icon>
-            <el-icon v-if="!disabled" class="ae-upload__item-delete" @click="handleRemove(item)">
-              <Close />
-            </el-icon>
+            />
+            <IconClose
+              v-if="!disabled"
+              class="ab-upload__item-delete"
+              :size="16"
+              @click="handleRemove(item)"
+            />
           </div>
         </div>
 
         <!-- 非编辑模式且无任何文件时 -->
-        <div v-if="disabled && internalFileList.length === 0" class="ae-upload__item ae-upload__item--text">
+        <div
+          v-if="disabled && internalFileList.length === 0"
+          class="ab-upload__item ab-upload__item--text"
+        >
           <div class="flex flex-row items-center justify-center w-full gap-1 is-empty">
             <span>{{ t('upload.empty') }}</span>
           </div>
@@ -152,19 +146,17 @@
         <!-- 上传按钮 -->
         <div
           v-if="showUploadButton"
-          class="ae-upload__trigger ae-upload__trigger--text"
+          class="ab-upload__trigger ab-upload__trigger--text"
           @click="handleTriggerClick"
         >
-          <el-icon>
-            <UploadIcon />
-          </el-icon>
+          <IconUpload :size="16" />
           <span>点击上传</span>
         </div>
       </template>
     </div>
 
     <!-- 提示文字 -->
-    <div v-if="tips || $slots.tip" class="ae-upload__tips">
+    <div v-if="tips || $slots.tip" class="ab-upload__tips">
       <slot name="tip">{{ tips }}</slot>
     </div>
 
@@ -172,18 +164,18 @@
     <input
       ref="inputRef"
       type="file"
-      class="ae-upload__input"
+      class="ab-upload__input"
       :accept="accept"
       :multiple="multiple"
       @change="handleFileChange"
     />
 
     <!-- 图片预览 -->
-    <el-image-viewer
+    <ImagePreviewGroup
       v-if="showImageViewer"
-      :url-list="previewImages"
-      :initial-index="previewIndex"
-      @close="showImageViewer = false"
+      v-model:visible="showImageViewer"
+      v-model:current="previewIndex"
+      :src-list="previewImages"
     />
   </div>
 </template>
@@ -191,26 +183,19 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { AbIcon } from '@/components/Icon'
-import {
-  ElMessage,
-  ElImageViewer,
-  ElDropdown,
-  ElDropdownMenu,
-  ElDropdownItem,
-  ElIcon
-} from 'element-plus'
+import { Dropdown, Doption, ImagePreviewGroup, Message } from '@arco-design/web-vue'
 import { logger, t } from '@/locale'
 import {
-  Plus,
-  Delete,
-  ZoomIn,
-  Loading,
-  Close,
-  Upload as UploadIcon,
-  ArrowDown,
-  Download,
-  Picture
-} from '@element-plus/icons-vue'
+  IconClose,
+  IconDelete,
+  IconDown,
+  IconDownload,
+  IconFileImage,
+  IconLoading,
+  IconPlus,
+  IconUpload,
+  IconZoomIn
+} from '@arco-design/web-vue/es/icon'
 import type {
   UploadProps,
   UploadEmits,
@@ -231,7 +216,7 @@ import {
 } from './utils'
 
 defineOptions({
-  name: 'AeUpload'
+  name: 'AbUpload'
 })
 
 const props = withDefaults(defineProps<UploadProps>(), {
@@ -316,7 +301,7 @@ async function handleFileChange(e: Event) {
     const availableCount = props.limit - currentCount
 
     if (files.length > availableCount) {
-      ElMessage.warning(t('upload.fileCountLimit', { limit: props.limit }))
+      Message.warning(t('upload.fileCountLimit', { limit: props.limit }))
       files.splice(availableCount)
     }
   }
@@ -358,7 +343,7 @@ async function processFile(file: File) {
   // 检查文件大小（压缩后）
   if (props.sizeLimit && !checkFileSize(rawFile, props.sizeLimit)) {
     const limit = parseSizeLimit(props.sizeLimit)
-    ElMessage.error(t('upload.fileSizeLimit', { size: formatFileSize(limit) }))
+    Message.error(t('upload.fileSizeLimit', { size: formatFileSize(limit) }))
     return
   }
   // 添加到列表（uploading 状态）
@@ -372,7 +357,7 @@ async function processFile(file: File) {
   internalFileList.value.push(internalFile)
   // 调用上传函数
   if (!props.upload) {
-    ElMessage.error(t('upload.uploadFunctionRequired'))
+    Message.error(t('upload.uploadFunctionRequired'))
     internalFileList.value = internalFileList.value.filter(item => item.uid !== internalFile.uid)
     return
   }
@@ -395,7 +380,7 @@ async function processFile(file: File) {
       emit('change', getSuccessFiles())
     }
   } catch (e) {
-    console.error('[AeUpload] exception in upload:', e)
+    console.error('[AbUpload] exception in upload:', e)
     // 上传失败，移除文件
     internalFileList.value = internalFileList.value.filter(item => item.uid !== internalFile.uid)
   }
@@ -446,7 +431,7 @@ function handlePreview(file: UploadFile) {
     previewIndex.value = imageFiles.indexOf(url)
     showImageViewer.value = true
   } else {
-    ElMessage.info(t('upload.previewNotSupported'))
+    Message.info(t('upload.previewNotSupported'))
     // 非图片文件，触发 preview 事件
     emit('preview', file)
   }
@@ -477,7 +462,7 @@ function handleDownload(file: UploadFile) {
   // 默认下载逻辑
   const url = getFileUrl(file)
   if (!url) {
-    ElMessage.warning(t('upload.downloadNotSupported'))
+    Message.warning(t('upload.downloadNotSupported'))
     return
   }
 
@@ -508,7 +493,7 @@ function handleImageError(item: InternalUploadFile) {
 </script>
 
 <style scoped lang="less">
-.ae-upload {
+.ab-upload {
   width: 100%;
 
   &__header {
@@ -518,7 +503,7 @@ function handleImageError(item: InternalUploadFile) {
   }
 
   &__link {
-    color: var(--el-color-primary);
+    color: rgb(var(--primary-6));
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
@@ -529,6 +514,10 @@ function handleImageError(item: InternalUploadFile) {
     &:hover {
       text-decoration: underline;
     }
+  }
+
+  &__link-icon {
+    font-size: 14px;
   }
 
   &__list {
@@ -550,15 +539,15 @@ function handleImageError(item: InternalUploadFile) {
       position: relative;
       width: 128px;
       height: 128px;
-      border: 1px solid var(--el-border-color);
-      border-radius: var(--el-border-radius-base);
+      border: 1px solid var(--color-border-2);
+      border-radius: var(--border-radius-small);
       overflow: hidden;
       cursor: pointer;
       .is-empty {
-        color: var(--el-text-color-secondary);
-        font-size: var(--el-font-size-base);
+        color: var(--color-text-3);
+        font-size: 14px;
         .empty-text {
-          line-height: var(--el-font-size-base);
+          line-height: 14px;
         }
       }
     }
@@ -569,16 +558,16 @@ function handleImageError(item: InternalUploadFile) {
       gap: 8px;
       height: 40px;
       padding: 8px 12px;
-      border: 1px solid var(--el-border-color);
-      border-radius: var(--el-border-radius-base);
+      border: 1px solid var(--color-border-2);
+      border-radius: var(--border-radius-small);
       transition: background-color 0.3s;
 
       &:hover {
-        background-color: var(--el-fill-color-light);
+        background-color: var(--color-fill-2);
       }
 
       .is-empty {
-        color: var(--el-text-color-regular);
+        color: var(--color-text-2);
       }
     }
   }
@@ -609,7 +598,7 @@ function handleImageError(item: InternalUploadFile) {
 
   &__file-name {
     font-size: 12px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -631,10 +620,7 @@ function handleImageError(item: InternalUploadFile) {
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.8);
 
-    .el-icon {
-      font-size: 24px;
-      color: var(--el-color-primary);
-    }
+    color: rgb(var(--primary-6));
   }
 
   &__mask {
@@ -651,7 +637,7 @@ function handleImageError(item: InternalUploadFile) {
     opacity: 0;
     transition: opacity 0.3s;
 
-    .el-icon {
+    .arco-icon {
       font-size: 20px;
       color: #fff;
       cursor: pointer;
@@ -669,13 +655,13 @@ function handleImageError(item: InternalUploadFile) {
 
   &__item-icon {
     font-size: 20px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
   }
 
   &__item-name {
     flex: 1;
     font-size: 14px;
-    color: var(--el-text-color-regular);
+    color: var(--color-text-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -689,28 +675,28 @@ function handleImageError(item: InternalUploadFile) {
 
   &__item-action {
     font-size: 16px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
     cursor: pointer;
     transition: color 0.3s;
 
     &:hover {
-      color: var(--el-color-primary);
+      color: rgb(var(--primary-6));
     }
   }
 
   &__item-loading {
     font-size: 16px;
-    color: var(--el-color-primary);
+    color: rgb(var(--primary-6));
   }
 
   &__item-delete {
     font-size: 16px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
     cursor: pointer;
     transition: color 0.3s;
 
     &:hover {
-      color: var(--el-color-danger);
+      color: rgb(var(--danger-6));
     }
   }
 
@@ -721,16 +707,16 @@ function handleImageError(item: InternalUploadFile) {
     &--picture {
       width: 128px;
       height: 128px;
-      border: 1px dashed var(--el-border-color);
-      border-radius: var(--el-border-radius-base);
+      border: 1px dashed var(--color-border-2);
+      border-radius: var(--border-radius-small);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--el-text-color-secondary);
+      color: var(--color-text-3);
 
       &:hover {
-        border-color: var(--el-color-primary);
-        color: var(--el-color-primary);
+        border-color: rgb(var(--primary-6));
+        color: rgb(var(--primary-6));
       }
     }
 
@@ -741,13 +727,13 @@ function handleImageError(item: InternalUploadFile) {
       gap: 8px;
       height: 40px;
       padding: 8px 12px;
-      border: 1px dashed var(--el-border-color);
-      border-radius: var(--el-border-radius-base);
-      color: var(--el-text-color-regular);
+      border: 1px dashed var(--color-border-2);
+      border-radius: var(--border-radius-small);
+      color: var(--color-text-2);
 
       &:hover {
-        border-color: var(--el-color-primary);
-        color: var(--el-color-primary);
+        border-color: rgb(var(--primary-6));
+        color: rgb(var(--primary-6));
       }
     }
   }
@@ -755,7 +741,7 @@ function handleImageError(item: InternalUploadFile) {
   &__tips {
     margin-top: 8px;
     font-size: 12px;
-    color: var(--el-text-color-secondary);
+    color: var(--color-text-3);
     line-height: 1.5;
   }
 
@@ -763,19 +749,23 @@ function handleImageError(item: InternalUploadFile) {
     display: none;
   }
 
+  &__spin {
+    animation: ab-upload-spin 1s linear infinite;
+  }
+
   // 尺寸变体
   &--small {
-    .ae-upload__file-icon {
+    .ab-upload__file-icon {
       padding: 2px;
       gap: 2px;
     }
 
-    .ae-upload__file-name {
+    .ab-upload__file-name {
       -webkit-line-clamp: 1;
       line-clamp: 1;
     }
 
-    .ae-upload__item--picture {
+    .ab-upload__item--picture {
       width: 64px;
       height: 64px;
       .is-empty {
@@ -786,12 +776,12 @@ function handleImageError(item: InternalUploadFile) {
       }
     }
 
-    .ae-upload__trigger--picture {
+    .ab-upload__trigger--picture {
       width: 64px;
       height: 64px;
     }
 
-    .ae-upload__item--text {
+    .ab-upload__item--text {
       height: 32px;
       padding: 6px 8px;
       font-size: 12px;
@@ -800,28 +790,28 @@ function handleImageError(item: InternalUploadFile) {
       }
     }
 
-    .ae-upload__trigger--text {
+    .ab-upload__trigger--text {
       height: 32px;
       padding: 6px 8px;
       font-size: 12px;
     }
 
-    .ae-upload__list--picture {
+    .ab-upload__list--picture {
       gap: 8px;
     }
 
-    .ae-upload__file-name {
+    .ab-upload__file-name {
       font-size: 10px;
     }
   }
 
   &--large {
-    .ae-upload__item--picture {
+    .ab-upload__item--picture {
       width: 256px;
       height: 256px;
     }
 
-    .ae-upload__trigger--picture {
+    .ab-upload__trigger--picture {
       width: 256px;
       height: 256px;
       .is-empty {
@@ -832,7 +822,7 @@ function handleImageError(item: InternalUploadFile) {
       }
     }
 
-    .ae-upload__item--text {
+    .ab-upload__item--text {
       height: 48px;
       padding: 10px 16px;
       font-size: 16px;
@@ -841,19 +831,25 @@ function handleImageError(item: InternalUploadFile) {
       }
     }
 
-    .ae-upload__trigger--text {
+    .ab-upload__trigger--text {
       height: 48px;
       padding: 10px 16px;
       font-size: 16px;
     }
 
-    .ae-upload__list--picture {
+    .ab-upload__list--picture {
       gap: 16px;
     }
 
-    .ae-upload__file-name {
+    .ab-upload__file-name {
       font-size: 14px;
     }
+  }
+}
+
+@keyframes ab-upload-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

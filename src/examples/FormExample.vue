@@ -818,7 +818,7 @@ const formSchemas = reactive<FormSchema[]>([
     },
     layoutProps: { span: 12 },
     formItemProps: {
-      subLabel: '使用了内置的ae-upload组件的照片墙模式',
+      subLabel: '使用了内置的ab-upload组件的照片墙模式',
       autoRules: ['isRequiredArray']
     }
   },
@@ -849,7 +849,7 @@ const formSchemas = reactive<FormSchema[]>([
     },
     layoutProps: { span: 12 },
     formItemProps: {
-      subLabel: '使用了内置的ae-upload组件的文件列表模式',
+      subLabel: '使用了内置的ab-upload组件的文件列表模式',
       autoRules: ['isRequiredArray']
     }
   },

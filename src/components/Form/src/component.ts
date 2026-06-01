@@ -29,7 +29,7 @@ import { Table } from '@/components/Table'
 import Group from './components/Group.vue'
 import Disclosure from './components/Disclosure.vue'
 import Blank from './components/Blank.vue'
-import { Upload } from '@/components/Upload'
+import AbUpload from '@/components/Upload'
 import AbComboInput from '@/components/ComboInput'
 import AbText from '@/components/Text'
 import { dateRangeTypes } from '@/components/Form/src/constants'
@@ -69,7 +69,7 @@ const defaultComponents: Recordable<Component, ComponentName> = {
   TimeSelect: ElTimeSelect,
   Transfer: ElTransfer,
   TreeSelect: ElTreeSelect,
-  Upload: Upload
+  Upload: AbUpload
 }
 
 /**

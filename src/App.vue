@@ -30,7 +30,14 @@
           </span>
         </template>
       </a-switch>
-      <div style="background-color: var(--color-bg-1);width: 220px;margin: 20px auto;border-radius: 12px;">
+      <div
+        style="
+          background-color: var(--color-bg-1);
+          width: 220px;
+          margin: 20px auto;
+          border-radius: 12px;
+        "
+      >
         <img :src="Logo" title="logo" width="200px" alt="logo" />
       </div>
       <p class="subtitle">基于 Vue 3 + Arco Design Vue 的高级组件库</p>
@@ -49,7 +56,7 @@
         <TabPane title="🎨 AbIcon 图标组件" key="icon">
           <IconExample v-if="activeTab === 'icon'" />
         </TabPane>
-        <TabPane title="📄 AeUpload 文件上传" key="upload">
+        <TabPane title="📄 AbUpload 文件上传" key="upload">
           <UploadExample v-if="activeTab === 'upload'" />
         </TabPane>
         <TabPane title="💬 AbModal 对话框" key="modal">

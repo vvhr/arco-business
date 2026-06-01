@@ -5,22 +5,20 @@
       <p>支持两种布局模式，配置示例，下载模板，自动压缩，自定义上传请求等功能</p>
     </div>
 
-    <el-card class="demo-card">
-      <template #header>
-        <div class="card-header">
-          <span>照片墙模式</span>
-          <div class="card-actions">
-            <el-radio-group v-model="disabled">
-              <el-radio-button :value="false">编辑模式</el-radio-button>
-              <el-radio-button :value="true">详情模式</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="size">
-              <el-radio-button value="small">小</el-radio-button>
-              <el-radio-button value="default">中</el-radio-button>
-              <el-radio-button value="large">大</el-radio-button>
-            </el-radio-group>
-            <el-button @click="handleUpdate">模拟动态赋值</el-button>
-          </div>
+    <Card class="demo-card">
+      <template #title>照片墙模式</template>
+      <template #extra>
+        <div class="card-actions">
+          <RadioGroup v-model="disabled" type="button">
+            <Radio :value="false">编辑模式</Radio>
+            <Radio :value="true">详情模式</Radio>
+          </RadioGroup>
+          <RadioGroup v-model="size" type="button">
+            <Radio value="small">小</Radio>
+            <Radio value="default">中</Radio>
+            <Radio value="large">大</Radio>
+          </RadioGroup>
+          <Button @click="handleUpdate">模拟动态赋值</Button>
         </div>
       </template>
       <Upload
@@ -35,24 +33,22 @@
         :examples="exampleImages"
         :templates="fileTemplates"
       />
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
-        <div class="card-header">
-          <span>列表模式</span>
-          <div class="card-actions">
-            <el-radio-group v-model="disabled">
-              <el-radio-button :value="false">编辑模式</el-radio-button>
-              <el-radio-button :value="true">详情模式</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="size">
-              <el-radio-button value="small">小</el-radio-button>
-              <el-radio-button value="default">中</el-radio-button>
-              <el-radio-button value="large">大</el-radio-button>
-            </el-radio-group>
-            <el-button @click="handleUpdate">模拟动态赋值</el-button>
-          </div>
+    <Card class="demo-card">
+      <template #title>列表模式</template>
+      <template #extra>
+        <div class="card-actions">
+          <RadioGroup v-model="disabled" type="button">
+            <Radio :value="false">编辑模式</Radio>
+            <Radio :value="true">详情模式</Radio>
+          </RadioGroup>
+          <RadioGroup v-model="size" type="button">
+            <Radio value="small">小</Radio>
+            <Radio value="default">中</Radio>
+            <Radio value="large">大</Radio>
+          </RadioGroup>
+          <Button @click="handleUpdate">模拟动态赋值</Button>
         </div>
       </template>
       <Upload
@@ -69,13 +65,13 @@
         :examples="exampleImages"
         :templates="fileTemplates"
       />
-    </el-card>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { Button, Card, Message, Radio, RadioGroup } from '@arco-design/web-vue'
 import Upload from '@/components/Upload'
 import type { UploadFile, UploadRawFile } from '@/components/Upload'
 
@@ -234,7 +230,7 @@ async function handleUpload(file: UploadRawFile): Promise<UploadFile | false> {
     uploadTime: new Date().toLocaleString()
   }
 
-  ElMessage.success(`${file.name} 上传成功`)
+  Message.success(`${file.name} 上传成功`)
   return uploadedFile
 }
 </script>
