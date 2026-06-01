@@ -3,6 +3,7 @@ import { textProps, textEmits } from './types'
 import type { HighlightPatterns } from './types'
 import { AbIcon } from '@/components/Icon'
 import { Message } from '@arco-design/web-vue'
+import { t } from '@/locale'
 import './text.less'
 
 /**
@@ -120,10 +121,10 @@ export default defineComponent({
     const handleCopy = async () => {
       const success = await copyToClipboard(props.value)
       if (success) {
-        Message.success(props.copySuccessText)
+        Message.success(props.copySuccessText || t('text.copySuccess'))
         emit('copy', props.value)
       } else {
-        Message.error('复制失败')
+        Message.error(t('text.copyFailed'))
       }
     }
 
@@ -201,7 +202,9 @@ export default defineComponent({
               class: 'ab-text__expand',
               onClick: toggleExpand
             },
-            isExpanded.value ? props.collapseText : props.expandText
+            isExpanded.value
+              ? props.collapseText || t('text.collapse')
+              : props.expandText || t('text.expand')
           )
         )
       }

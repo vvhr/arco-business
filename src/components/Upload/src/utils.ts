@@ -1,4 +1,5 @@
 import type { UploadRawFile, FileKeys, UploadFile } from './types'
+import { t } from '@/locale'
 
 /**
  * 生成唯一ID
@@ -215,7 +216,7 @@ export function compressImage(
         const ctx = canvas.getContext('2d')
 
         if (!ctx) {
-          reject(new Error('无法获取 canvas context'))
+          reject(new Error(t('upload.canvasContextUnavailable')))
           return
         }
 
@@ -238,7 +239,7 @@ export function compressImage(
         canvas.toBlob(
           blob => {
             if (!blob) {
-              reject(new Error('图片压缩失败'))
+              reject(new Error(t('console.upload.compressError')))
               return
             }
 
@@ -261,12 +262,12 @@ export function compressImage(
       }
 
       img.onerror = () => {
-        reject(new Error('图片加载失败'))
+        reject(new Error(t('upload.imageLoadFailed')))
       }
     }
 
     reader.onerror = () => {
-      reject(new Error('文件读取失败'))
+      reject(new Error(t('upload.fileReadFailed')))
     }
   })
 }

@@ -3,11 +3,11 @@
     <!-- 示例图和模板 -->
     <div v-if="examples?.length || templates?.length" class="ab-upload__header">
       <span v-if="examples?.length" class="ab-upload__link" @click="handleViewExamples">
-        查看示例
+        {{ t('upload.viewExamples') }}
       </span>
       <Dropdown v-if="templates?.length" @select="handleDownloadTemplate">
         <span class="ab-upload__link">
-          下载模板
+          {{ t('upload.downloadTemplate') }}
           <IconDown class="ab-upload__link-icon" />
         </span>
         <template #content>
@@ -150,7 +150,7 @@
           @click="handleTriggerClick"
         >
           <IconUpload :size="16" />
-          <span>点击上传</span>
+          <span>{{ t('upload.button') }}</span>
         </div>
       </template>
     </div>

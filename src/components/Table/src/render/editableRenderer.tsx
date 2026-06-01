@@ -9,7 +9,7 @@ import type {
 import type { TableFormImportItemConfig } from '@/types/imports'
 import { useComponent } from '../hook/useComponent'
 import type { Component, VNode } from 'vue'
-import { logger } from '@/locale'
+import { logger, t } from '@/locale'
 
 /** 编辑态单元格渲染上下文。 */
 export interface EditableRenderContext {
@@ -67,9 +67,10 @@ export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefi
 
 /** 编辑组件注册缺失时的占位提示。 */
 function renderErrorPlaceholder(column: TableColumn): VNode {
+  const component = column.editProps?.component || ''
   return (
     <div class="ab-table-edit-error" style="color: rgb(var(--danger-6)); font-size: 12px;">
-      No Found: {column.editProps?.component || 'Unknown'}
+      {t('table.editComponentNotFound', { component })}
     </div>
   )
 }

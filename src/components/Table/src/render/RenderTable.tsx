@@ -201,7 +201,7 @@ function buildSummary(props: TableProps) {
         return
       }
       if (index === 0) {
-        row[dataIndex] = '合计'
+        row[dataIndex] = t('table.summary.total')
         return
       }
       const findColumn = findColumnByKey(props.columns, dataIndex) || findColumnByField(props.columns, dataIndex)

@@ -46,6 +46,10 @@ export interface LocaleConfig {
       success: string
       failed: string
     }
+    index: string
+    summary: {
+      total: string
+    }
     selection: {
       selected: string
       items: string
@@ -54,6 +58,19 @@ export interface LocaleConfig {
       more: string
     }
     empty: string
+    sensitive: {
+      original: string
+      encrypted: string
+    }
+    editComponentNotFound: string
+  }
+
+  // 文本
+  text: {
+    expand: string
+    collapse: string
+    copySuccess: string
+    copyFailed: string
   }
 
   // 表单
@@ -91,6 +108,8 @@ export interface LocaleConfig {
   // 上传
   upload: {
     button: string
+    viewExamples: string
+    downloadTemplate: string
     drag: string
     dragTip: string
     preview: string
@@ -108,6 +127,9 @@ export interface LocaleConfig {
     previewNotSupported: string // 该文件不支持预览
     downloadNotSupported: string // 暂不支持下载
     empty: string // 暂无文件
+    canvasContextUnavailable: string
+    imageLoadFailed: string
+    fileReadFailed: string
   }
 
   // 分页

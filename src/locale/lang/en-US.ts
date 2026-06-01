@@ -30,6 +30,10 @@ const enUS: LocaleConfig = {
       success: 'Copied successfully',
       failed: 'Copy failed'
     },
+    index: 'No.',
+    summary: {
+      total: 'Total'
+    },
     selection: {
       selected: 'Selected',
       items: 'items'
@@ -37,7 +41,19 @@ const enUS: LocaleConfig = {
     action: {
       more: 'More'
     },
-    empty: '-'
+    empty: '-',
+    sensitive: {
+      original: 'Original value: {value}',
+      encrypted: 'Encrypted value: {value}'
+    },
+    editComponentNotFound: 'Edit component is not registered: {component}'
+  },
+
+  text: {
+    expand: 'Expand',
+    collapse: 'Collapse',
+    copySuccess: 'Copied successfully',
+    copyFailed: 'Copy failed'
   },
 
   form: {
@@ -73,6 +89,8 @@ const enUS: LocaleConfig = {
 
   upload: {
     button: 'Click to upload',
+    viewExamples: 'View examples',
+    downloadTemplate: 'Download template',
     drag: 'Drop file here',
     dragTip: 'or click to upload',
     preview: 'Preview',
@@ -89,7 +107,10 @@ const enUS: LocaleConfig = {
     uploadFunctionRequired: 'Upload function is not configured',
     previewNotSupported: 'This file does not support preview',
     downloadNotSupported: 'Download is not supported yet',
-    empty: 'No files'
+    empty: 'No files',
+    canvasContextUnavailable: 'Unable to get canvas context',
+    imageLoadFailed: 'Image load failed',
+    fileReadFailed: 'File read failed'
   },
 
   pagination: {

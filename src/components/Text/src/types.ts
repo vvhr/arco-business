@@ -144,14 +144,14 @@ export const textProps = {
    */
   expandText: {
     type: String,
-    default: '展开'
+    default: ''
   },
   /**
    * 收起按钮文案
    */
   collapseText: {
     type: String,
-    default: '收起'
+    default: ''
   },
   /**
    * 是否可复制
@@ -172,7 +172,7 @@ export const textProps = {
    */
   copySuccessText: {
     type: String,
-    default: '复制成功'
+    default: ''
   }
 } as const
 

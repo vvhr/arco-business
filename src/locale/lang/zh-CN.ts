@@ -30,6 +30,10 @@ const zhCN: LocaleConfig = {
       success: '复制成功',
       failed: '复制失败'
     },
+    index: '序号',
+    summary: {
+      total: '合计'
+    },
     selection: {
       selected: '当前已选择',
       items: '条数据'
@@ -37,7 +41,19 @@ const zhCN: LocaleConfig = {
     action: {
       more: '更多'
     },
-    empty: '-'
+    empty: '-',
+    sensitive: {
+      original: '原始值: {value}',
+      encrypted: '已加密值: {value}'
+    },
+    editComponentNotFound: '编辑组件未注册: {component}'
+  },
+
+  text: {
+    expand: '展开',
+    collapse: '收起',
+    copySuccess: '复制成功',
+    copyFailed: '复制失败'
   },
 
   form: {
@@ -73,6 +89,8 @@ const zhCN: LocaleConfig = {
 
   upload: {
     button: '点击上传',
+    viewExamples: '查看示例',
+    downloadTemplate: '下载模板',
     drag: '将文件拖到此处',
     dragTip: '或点击上传',
     preview: '预览',
@@ -89,7 +107,10 @@ const zhCN: LocaleConfig = {
     uploadFunctionRequired: '未配置上传函数',
     previewNotSupported: '该文件不支持预览',
     downloadNotSupported: '暂不支持下载',
-    empty: '暂无文件'
+    empty: '暂无文件',
+    canvasContextUnavailable: '无法获取 canvas context',
+    imageLoadFailed: '图片加载失败',
+    fileReadFailed: '文件读取失败'
   },
 
   pagination: {

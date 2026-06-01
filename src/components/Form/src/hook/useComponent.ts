@@ -3,7 +3,8 @@ import { get } from 'lodash-es'
 import { getSlot } from '@/utils/get'
 import { isExistAttr, isFunction } from '@/utils/is'
 import { setReactiveValue } from '@/utils/set'
-import { logger } from '@/locale'
+import { logger, t } from '@/locale'
+import { getPlaceholder as getLocalePlaceholder } from '@/locale/utils'
 import {
   needAllowClear,
   needDataOptions,
@@ -314,10 +315,11 @@ function getPlaceholder(
   const component = componentConfigs[schema.component]
   const schemaComponentProps = schema.componentProps || {}
   if (needInputPlaceholder.includes(schema.component as FormInputName) || component?.needInputPlaceholder) {
+    const inputPlaceholder = labelStr ? getLocalePlaceholder(t('form.placeholder.input'), labelStr) : ''
     return {
       placeholder: props.disabled && setPlaceholderInDisabled !== undefined
         ? setPlaceholderInDisabled
-        : labelStr ? `请填写${labelStr}` : ''
+        : inputPlaceholder
     }
   }
   if (needSelectPlaceholder.includes(schema.component as FormInputName) || component?.needSelectPlaceholder) {
@@ -332,19 +334,20 @@ function getPlaceholder(
       }
     }
     if (schema.component === 'TimePicker' && schemaComponentProps.type === 'time-range') {
-      const timeRangePlaceholder = labelStr ? `请选择${labelStr}` : ''
+      const timeRangePlaceholder = labelStr ? getLocalePlaceholder(t('form.placeholder.select'), labelStr) : ''
       return {
         placeholder: [timeRangePlaceholder, timeRangePlaceholder]
       }
     }
+    const selectPlaceholder = labelStr ? getLocalePlaceholder(t('form.placeholder.select'), labelStr) : ''
     return {
-      placeholder: labelStr ? `请选择${labelStr}` : ''
+      placeholder: selectPlaceholder
     }
   }
   if (needRangePlaceholder.includes(schema.component as FormInputName)) {
     const rangePlaceholder = props.disabled && setPlaceholderInDisabled !== undefined
       ? setPlaceholderInDisabled
-      : labelStr ? `请选择${labelStr}` : ''
+      : labelStr ? getLocalePlaceholder(t('form.placeholder.select'), labelStr) : ''
     return {
       placeholder: [rangePlaceholder, rangePlaceholder]
     }

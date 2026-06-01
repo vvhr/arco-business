@@ -3,7 +3,11 @@
     class="ab-table-sensitive"
     tabindex="0"
     role="button"
-    :aria-label="isHovering ? `原始值: ${originValue}` : `已加密值: ${cryptoValue}`"
+    :aria-label="
+      isHovering
+        ? t('table.sensitive.original', { value: originValue })
+        : t('table.sensitive.encrypted', { value: cryptoValue })
+    "
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
     @focusin="handleFocusIn"
@@ -20,6 +24,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { t } from '@/locale'
 
 const props = defineProps<{
   originValue: string | number

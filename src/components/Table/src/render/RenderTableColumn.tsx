@@ -25,6 +25,7 @@ import {
 import { renderActionColumn } from './actionRenderer'
 import { renderEditableColumn } from './editableRenderer'
 import { logger } from '@/locale'
+import { t } from '@/locale'
 
 /** 将 TableColumn 递归转换为 Arco TableColumnData。 */
 export function renderTableColumns(
@@ -57,7 +58,7 @@ export function renderTableColumns(
     const config = typeof props.indexable === 'object' ? props.indexable : {}
     return {
       dataIndex: '__abIndex',
-      title: config.label ?? '序号',
+      title: config.label ?? t('table.index'),
       width: config.width ?? 70,
       minWidth: config.minWidth ?? 70,
       fixed: config.fixed,
