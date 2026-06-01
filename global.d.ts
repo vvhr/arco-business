@@ -8,8 +8,6 @@ declare module 'vue' {
     AeUpload: typeof import('acro-business')['AeUpload']
     AbModal: typeof import('acro-business')['AbModal']
     AbDrawer: typeof import('acro-business')['AbDrawer']
-    AeTabs: typeof import('acro-business')['AeTabs']
-    AeTabPane: typeof import('acro-business')['AeTabPane']
     AeText: typeof import('acro-business')['AeText']
     AeComboInput: typeof import('acro-business')['AeComboInput']
   }

@@ -21,7 +21,7 @@
       >
         <template #checked-icon>
           <span style="color: rgb(var(--primary-6))">
-             <icon-moon-fill />
+            <icon-moon-fill />
           </span>
         </template>
         <template #unchecked-icon>
@@ -38,51 +38,49 @@
       />
       <p class="subtitle">基于 Vue 3 + Arco Design Vue 的高级组件库</p>
     </header>
-    <el-tabs v-model="activeTab" class="demo-tabs">
-      <el-tab-pane label="🚀 快速开始" name="start">
+    <div style="background: var(--color-bg-1)">
+          <Tabs v-model:active-key="activeTab" justify type="capsule">
+      <TabPane title="🚀 快速开始" key="start">
         <QuickStartExample v-if="activeTab === 'start'" />
-      </el-tab-pane>
-      <el-tab-pane label="📝 AeForm 表单组件" name="form">
+      </TabPane>
+      <TabPane title="📝 AeForm 表单组件" key="form">
         <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
-      </el-tab-pane>
-      <el-tab-pane label="📊 AeTable 表格组件" name="table">
+      </TabPane>
+      <TabPane title="📊 AeTable 表格组件" key="table">
         <TableExample v-if="activeTab === 'table'" />
-      </el-tab-pane>
-      <el-tab-pane label="🎨 AeIcon 图标组件" name="icon">
+      </TabPane>
+      <TabPane title="🎨 AeIcon 图标组件" key="icon">
         <IconExample v-if="activeTab === 'icon'" />
-      </el-tab-pane>
-      <el-tab-pane label="📄 AeUpload 文件上传" name="upload">
+      </TabPane>
+      <TabPane title="📄 AeUpload 文件上传" key="upload">
         <UploadExample v-if="activeTab === 'upload'" />
-      </el-tab-pane>
-      <el-tab-pane label="💬 AbModal 对话框" name="modal">
+      </TabPane>
+      <TabPane title="💬 AbModal 对话框" key="modal">
         <ModalExample v-if="activeTab === 'modal'" />
-      </el-tab-pane>
-      <el-tab-pane label="💬 AbDrawer 抽屉" name="drawer">
+      </TabPane>
+      <TabPane title="💬 AbDrawer 抽屉" key="drawer">
         <DrawerExample v-if="activeTab === 'drawer'" />
-      </el-tab-pane>
-      <el-tab-pane label="💬 AeTabs 标签页" name="tabs">
-        <TabsExample v-if="activeTab === 'tabs'" />
-      </el-tab-pane>
-      <el-tab-pane label="💬 AeText 增强文本" name="text">
+      </TabPane>
+      <TabPane title="💬 AeText 增强文本" key="text">
         <TextExample v-if="activeTab === 'text'" />
-      </el-tab-pane>
-      <el-tab-pane label="🧩 AeComboInput 组合输入器" name="combo-input">
+      </TabPane>
+      <TabPane title="🧩 AeComboInput 组合输入器" key="combo-input">
         <ComboInputExample v-if="activeTab === 'combo-input'" />
-      </el-tab-pane>
-    </el-tabs>
+      </TabPane>
+    </Tabs>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-
+import { Tabs, TabPane } from '@arco-design/web-vue'
 import FormExample from './examples/FormExample.vue'
 import TableExample from './examples/TableExample.vue'
 import IconExample from './examples/IconExample.vue'
 import UploadExample from './examples/UploadExample.vue'
 import ModalExample from './examples/ModalExample.vue'
 import DrawerExample from './examples/DrawerExample.vue'
-import TabsExample from './examples/TabsExample.vue'
 import QuickStartExample from './examples/QuickStartExample.vue'
 import TextExample from './examples/TextExample.vue'
 import ComboInputExample from './examples/ComboInputExample.vue'
@@ -174,23 +172,6 @@ const toggleTheme = (value: boolean) => {
   margin: 0;
 }
 
-.demo-tabs {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* 暗黑模式样式 */
-.dark .demo-container {
-  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-}
-
-.dark .demo-tabs {
-  background: var(--el-bg-color);
-}
 </style>
 
 <style>

@@ -8,7 +8,6 @@ import { AeTable } from './components/Table'
 import { AeUpload } from './components/Upload'
 import { AbModal } from './components/Modal'
 import { AbDrawer } from './components/Drawer'
-import { AeTabs, AeTabPane } from './components/Tabs'
 import { AeText } from './components/Text'
 import { AeComboInput } from './components/ComboInput'
 
@@ -28,7 +27,7 @@ export * from './types'
 
 export type { FormImportItem, FormImportItemConfig, TableFormImportItem, TableFormImportItemConfig }
 // Export components
-export { AeForm, AeIcon, AeTable, AeUpload, AbModal, AbDrawer, AeTabs, AeTabPane, AeText, AeComboInput }
+export { AeForm, AeIcon, AeTable, AeUpload, AbModal, AbDrawer, AeText, AeComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -113,14 +112,6 @@ export type {
 export type { ModalProps, ModalEmits, ModalInstance, ModalSlots } from './components/Modal'
 // Drawer
 export type { DrawerProps, DrawerEmits, DrawerInstance, DrawerSlots } from './components/Drawer'
-// Tabs
-export type {
-  TabsProps,
-  TabPaneProps,
-  TabsInstance,
-  TabPaneInstance,
-  TabsEmits
-} from './components/Tabs'
 
 // Text
 export type { TextProps, TextEmits, DotType } from './components/Text'
@@ -202,8 +193,6 @@ const install = (app: App, options?: InstallOptions) => {
     AeUpload,
     AbModal,
     AbDrawer,
-    AeTabs,
-    AeTabPane,
     AeText,
     AeComboInput
   ]

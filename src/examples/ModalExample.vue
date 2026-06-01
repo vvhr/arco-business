@@ -133,7 +133,7 @@ const handlePrint = () => {
     <AbModal v-model="tabsDialogVisible" title="标签页对话框" width="700px" :scrollable="false">
       <Tabs
         v-model:active-key="activeTab"
-        style="height: 500px; display: flex; flex-direction: column"
+        justify
         type="card"
       >
         <TabPane title="用户管理" key="first">
