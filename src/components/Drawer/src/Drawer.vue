@@ -130,6 +130,9 @@ function onClose() {
 function onOpen() {
   emit('open')
 }
+function onScroll() {
+  emit('scroll')
+}
 
 function getScrollbarRef() {
   return scrollbarRef.value
