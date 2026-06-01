@@ -144,7 +144,7 @@ export default defineConfig({
     assetsDir: 'assets',
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'AdvancedEleUI',
+      name: 'AcroBusiness',
       formats: ['es', 'cjs', 'umd'],
       fileName: format => {
         if (format === 'es') return 'index.js'

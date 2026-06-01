@@ -21,13 +21,13 @@ import App from './App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
-/** 引入 AdvancedEleUI 组件库 */
-import AdvancedEleUI from 'acro-business'
+/** 引入 AcroBusiness 组件库 */
+import AcroBusiness from 'acro-business'
 import 'acro-business/dist/style.css'
 
 const app = createApp(App)
 app.use(ElementPlus)
-app.use(AdvancedEleUI)
+app.use(AcroBusiness)
 app.mount('#app')</code></pre>
     </el-card>
 
@@ -38,7 +38,7 @@ app.mount('#app')</code></pre>
       <div class="type-support-content">
         <p class="description">组件库支持中英文，默认为中文。可以全局设置语言：</p>
         <div class="method-title">设置为英文</div>
-        <pre class="code-block"><code>app.use(AdvancedEleUI, {
+        <pre class="code-block"><code>app.use(AcroBusiness, {
   locale: 'en-US'
 })</code></pre>
         <div class="method-title">运行时切换</div>

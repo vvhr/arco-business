@@ -56,7 +56,7 @@ export function onLocaleChange(callback: (locale: Language) => void) {
  */
 export function setLocale(locale: Language) {
   if (!localeMap[locale]) {
-    console.warn(`[AdvancedEleUI] Locale "${locale}" is not supported. Using "zh-CN" instead.`)
+    console.warn(`[AcroBusiness] Locale "${locale}" is not supported. Using "zh-CN" instead.`)
     currentLocale.value = 'zh-CN'
     return
   }

@@ -168,7 +168,7 @@ export interface InstallOptions {
    * 注册自定义图标集
    * @example
    * ```ts
-   * app.use(AdvancedEleUI, {
+   * app.use(AcroBusiness, {
    *   iconCollections: [{
    *     prefix: 'my-icons',
    *     width: 24,
