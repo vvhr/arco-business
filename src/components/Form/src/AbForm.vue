@@ -14,14 +14,14 @@ import { useImport } from './hook/useImport'
 import { useRenderAnchor } from './render/useRenderAnchor'
 import { useRenderForm } from './render/useRenderForm'
 import { isObject } from '@/utils/is'
-import type { AbFormProps, AbFormSchema } from './types'
+import type { FormProps, FormSchema } from './types'
 
 export default defineComponent({
   name: 'AbForm',
   props: abFormProps,
   emits: ['register', 'update:stepValue', 'init', 'change', 'update:model'],
   setup(rawProps, { emit, attrs, slots, expose }) {
-    const props = rawProps as unknown as AbFormProps
+    const props = rawProps as unknown as FormProps
     const { components, arrayStrategies, componentConfigs } = useImport(props.imports)
 
     if (props.controlled && !isObject(props.model)) {
@@ -67,7 +67,7 @@ export default defineComponent({
 
     const schemasFieldsHash = computed(() => {
       const rawSchemas = toRaw(props.schemas)
-      const extractFieldInfo = (schema: AbFormSchema): string => {
+      const extractFieldInfo = (schema: FormSchema): string => {
         const { key, field, type, component, value, children } = schema
         let info = `${field || key}:${type || 'Inputer'}:${component || ''}:${value !== undefined ? 'hasValue' : 'noValue'}`
         if (children && Array.isArray(children)) {

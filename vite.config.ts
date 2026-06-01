@@ -28,10 +28,9 @@ async function generateGlobalDts() {
 
   // 定义所有组件名称
   const components = [
-    'AeForm',
     'AbForm',
     'AbIcon',
-    'Table',
+    'AbTable',
     'AbUpload',
     'AbModal',
     'AbDrawer',
@@ -57,22 +56,6 @@ export {}
 
   writeFileSync(targetFile, content, 'utf-8')
   console.log(`✓ Created global.d.ts with ${components.length} components`)
-}
-
-/**
- * 编译独立的 element-plus-beauty.less 文件
- */
-async function compileBeautyStyles() {
-  const lessFile = resolve(__dirname, 'src/styles/element-plus-beauty.less')
-  const outputFile = resolve(__dirname, 'dist/element-plus-beauty.css')
-
-  try {
-    // 使用 lessc 命令编译 less 文件
-    await execAsync(`npx lessc "${lessFile}" "${outputFile}"`)
-    console.log('✓ Compiled element-plus-beauty.less to dist/element-plus-beauty.css')
-  } catch (error) {
-    console.error('✗ Failed to compile element-plus-beauty.less:', error)
-  }
 }
 
 export default defineConfig({
@@ -124,7 +107,6 @@ export default defineConfig({
       },
       afterBuild: async () => {
         await generateGlobalDts()
-        await compileBeautyStyles()
       }
     })
   ],

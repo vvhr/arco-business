@@ -1,11 +1,11 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
 import type { FieldRule } from '@arco-design/web-vue'
 import type {
-  AbFormComponentProps,
-  AbFormItemProps,
-  AbFormProps,
-  AbFormSchema,
-  AbFormSlots
+  FormComponentProps,
+  FormItemProps,
+  FormProps,
+  FormSchema,
+  FormSlots
 } from '../types'
 import { getAutoRulesMap } from '@/utils/rules'
 import { isArray, isString } from 'lodash-es'
@@ -21,12 +21,12 @@ import {
 } from '../utils'
 
 export function useFormItem(
-  props: AbFormProps,
-  slots: AbFormSlots,
-  schema: AbFormSchema,
+  props: FormProps,
+  slots: FormSlots,
+  schema: FormSchema,
   formModel: Ref<Recordable>
 ) {
-  const componentProps: AbFormComponentProps = getTrueComponentProps(
+  const componentProps: FormComponentProps = getTrueComponentProps(
     schema,
     formModel.value,
     props
@@ -82,7 +82,7 @@ export function useFormItem(
     return itemProps
   }
 
-  function itemPropsStyle(globalItemProps: AbFormItemProps, schemaItemProps: AbFormItemProps) {
+  function itemPropsStyle(globalItemProps: FormItemProps, schemaItemProps: FormItemProps) {
     return schemaItemProps.style ?? globalItemProps.style
   }
 
@@ -131,7 +131,7 @@ export function useFormItem(
       .join(' ')
   }
 
-  function mergeDisabledStyle(originStyle: AbFormItemProps['style'], disabledStyle?: Recordable) {
+  function mergeDisabledStyle(originStyle: FormItemProps['style'], disabledStyle?: Recordable) {
     if (!disabledStyle) {
       return originStyle
     }

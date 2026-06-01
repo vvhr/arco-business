@@ -1,14 +1,11 @@
-<script setup lang="ts"></script>
-
 <template>
-  <div class="ae-form-blank">
-    <slot style="filter: blur()"></slot>
+  <div class="ab-form-blank">
+    <slot />
   </div>
 </template>
 
 <style scoped lang="less">
-.ae-form-blank {
+.ab-form-blank {
   width: 100%;
-  position: relative;
 }
 </style>

@@ -1,9 +1,9 @@
-import { defineComponent, computed, type PropType } from 'vue'
-import type { FormSchema, FormSchemaProps, DesignableColProps } from '../types'
-import { ElCol, ElRow } from 'element-plus'
+import { computed, defineComponent, type PropType } from 'vue'
+import { Col, Row } from '@arco-design/web-vue'
+import type { FormDesignableColProps, FormSchema, FormSchemaProps } from '../types'
 
 export const SchemaLayout = defineComponent({
-  name: 'SchemaLayout',
+  name: 'FormSchemaLayout',
   props: {
     schema: {
       type: Object as PropType<FormSchema>,
@@ -22,8 +22,8 @@ export const SchemaLayout = defineComponent({
       default: false
     },
     designableColProps: {
-      type: Function as PropType<DesignableColProps>,
-      default: () => {}
+      type: Function as PropType<FormDesignableColProps>,
+      default: () => ({})
     },
     isHidden: {
       type: Boolean,
@@ -40,15 +40,14 @@ export const SchemaLayout = defineComponent({
     })
     const type = computed(() => props.schema.type ?? 'Inputer')
     const enableAlone = ['Container', 'Custom', 'Inputer', 'Decorator']
+
     return () => {
-      // 每次渲染时重新计算
       const designableColProps = props.designable
         ? { ...(props.designableColProps?.(props.itemKey, props.schema, props.isHidden) || {}) }
         : {}
       if (layoutProps.value.alone && enableAlone.includes(type.value)) {
-        // 如果需要独占一行, 需要包裹 ElCol+ElRow
         return (
-          <ElCol
+          <Col
             class="mb-2"
             {...designableColProps}
             span={24}
@@ -56,30 +55,29 @@ export const SchemaLayout = defineComponent({
             data-id={props.itemKey}
             id={props.itemKey}
           >
-            <ElRow>
-              <ElCol span={layoutProps.value.span} style={layoutProps.value.style}>
+            <Row>
+              <Col span={layoutProps.value.span} style={layoutProps.value.style}>
                 {slots.default?.()}
-              </ElCol>
-            </ElRow>
+              </Col>
+            </Row>
             {props.designable ? slots.design?.(props.schema) : undefined}
-          </ElCol>
-        )
-      } else {
-        return (
-          <ElCol
-            class="mb-2"
-            {...designableColProps}
-            span={layoutProps.value.span}
-            key={props.itemKey}
-            data-id={props.itemKey}
-            id={props.itemKey}
-            style={layoutProps.value.style}
-          >
-            {slots.default?.()}
-            {props.designable ? slots.design?.(props.schema) : undefined}
-          </ElCol>
+          </Col>
         )
       }
+      return (
+        <Col
+          class="mb-2"
+          {...designableColProps}
+          span={layoutProps.value.span}
+          key={props.itemKey}
+          data-id={props.itemKey}
+          id={props.itemKey}
+          style={layoutProps.value.style}
+        >
+          {slots.default?.()}
+          {props.designable ? slots.design?.(props.schema) : undefined}
+        </Col>
+      )
     }
   }
 })

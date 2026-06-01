@@ -1,79 +1,64 @@
-import type { ComponentName } from '../types'
-import type { FormImportItem, FormImportItemConfig } from '@/types/imports'
-import type { Component } from 'vue'
-import { shallowReactive } from 'vue'
-import { defaultComponents, defaultArrayStrategies } from '../component'
-import { globalFormImports } from '@/utils/imports'
+import { computed } from 'vue'
 import { logger } from '@/locale'
+import { globalFormImports } from '@/utils/imports'
+import { defaultArrayStrategies, defaultComponents } from '../component'
+import type { FormComponentName, FormImportItem, FormImportItemConfig } from '../types'
 
-type Components = Partial<Recordable<Component, ComponentName>>
-type ComponentConfigs = Partial<Recordable<FormImportItemConfig, ComponentName>>
+export function useImport(imports: FormImportItem[]) {
+  const local = computed(() => localRegister(imports))
 
-/**
- * use Import
- * @description 使用全局注册和局部注册的组件库和组件配置
- * @param localImports 局部注册的组件列表，优先级高于全局注册
- */
-export function useImport(localImports: FormImportItem[] = []) {
-  /**
-   * 组件库（合并优先级：局部注册 > 全局注册 > 默认组件）
-   */
-  const components = shallowReactive<Components>({
-    ...defaultComponents,
-    ...globalFormImports.components
+  const components = computed(() => {
+    return {
+      ...defaultComponents,
+      ...globalFormImports.components,
+      ...local.value.components
+    } as Partial<Recordable<any, FormComponentName>>
   })
 
-  /**
-   * 组件配置（合并优先级：局部注册 > 全局注册）
-   */
-  const componentConfigs = shallowReactive<ComponentConfigs>({
-    ...globalFormImports.componentConfigs
+  const componentConfigs = computed(() => {
+    return {
+      ...globalFormImports.componentConfigs,
+      ...local.value.componentConfigs
+    } as Partial<Recordable<FormImportItemConfig, FormComponentName>>
   })
 
-  /**
-   * 组件值初始化为数组的策略（合并优先级：局部注册 > 全局注册 > 默认策略）
-   */
-  const arrayStrategies = shallowReactive<
-    Partial<Record<ComponentName, (cps: Recordable) => boolean>>
-  >({
-    ...defaultArrayStrategies,
-    ...globalFormImports.arrayStrategies
+  const arrayStrategies = computed(() => {
+    return {
+      ...defaultArrayStrategies,
+      ...globalFormImports.arrayStrategies,
+      ...local.value.arrayStrategies
+    }
   })
 
-  // 注册局部组件（覆盖全局注册的同名组件）
-  const loggerRecords = {
-    componentExists: [],
-    componentRegistered: []
+  return {
+    components,
+    componentConfigs,
+    arrayStrategies
   }
-  localImports.forEach(item => {
-    if (components[item.name]) {
-      loggerRecords.componentExists.push(item.name)
+}
+
+function localRegister(imports: FormImportItem[]) {
+  const components: Recordable = {}
+  const componentConfigs: Recordable = {}
+  const arrayStrategies: Recordable = {}
+
+  imports.forEach(item => {
+    if (!item.name || !item.component) {
+      logger.warn('console.form.componentNotExist', { name: item.name || '' })
+      return
     }
     components[item.name] = item.component
-
     if (item.config) {
       componentConfigs[item.name] = item.config
     }
-
     if (item.isArrayFn) {
       arrayStrategies[item.name] = item.isArrayFn
     }
-
-    loggerRecords.componentRegistered.push(item.name)
   })
-  if (loggerRecords.componentExists.length) {
-    logger.warn('console.form.componentExists', {
-      name: loggerRecords.componentExists.join(', ')
-    })
-  }
-  if (loggerRecords.componentRegistered.length) {
-    logger.success('console.form.componentRegistered', {
-      name: loggerRecords.componentRegistered.join(', ')
-    })
-  }
+
   return {
     components,
-    arrayStrategies,
-    componentConfigs
+    componentConfigs,
+    arrayStrategies
   }
 }

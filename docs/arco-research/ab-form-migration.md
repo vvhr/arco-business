@@ -1,10 +1,10 @@
-# AbForm 迁移差异报告
+# Form 迁移差异报告
 
 ## 迁移目标
 
-本轮新增 `src/components/Form2`，组件名为 `AbForm`。新组件与旧 `AeForm` 并行存在，不导入旧 Form 的类型、工具、hook、render 或子组件。允许复用项目级通用能力，例如 `locale`、`tree`、`get/set`、`AbIcon`、`AbUpload`、`AbText`、`AbComboInput` 和当前 Table 组件。
+本轮新增组件已迁移到 `src/components/Form`，组件名为 `Form`。组件不导入旧 Form 的类型、工具、hook、render 或子组件。允许复用项目级通用能力，例如 `locale`、`tree`、`get/set`、`AbIcon`、`AbUpload`、`AbText`、`AbComboInput` 和当前 Table 组件。
 
-`AbForm` 保留原有 schema 渲染引擎思想：由 schema 描述布局、容器、装饰组件、输入组件和自定义渲染，再统一生成表单。迁移重点是将 Element Plus 的组件、属性和样式语义替换为 Arco Design Vue。
+`Form` 保留原有 schema 渲染引擎思想：由 schema 描述布局、容器、装饰组件、输入组件和自定义渲染，再统一生成表单。迁移重点是将 Element Plus 的组件、属性和样式语义替换为 Arco Design Vue。
 
 ## Form 差异
 
@@ -14,7 +14,7 @@ Element Plus 的 `el-form` 以 `label-position`、`label-width` 和 `inline` 等
 
 - 移除 `labelPosition`，改为 `layout` 与 `labelAlign`。
 - 移除顶层 `labelWidth`，固定标题宽度使用 `labelColFlex`。
-- `AbFormProps` 继承 Arco Form props，但排除 `model`、`layout`、`labelAlign`、`disabled`、`rules`、`autoLabelWidth`、`id`、`scrollToFirstError` 等由组件统一接管的属性。
+- `FormProps` 继承 Arco Form props，但排除 `model`、`layout`、`labelAlign`、`disabled`、`rules`、`autoLabelWidth`、`id`、`scrollToFirstError` 等由组件统一接管的属性。
 - `disabled` 不透传给 `a-form`。顶层禁用只作为内部状态参与具体输入组件的禁用计算，避免 Arco Form 原生禁用态限制局部字段启用。
 
 ## FormItem 差异
@@ -28,7 +28,7 @@ Element Plus 的 `el-form` 以 `label-position`、`label-width` 和 `inline` 等
 - 函数式说明使用 `extraRender`、`helpRender`。
 - 插槽改为 `${key}--extra` 与 `${key}--help`。
 - 不再实现 `renderFormItemLabel`，只在用户显式提供 `${key}--label` 时透传 label slot。
-- `AbFormItemProps` 继承 Arco FormItem props，并排除 `field`、`label`、`disabled`、`rules` 等由 schema 或 AbForm 接管的字段。
+- `FormItemProps` 继承 Arco FormItem props，并排除 `field`、`label`、`disabled`、`rules` 等由 schema 或 Form 接管的字段。
 
 ## Grid 与 Anchor 差异
 
@@ -42,7 +42,7 @@ Element Plus 的 `el-row/el-col` 与 Arco 的 `a-row/a-col` 基础语义接近�
 
 ## 校验库与错误类型
 
-Arco Design Vue 2.58.0 的 Form 校验能力来自 `b-validate`，不是 `async-validator`。因此 Form2 不再暴露 Element Plus 的 `FormItemRule`、`ValidateError`、`ValidateFieldsError`。
+Arco Design Vue 2.58.0 的 Form 校验能力来自 `b-validate`，不是 `async-validator`。因此新版 Form 不再暴露 Element Plus 的 `FormItemRule`、`ValidateError`、`ValidateFieldsError`。
 
 处理方案：
 
@@ -80,16 +80,16 @@ Element Plus 与 Arco 在多选态判断上不完全一致，不能沿用旧 `de
 
 处理方案：
 
-- `Form2` 只保留 schema form 模式。
+- 新版 Form 只保留 schema form 模式。
 - 不迁移 Descriptions 相关渲染、类型和样式。
-- 如需描述列表，后续应独立设计 AbDescriptions，而不是放入 AbForm。
+- 如需描述列表，后续应独立设计 Descriptions 组件，而不是放入 Form。
 
 ## 样式迁移
 
-Element Plus 类名和 CSS 变量不再出现在 `Form2` 中。
+Element Plus 类名和 CSS 变量不再出现在新版 Form 中。
 
 处理方案：
 
 - 所有内部类名前缀使用 `ab-form`。
 - 颜色、边框、背景、文字等样式使用 Arco CSS 变量，例如 `--color-border-2`、`--color-fill-1`、`--color-text-1`。
-- 行内编辑、无标题字段和禁用展示只影响 AbForm 自身结构，不依赖 Element Plus 的类名。
+- 行内编辑、无标题字段和禁用展示只影响 Form 自身结构，不依赖 Element Plus 的类名。

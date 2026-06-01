@@ -1,257 +1,204 @@
-import { ref, unref, computed, type Component, toRaw } from 'vue'
-import { ElForm, ElRow, ElNotification } from 'element-plus'
+import { computed, ref, toRaw, unref, type Component, type Ref } from 'vue'
 import { get, set, unset } from 'lodash-es'
-import type { ComponentName, FormProps, FormSchema, FormEmits } from '../types'
-import { SchemaType } from '../constants'
+import { Message } from '@arco-design/web-vue'
 import { findNode, findNodes } from '@/utils/tree'
-import { getFirstAttr } from '@/utils/get'
-import { getTrueComponentProps, getValue, isHidden } from '../utils/schema'
 import { t } from '@/locale'
+import { SchemaType } from '../constants'
+import { getTrueComponentProps, getValue, isHidden } from '../utils'
+import type {
+  FormComponentName,
+  FormEmits,
+  FormProps,
+  FormRawInstance,
+  FormSchema,
+  FormValidationErrors
+} from '../types'
+
+type FormUseFormReturn = {
+  isValidating: Ref<boolean>
+  formModel: Ref<Recordable>
+  formRef: Ref<FormRawInstance | undefined>
+  baseRowRef: Ref<any>
+  componentRefs: Ref<Recordable<ComponentRef<any>>>
+  initValues: (initModel?: Recordable) => void
+  getDefaultModel: (defaultModel?: Recordable) => Recordable
+  getFormModel: () => Recordable
+  getFormRef: () => FormRawInstance | undefined
+  setValues: (data?: Recordable) => void
+  clearValues: (defaultModel?: Recordable) => void
+  setValue: (path: string, value: any) => void
+  delValue: (path: string) => boolean
+  resetValidate: () => void
+  validate: () => Promise<boolean>
+  scrollToKey: (key: string) => void
+}
 
 export function useForm(
   props: FormProps,
   emit: FormEmits,
-  components: Recordable<Component, ComponentName>,
-  arrayStrategies: Partial<Record<ComponentName, (cps: Recordable) => boolean>>
-): {
-  isValidating: any
-  formModel: any
-  elFormRef: any
-  baseElRowRef: any
-  schemasKeys: any
-  componentRefs: any
-  initValues: (initModel: Recordable) => void
-  getDefaultModel: (defaultModel: Recordable) => Recordable
-  getFormModel: () => Recordable
-  getElFormRef: () => any
-  setValues: (data: Recordable) => void
-  clearValues: (defaultModel: Recordable) => void
-  setValue: (key: string, value: any) => void
-  delValue: (key: string) => void
-  resetValidate: () => void
-  validate: () => Promise<any>
-  scrollToKey: (key: string) => void
-} {
+  components: Recordable<Component, FormComponentName>,
+  arrayStrategies: Partial<Record<FormComponentName, (cps: Recordable) => boolean>>
+): FormUseFormReturn {
   const isValidating = ref(false)
-
-  // 可控模式直接返回props.model, 非可控模式使用内部对象
   const formModel = props.controlled
     ? computed({
         get: () => props.model,
-        set: val => {
-          emit('update:model', val)
-        }
+        set: value => emit('update:model', value)
       })
     : ref<Recordable>({})
 
-  const elFormRef = ref<ComponentRef<typeof ElForm>>()
-  const baseElRowRef = ref<ComponentRef<typeof ElRow>>()
-  const schemasKeys = ref<string[]>([])
+  const formRef = ref<FormRawInstance>()
+  const baseRowRef = ref<any>()
   const componentRefs = ref<Recordable<ComponentRef<any>>>({})
+
   function initValues(initModel?: Recordable) {
     formModel.value = {
       ...getDefaultModel(initModel || {}),
       ...initModel
     }
-    setTimeout(() => resetValidate(), 200)
+    window.setTimeout(() => resetValidate(), 200)
   }
 
   function getDefaultModel(defaultModel?: Recordable) {
     const model: Recordable = { ...(defaultModel || {}) }
     const initField = (schema: FormSchema) => {
-      // 1. 检查 schema 是否需要初始化字段
-      const type: any = schema.type ?? SchemaType.INPUTER
-      if (!schema.field || ![SchemaType.CUSTOM, SchemaType.INPUTER].includes(type)) {
-        // 是否存在子组件
+      const type = schema.type ?? SchemaType.INPUTER
+      if (!schema.field || (type !== SchemaType.CUSTOM && type !== SchemaType.INPUTER)) {
         if (
-          [SchemaType.STEP, SchemaType.CONTAINER, SchemaType.DESCRIPTIONS].includes(type) &&
+          [SchemaType.STEP, SchemaType.CONTAINER].includes(type as any) &&
           schema.children &&
           Array.isArray(schema.children)
         ) {
-          schema.children.forEach(child => {
-            initField(child)
-          })
+          schema.children.forEach(child => initField(child))
         }
         return
       }
-
-      // 2. 如果字段已在 model 中定义，则跳过
       if (get(model, schema.field) !== undefined) {
         return
       }
-
-      // 3. 如果 schema 定义了初始值 (value)，直接使用
       if (schema.value !== undefined) {
         set(model, schema.field, getValue(schema, model, props))
         return
       }
-
-      // 4. 根据组件类型决定默认值
-      const componentName = schema.component as string
+      const componentName = schema.component as FormComponentName
       if (componentName && arrayStrategies[componentName]) {
         const componentProps = getTrueComponentProps(schema, model, props)
-        const shouldBeArray = arrayStrategies[componentName](componentProps)
+        const shouldBeArray = arrayStrategies[componentName]?.(componentProps)
         set(model, schema.field, shouldBeArray ? [] : null)
         return
       }
-
-      // 5. 默认初始化为 null
       set(model, schema.field, null)
     }
-    unref(props).schemas.forEach(v => initField(v))
+    props.schemas.forEach(schema => initField(schema))
     return model
   }
 
   function getFormModel() {
     return formModel.value
   }
-  function getElFormRef() {
-    return unref(elFormRef) as ComponentRef<typeof ElForm>
+
+  function getFormRef() {
+    return unref(formRef)
   }
 
-  // 对表单赋值
   function setValues(data: Recordable = {}) {
     formModel.value = { ...unref(formModel), ...data }
   }
-  // 清空表单
+
   function clearValues(defaultModel?: Recordable) {
     formModel.value = { ...(defaultModel || getDefaultModel()) }
-    setTimeout(() => resetValidate(), 200)
+    window.setTimeout(() => resetValidate(), 200)
   }
-  // 对表单某路径赋值 支持多层嵌套字段赋值
+
   function setValue(path: string, value: any) {
     if (props.controlled) {
-      // 可控模式:创建新对象触发响应式更新
-      const newModel = { ...props.model }
-      if (path.includes('.')) {
-        set(newModel, path, value)
-      } else {
-        newModel[path] = value
-      }
-      formModel.value = newModel
-    } else {
-      // 非可控模式:直接修改
-      if (path.includes('.')) {
-        set(formModel.value, path, value)
-      } else {
-        formModel.value[path] = value
-      }
+      const nextModel = { ...props.model }
+      set(nextModel, path, value)
+      formModel.value = nextModel
+      return
     }
+    set(formModel.value, path, value)
   }
-  // 删除表单某路径字段 支持多层嵌套字段
+
   function delValue(path: string) {
-    if (get(unref(formModel), path) !== undefined) {
-      if (props.controlled) {
-        const newModel = { ...props.model }
-        unset(newModel, path)
-        formModel.value = newModel
-      } else {
-        unset(formModel.value, path)
-      }
-      return true
+    if (get(unref(formModel), path) === undefined) {
+      return false
     }
-    return false
+    if (props.controlled) {
+      const nextModel = { ...props.model }
+      unset(nextModel, path)
+      formModel.value = nextModel
+    } else {
+      unset(formModel.value, path)
+    }
+    return true
   }
 
   function resetValidate() {
-    unref(elFormRef)?.clearValidate()
-    // 找到所有可见的表格组件
-    const tableSchemas = getVisibleTableSchemas()
-    if (tableSchemas?.length) {
-      tableSchemas.forEach((v: FormSchema) => {
-        const tableRef = getComponentRef(v.key || v.field)
-        if (tableRef) {
-          tableRef?.resetValidate()
-        }
-      })
-    }
+    unref(formRef)?.clearValidate?.()
+    getVisibleTableSchemas().forEach(schema => {
+      const tableRef = getComponentRef(schema.key || schema.field || '')
+      tableRef?.resetValidate?.()
+    })
   }
-  // 获取特殊子组件实例
+
   const getComponentRef = (key: string) => {
     return key ? componentRefs.value[`${key}Ref`] : undefined
   }
 
-  // 辅助函数：获取所有可见的Table组件Schema
   const getVisibleTableSchemas = () => {
-    const rawSchemas = toRaw(unref(props).schemas)
+    const rawSchemas = toRaw(props.schemas)
     return findNodes(rawSchemas, (node: FormSchema) => {
       return node.component === 'Table' && !isHidden(node, formModel.value, props)
-    })
+    }) as FormSchema[]
   }
 
-  // 辅助函数：校验表格
   const validateTables = async () => {
-    // 找到所有可见的表格组件
-    const tableSchemas = getVisibleTableSchemas()
-    if (tableSchemas?.length) {
-      for (const item of tableSchemas) {
-        const tableRef = getComponentRef(item.key || item.field)
-        if (tableRef) {
-          const valid = await tableRef?.validate()
-          if (valid === false) {
-            const fieldLabel = item?.label || item?.field
-            if (fieldLabel && props.showErrorNotice) {
-              ElNotification({
-                title: t('form.validation.tableError', { field: fieldLabel }),
-                message: t('form.validation.checkTable'),
-                type: 'warning'
-              })
-            }
-            return false
+    for (const schema of getVisibleTableSchemas()) {
+      const tableRef = getComponentRef(schema.key || schema.field || '')
+      if (tableRef) {
+        const valid = await tableRef.validate?.()
+        if (valid === false) {
+          const fieldLabel = schema.label || schema.field
+          if (fieldLabel && props.showErrorNotice) {
+            Message.warning(t('form.validation.tableError', { field: fieldLabel }))
           }
+          return false
         }
       }
     }
     return true
   }
 
-  // 辅助函数：处理校验错误
-  const handleValidationError = (valid: boolean, fields: any) => {
-    if (!valid) {
-      const firstRule = getFirstAttr(fields)
-      const findSchema = findNode(
-        props.schemas,
-        (schema: FormSchema) => schema.field === firstRule[0].field
-      )
-      // Scroll to the first error field
-      if (props.scrollRef && findSchema) {
-        const container = props.scrollRef
-        const fieldId = findSchema.key || findSchema.field
-        try {
-          const element = container.querySelector(`[data-id="${CSS.escape(fieldId)}"]`)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }
-        } catch (e) {
-          console.error('[AeForm] scrollRef is invalid', e)
-        }
-      }
-      // If props.showErrorNotice is set to true, it automatically alerts which field validation has failed.
-      if (props.showErrorNotice && findSchema) {
-        const fieldLabel = findSchema?.label || findSchema?.field
-        if (fieldLabel) {
-          ElNotification({
-            title: t('form.validation.fieldError', { field: fieldLabel }),
-            message: firstRule[0].message,
-            type: 'warning'
-          })
-        }
+  function handleValidationError(errors: FormValidationErrors | undefined) {
+    if (!errors) {
+      return
+    }
+    const firstError = Object.values(errors)[0]
+    if (!firstError) {
+      return
+    }
+    const findSchema = findNode(props.schemas, schema => schema.field === firstError.field)
+    if (props.scrollRef && findSchema) {
+      scrollToKey(findSchema.key || findSchema.field || '')
+    }
+    if (props.showErrorNotice && findSchema) {
+      const fieldLabel = findSchema.label || findSchema.field
+      if (fieldLabel) {
+        Message.warning(`${t('form.validation.fieldError', { field: fieldLabel })}: ${firstError.message}`)
       }
     }
   }
 
-  /**
-   * 校验所有表单当前已渲染的字段
-   * 说明: el-form原生校验函数封装
-   */
   async function validate() {
     isValidating.value = true
     try {
-      const result = await unref(elFormRef)?.validate(handleValidationError)
+      const errors = await unref(formRef)?.validate?.()
+      handleValidationError(errors as FormValidationErrors | undefined)
       const tableResult = await validateTables()
-      return result && tableResult
+      return !errors && tableResult
     } catch (error) {
-      console.error('[AeForm] validate error', error)
+      console.error('[Form] validate error', error)
       return false
     } finally {
       isValidating.value = false
@@ -259,26 +206,25 @@ export function useForm(
   }
 
   function scrollToKey(key: string) {
-    if (props.scrollRef && key) {
-      const container = props.scrollRef
-      const element = container.querySelector(`[data-id="${CSS.escape(key)}"]`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
+    if (!props.scrollRef || !key) {
+      return
+    }
+    const element = props.scrollRef.querySelector(`[data-id="${CSS.escape(key)}"]`)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
   return {
     isValidating,
     formModel,
-    elFormRef,
-    baseElRowRef,
-    schemasKeys,
+    formRef,
+    baseRowRef,
     componentRefs,
     initValues,
     getDefaultModel,
     getFormModel,
-    getElFormRef,
+    getFormRef,
     setValues,
     clearValues,
     setValue,

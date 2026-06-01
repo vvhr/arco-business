@@ -1,100 +1,87 @@
 import type { Component } from 'vue'
-import type { ComponentName } from './types'
+import type { FormComponentName } from './types.ts'
 import {
-  ElCascader,
-  ElCheckboxGroup,
-  ElColorPicker,
-  ElDatePicker,
-  ElInput,
-  ElInputNumber,
-  ElRadioGroup,
-  ElRate,
-  ElSelect,
-  ElSlider,
-  ElSwitch,
-  ElTimePicker,
-  ElTimeSelect,
-  ElTransfer,
-  ElAutocomplete,
-  ElDivider,
-  ElAlert,
-  ElImage,
-  ElResult,
-  ElSegmented,
-  ElMention,
-  ElTreeSelect,
-  ElInputTag
-} from 'element-plus'
+  Alert,
+  AutoComplete,
+  Cascader,
+  CheckboxGroup,
+  ColorPicker,
+  DatePicker,
+  Divider,
+  Image,
+  Input,
+  InputNumber,
+  InputTag,
+  Mention,
+  RadioGroup,
+  RangePicker,
+  Rate,
+  Result,
+  Select,
+  Slider,
+  Switch,
+  TimePicker,
+  Transfer,
+  TreeSelect,
+  Textarea,
+  VerificationCode
+} from '@arco-design/web-vue'
 import AbTable from '@/components/Table'
-import Group from './components/Group.vue'
-import Disclosure from './components/Disclosure.vue'
-import Blank from './components/Blank.vue'
 import AbUpload from '@/components/Upload'
 import AbComboInput from '@/components/ComboInput'
 import AbText from '@/components/Text'
-import { dateRangeTypes } from '@/components/Form/src/constants'
+import Blank from './components/Blank.vue'
+import Disclosure from './components/Disclosure.vue'
+import Group from './components/Group.vue'
 
-const defaultComponents: Recordable<Component, ComponentName> = {
-  /** 容器类组件 */
-  Group: Group,
-  Disclosure: Disclosure,
-  Blank: Blank,
-  /** 装饰类组件名 */
-  Alert: ElAlert,
-  Divider: ElDivider,
+const defaultComponents: Recordable<Component, FormComponentName> = {
+  Group,
+  Disclosure,
+  Blank,
+  Alert,
+  Divider,
   Text: AbText,
-  Image: ElImage,
-  Result: ElResult,
-  /** 输入类组件名 */
-  Autocomplete: ElAutocomplete,
-  Cascader: ElCascader,
-  Checkbox: ElCheckboxGroup,
-  CheckboxButton: ElCheckboxGroup,
-  ColorPicker: ElColorPicker,
+  Image,
+  Result,
+  AutoComplete,
+  Cascader,
+  CheckboxGroup,
+  ColorPicker,
   ComboInput: AbComboInput,
-  DatePicker: ElDatePicker,
-  Input: ElInput,
-  InputNumber: ElInputNumber,
-  InputTag: ElInputTag,
-  Mention: ElMention,
-  Radio: ElRadioGroup,
-  RadioButton: ElRadioGroup,
-  Rate: ElRate,
-  Segmented: ElSegmented,
-  Select: ElSelect,
-  Slider: ElSlider,
-  Switch: ElSwitch,
+  DatePicker,
+  RangePicker,
+  Input,
+  InputNumber,
+  InputTag,
+  Mention,
+  RadioGroup,
+  Rate,
+  Select,
+  Slider,
+  Switch,
   Table: AbTable,
-  TimePicker: ElTimePicker,
-  TimeSelect: ElTimeSelect,
-  Transfer: ElTransfer,
-  TreeSelect: ElTreeSelect,
-  Upload: AbUpload
+  TimePicker,
+  Transfer,
+  TreeSelect,
+  Textarea,
+  Upload: AbUpload,
+  VerificationCode
 }
 
-/**
- * 定义不同组件的默认值初始化策略
- * 策略函数接收组件的 props，返回 true 表示应初始化为数组 []
- */
-const defaultArrayStrategies: Partial<Record<ComponentName, (cps: Recordable) => boolean>> = {
-  // 始终为数组的组件
-  Checkbox: () => true,
-  CheckboxButton: () => true,
-  Table: () => true,
+const defaultArrayStrategies: Partial<
+  Record<FormComponentName, (cps: Recordable) => boolean>
+> = {
+  CheckboxGroup: () => true,
   InputTag: () => true,
   Transfer: () => true,
-  // 根据 componentProps 条件判断的组件
-  Select: (cps: Recordable) => !!cps.multiple,
-  TreeSelect: (cps: Recordable) => !!cps.multiple,
-  TimePicker: (cps: Recordable) => !!cps.isRange,
-  DatePicker: (cps: Recordable) => {
-    return dateRangeTypes.includes(cps.type)
-  },
-  Cascader: (cps: Recordable) => {
-    // 根据 el-cascader 文档，默认 multiple=false, emitPath=true
-    // 只有当 multiple=false 且 emitPath=false 时，值才不是数组
-    const cascaderProps = { multiple: false, emitPath: true, ...cps.props }
-    return !(cascaderProps.multiple === false && cascaderProps.emitPath === false)
+  Table: () => true,
+  RangePicker: () => true,
+  Select: cps => !!cps.multiple,
+  TreeSelect: cps => !!cps.multiple || !!cps.treeCheckable,
+  TimePicker: cps => cps.type === 'time-range',
+  Cascader: cps => {
+    const cascaderProps = { multiple: false, pathMode: true, ...cps }
+    return !!cascaderProps.multiple || cascaderProps.pathMode !== false
   }
 }
 

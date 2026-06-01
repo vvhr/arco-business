@@ -1,20 +1,20 @@
-import type { AbFormProps, AbFormSchema, AbFormComponentProps } from './types'
+import type { FormProps, FormSchema, FormComponentProps } from './types'
 import { isFunction } from '@/utils/is'
 import { logger } from '@/locale'
 
-export function isHidden(schema: AbFormSchema, formModel: Recordable, props: AbFormProps) {
+export function isHidden(schema: FormSchema, formModel: Recordable, props: FormProps) {
   return getSchemaPropValue(schema.hidden, schema, formModel, props, 'boolean', false)
 }
 
-export function getValue(schema: AbFormSchema, formModel: Recordable, props: AbFormProps) {
+export function getValue(schema: FormSchema, formModel: Recordable, props: FormProps) {
   return getSchemaPropValue(schema.value, schema, formModel, props, 'any', null)
 }
 
-export function getLabel(schema: AbFormSchema, formModel: Recordable, props: AbFormProps) {
+export function getLabel(schema: FormSchema, formModel: Recordable, props: FormProps) {
   return getSchemaPropValue(schema.label, schema, formModel, props, 'string', '')
 }
 
-export function getNoLabel(schema: AbFormSchema, formModel: Recordable, props: AbFormProps) {
+export function getNoLabel(schema: FormSchema, formModel: Recordable, props: FormProps) {
   return getSchemaPropValue(
     schema.formItemProps?.noLabel,
     schema,
@@ -27,9 +27,9 @@ export function getNoLabel(schema: AbFormSchema, formModel: Recordable, props: A
 
 export function getSchemaPropValue(
   propValue: any,
-  schema: AbFormSchema,
+  schema: FormSchema,
   formModel: Recordable,
-  props: AbFormProps,
+  props: FormProps,
   staticType: 'boolean' | 'string' | 'number' | 'array' | 'object' | 'any',
   def: any
 ) {
@@ -55,9 +55,9 @@ export function getSchemaPropValue(
 }
 
 export function getTrueComponentProps(
-  schema: AbFormSchema,
+  schema: FormSchema,
   formModel: Recordable,
-  props: AbFormProps
+  props: FormProps
 ): Recordable {
   if (schema.type === 'Step') {
     return {}
@@ -86,10 +86,10 @@ export function getTrueComponentProps(
 export function getComponentPropValue(
   truePropName: string,
   enableFn: boolean,
-  schema: AbFormSchema,
+  schema: FormSchema,
   formModel: Recordable,
-  trueComponentProps: AbFormComponentProps,
-  props: AbFormProps,
+  trueComponentProps: FormComponentProps,
+  props: FormProps,
   def: any
 ) {
   if (!schema.componentProps) {
@@ -108,7 +108,7 @@ export function getComponentPropValue(
 export function getComponentEventFunction(
   eventValue: any,
   form: Recordable,
-  schema: AbFormSchema,
+  schema: FormSchema,
   disabled: boolean,
   excontext: Recordable
 ) {
@@ -118,7 +118,7 @@ export function getComponentEventFunction(
   return () => undefined
 }
 
-export function getSlotKey(schema: AbFormSchema) {
+export function getSlotKey(schema: FormSchema) {
   return (schema.key || schema.field || '').replace(/\./g, '-')
 }
 

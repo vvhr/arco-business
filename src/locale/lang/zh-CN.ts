@@ -126,23 +126,23 @@ const zhCN: LocaleConfig = {
         '[Table] 配置错误，请检查 column.editProps.component 是否正确，请检查列配置'
     },
     form: {
-      componentNotExist: '[AeForm] {type} 类型组件配置异常，组件 {component} 不存在',
-      componentError: '[AeForm] {type} 类型组件配置异常，请检查组件 {component} 是否正确！',
+      componentNotExist: '[Form] {type} 类型组件配置异常，组件 {component} 不存在',
+      componentError: '[Form] {type} 类型组件配置异常，请检查组件 {component} 是否正确！',
       customComponentError:
-        '[AeForm] 自定义组件配置异常，如果您预期使用自定义渲染组件，请使用 render 属性或 slot 编写组件内容',
-      keyRequired: '[AeForm] 组件必须设置 key 属性或 field 属性，无法渲染 schema',
-      nestedStepNotSupported: '[AeForm] 不支持嵌套 Step 类型子组件，无法渲染 schema',
+        '[Form] 自定义组件配置异常，如果您预期使用自定义渲染组件，请使用 render 属性或 slot 编写组件内容',
+      keyRequired: '[Form] 组件必须设置 key 属性或 field 属性，无法渲染 schema',
+      nestedStepNotSupported: '[Form] 不支持嵌套 Step 类型子组件，无法渲染 schema',
       nestedDescriptionsNotSupported:
-        '[AeForm] 不支持嵌套 Descriptions 类型子组件，无法渲染 schema',
-      nestedContainerNotSupported: '[AeForm] 不支持嵌套 Container 类型子组件，无法渲染 schema',
+        '[Form] 不支持嵌套 Descriptions 类型子组件，无法渲染 schema',
+      nestedContainerNotSupported: '[Form] 不支持嵌套 Container 类型子组件，无法渲染 schema',
       wrapInDescriptions:
-        '[AeForm] 在 desc 模式下，请将所有组件包裹在 Descriptions 组件内，当前组件未包裹在 Descriptions 内，请检查 schema',
+        '[Form] 在 desc 模式下，请将所有组件包裹在 Descriptions 组件内，当前组件未包裹在 Descriptions 内，请检查 schema',
       expressionCompileError: '表达式编译失败: {code}',
       expressionExecuteError: '表达式执行失败: {code}',
       dynamicPropertyError: '动态属性 {key} 设置错误',
-      componentExists: '[AeForm] 组件 {name} 已存在，将被覆盖',
-      configExists: '[AeForm] 组件配置 {name} 已存在，将被覆盖',
-      componentRegistered: '[AeForm] 通过 imports 属性导入的组件 {name} 已成功注册！'
+      componentExists: '[Form] 组件 {name} 已存在，将被覆盖',
+      configExists: '[Form] 组件配置 {name} 已存在，将被覆盖',
+      componentRegistered: '[Form] 通过 imports 属性导入的组件 {name} 已成功注册！'
     },
     upload: {
       compressError: '图片压缩失败'

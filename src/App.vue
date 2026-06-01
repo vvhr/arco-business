@@ -47,19 +47,16 @@
         <TabPane title="🚀 快速开始" key="start">
           <QuickStartExample v-if="activeTab === 'start'" />
         </TabPane>
-        <TabPane title="📝 AeForm 表单组件" key="form">
-          <FormExample v-if="activeTab === 'form'" :container-ref="containerRef" />
+        <TabPane title="📝 AbForm 表单" key="form">
+          <FormExample v-if="activeTab === 'form'" />
         </TabPane>
-        <TabPane title="📝 AbForm 表单组件" key="ab-form">
-          <FormExample2 v-if="activeTab === 'ab-form'" />
-        </TabPane>
-        <TabPane title="📊 AbTable 表格组件" key="table">
+        <TabPane title="📊 AbTable 表格" key="table">
           <TableExample v-if="activeTab === 'table'" />
         </TabPane>
-        <TabPane title="🎨 AbIcon 图标组件" key="icon">
+        <TabPane title="🎨 AbIcon 图标" key="icon">
           <IconExample v-if="activeTab === 'icon'" />
         </TabPane>
-        <TabPane title="📄 AbUpload 文件上传" key="upload">
+        <TabPane title="📄 AbUpload 上传" key="upload">
           <UploadExample v-if="activeTab === 'upload'" />
         </TabPane>
         <TabPane title="💬 AbModal 对话框" key="modal">
@@ -84,7 +81,6 @@ import Logo from '@/assets/logo.png'
 import { ref, onMounted } from 'vue'
 import { Tabs, TabPane } from '@arco-design/web-vue'
 import FormExample from './examples/FormExample.vue'
-import FormExample2 from './examples/FormExample2.vue'
 import TableExample from './examples/TableExample.vue'
 import IconExample from './examples/IconExample.vue'
 import UploadExample from './examples/UploadExample.vue'
@@ -96,7 +92,6 @@ import ComboInputExample from './examples/ComboInputExample.vue'
 
 const activeTab = ref('start')
 const isDark = ref(false)
-const containerRef = ref()
 // 初始化主题
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')

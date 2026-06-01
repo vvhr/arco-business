@@ -2,8 +2,7 @@ import type { App } from 'vue'
 import 'virtual:uno.css'
 
 // Import components
-import { AeForm } from './components/Form'
-import { AbForm } from './components/Form2'
+import { AbForm } from './components/Form'
 import { AbIcon } from './components/Icon'
 import { AbTable } from './components/Table'
 import { AbUpload } from './components/Upload'
@@ -17,25 +16,21 @@ import { VERSION_INFO, getVersionInfo, printVersionInfo } from './version'
 
 // Import
 import type {
-  FormImportItem,
-  FormImportItemConfig,
   TableFormImportItem,
   TableFormImportItemConfig
 } from './types/imports'
-import type { AbFormImportItem } from './components/Form2'
+import type { FormImportItem } from './components/Form'
 
 // Export global types
 export * from './types'
 
 export type {
   FormImportItem,
-  FormImportItemConfig,
-  AbFormImportItem,
   TableFormImportItem,
   TableFormImportItemConfig
 }
 // Export components
-export { AeForm, AbForm, AbIcon, AbTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
+export { AbForm, AbIcon, AbTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
 
 // Export version info
 export { VERSION_INFO, getVersionInfo, printVersionInfo }
@@ -43,80 +38,46 @@ export { VERSION_INFO, getVersionInfo, printVersionInfo }
 // Export component's types
 // Form
 export type {
+  FormAnchorLinkProps,
+  FormAnyComponentProps,
+  FormComponentEventFn,
+  FormComponentEvents,
+  FormComponentName,
+  FormComponentProps,
+  FormContainerName,
+  FormContainerSchema,
+  FormCustomSchema,
+  FormDecoratorName,
+  FormDecoratorSchema,
   FormDefineProps,
-  FormInstance,
-  FormExpose,
-  FormItemProps,
-  ComponentName,
-  FormSchema,
-  FormSlots,
+  FormDesignableColProps,
+  FormDesignableDirectives,
+  FormDisabledStyles,
   FormEmits,
-  FormSchemaProps,
+  FormExpose,
+  FormFieldNames,
+  FormImportItemConfig,
+  FormInputName,
+  FormInputSchema,
+  FormInstance,
+  FormItemProps,
+  FormLabelAlign,
+  FormLayout,
+  FormLayoutProps,
+  FormOutsideProps,
+  FormProps,
+  FormRawInstance,
+  FormSchema,
   FormSchemaBase,
-  StepSchema,
-  ContainerSchema,
-  DecoratorSchema,
-  InputerSchema,
-  CustomSchema,
-  ComponentProps,
-  ComponentEvent,
-  OptionKeys,
-  FormSchemaType,
-  FormSchemaFn,
   FormSchemaDomFn,
-  ComponentEventFn,
-  OutsidePropsDirection,
-  OutsidePropsPrependSlot,
-  OutsidePropsAppendSlot,
-  OutsidePropsPrependRender,
-  OutsidePropsAppendRender,
-  InsidePropsSlots,
-  InsidePropsRenders,
-  InsidePropsRender
+  FormSchemaFn,
+  FormSchemaProps,
+  FormSchemaType,
+  FormSize,
+  FormSlots,
+  FormStepSchema,
+  FormValidationErrors
 } from './components/Form'
-
-// AbForm
-export type {
-  AbFormAnchorLinkProps,
-  AbFormAnyComponentProps,
-  AbFormComponentEventFn,
-  AbFormComponentEvents,
-  AbFormComponentName,
-  AbFormComponentProps,
-  AbFormContainerName,
-  AbFormContainerSchema,
-  AbFormCustomSchema,
-  AbFormDecoratorName,
-  AbFormDecoratorSchema,
-  AbFormDefineProps,
-  AbFormDesignableColProps,
-  AbFormDesignableDirectives,
-  AbFormDisabledStyles,
-  AbFormEmits,
-  AbFormExpose,
-  AbFormFieldNames,
-  AbFormImportItemConfig,
-  AbFormInputName,
-  AbFormInputSchema,
-  AbFormInstance,
-  AbFormItemProps,
-  AbFormLabelAlign,
-  AbFormLayout,
-  AbFormLayoutProps,
-  AbFormOutsideProps,
-  AbFormProps,
-  AbFormRawInstance,
-  AbFormSchema,
-  AbFormSchemaBase,
-  AbFormSchemaDomFn,
-  AbFormSchemaFn,
-  AbFormSchemaProps,
-  AbFormSchemaType,
-  AbFormSize,
-  AbFormSlots,
-  AbFormStepSchema,
-  AbFormValidationErrors
-} from './components/Form2'
 
 // Table
 export type {
@@ -209,7 +170,7 @@ export { default as enUS } from './locale/lang/en-US'
 // Install options
 import { setLocale, setCustomLocale } from './locale'
 import type { Language, LocaleConfig, DeepPartial } from './locale/types'
-import { globalAbFormImports, globalFormImports, globalTableImports } from './utils/imports'
+import { globalFormImports, globalTableImports } from './utils/imports'
 import { addIconCollections } from './utils/icon'
 import type { IconCollection } from './utils/icon'
 
@@ -227,10 +188,6 @@ export interface InstallOptions {
    * 注册表单自定义组件
    */
   formImports?: FormImportItem[]
-  /**
-   * 注册 AbForm 自定义组件
-   */
-  abFormImports?: AbFormImportItem[]
   /**
    * 注册表格自定义编辑组件
    */
@@ -258,7 +215,6 @@ export interface InstallOptions {
 const install = (app: App, options?: InstallOptions) => {
   // 注册组件（所有组件都有 install 方法）
   const components = [
-    AeForm,
     AbForm,
     AbIcon,
     AbTable,
@@ -287,11 +243,6 @@ const install = (app: App, options?: InstallOptions) => {
   // 注册表单自定义组件
   if (options?.formImports) {
     globalFormImports.registerComponents(options.formImports)
-  }
-
-  // 注册 AbForm 自定义组件
-  if (options?.abFormImports) {
-    globalAbFormImports.registerComponents(options.abFormImports)
   }
 
   // 注册表格自定义编辑组件

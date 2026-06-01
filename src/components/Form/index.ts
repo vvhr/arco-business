@@ -1,48 +1,61 @@
-import Form from './src/Form.vue'
+import FormComponent from './src/AbForm.vue'
 import { withInstall } from '@/utils/install'
 import type { SFCWithInstall } from '@/utils/install'
+import type { DefineComponent } from 'vue'
+import type { FormExpose, FormProps } from './src/types.ts'
 
-export const AeForm: SFCWithInstall<typeof Form> = withInstall(Form)
-export default AeForm
+type FormPublicProps = Partial<Omit<FormProps, 'onChange'>> & {
+  onRegister?: (formRef: any) => any
+  onInit?: (form: Recordable) => any
+  onChange?: (data: { value: any; field: string; oldValue: any }) => any
+}
 
-export type FormDefineProps = InstanceType<typeof Form>['$props']
-export type { FormInstance, FormExpose } from './src/types/instance'
-export type { ComponentName } from './src/types/components'
-export type { FormSlots, FormEmits, FormSchemaProps, DesignableColProps } from './src/types/props'
+type FormPublicComponent = DefineComponent<FormPublicProps>
+
+export const AbForm: SFCWithInstall<FormPublicComponent> = withInstall(
+  FormComponent as unknown as FormPublicComponent
+)
+export default AbForm
+
+export type FormDefineProps = FormPublicProps
+export type FormInstance = InstanceType<FormPublicComponent> & FormExpose
 export type {
+  FormAnchorLinkProps,
+  FormAnyComponentProps,
+  FormComponentEventFn,
+  FormComponentEvents,
+  FormComponentName,
+  FormComponentProps,
+  FormContainerName,
+  FormContainerSchema,
+  FormCustomSchema,
+  FormDecoratorName,
+  FormDecoratorSchema,
+  FormDesignableColProps,
+  FormDesignableDirectives,
+  FormDisabledStyles,
+  FormEmits,
+  FormExpose,
+  FormFieldNames,
+  FormImportItem,
+  FormImportItemConfig,
+  FormInputName,
+  FormInputSchema,
+  FormItemProps,
+  FormLabelAlign,
+  FormLayout,
+  FormLayoutProps,
+  FormOutsideProps,
+  FormProps,
+  FormRawInstance,
   FormSchema,
   FormSchemaBase,
-  StepSchema,
-  ContainerSchema,
-  DecoratorSchema,
-  InputerSchema,
-  CustomSchema
-} from './src/types/schema'
-export type { OutsideProps, InsideProps, FormItemProps, LayoutProps } from './src/types/schema'
-export type {
-  AnyComponentProps,
-  ComponentProps,
-  ComponentEvent,
-  OptionKeys
-} from './src/types/schema-component'
-export type {
-  FormSchemaType,
+  FormSchemaDomFn,
   FormSchemaFn,
-  ComponentEventFn,
-  FormSchemaDomFn
-} from './src/types/schema-ext'
-export type {
-  OutsidePropsDirection,
-  OutsidePropsPrependSlot,
-  OutsidePropsAppendSlot,
-  OutsidePropsPrependRender,
-  OutsidePropsAppendRender
-} from './src/types/schema-ext'
-export type {
-  InsidePropsSlots,
-  InsidePropsRenders,
-  InsidePropsRender
-} from './src/types/schema-ext'
-
-// 兼容旧的导出方式
-export { AeForm as Form }
+  FormSchemaProps,
+  FormSchemaType,
+  FormSize,
+  FormSlots,
+  FormStepSchema,
+  FormValidationErrors
+} from './src/types.ts'

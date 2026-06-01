@@ -24,5 +24,5 @@ export function getVersionInfo() {
  * 打印版本信息到控制台
  */
 export function printVersionInfo() {
-  console.log('[Acro Business] Version Info:', VERSION_INFO)
+  console.log('[Arco Business] Version Info:', VERSION_INFO)
 }

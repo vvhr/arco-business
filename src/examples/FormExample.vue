@@ -1,1403 +1,904 @@
 <template>
   <div class="demo-section">
     <div class="section-header">
-      <h2>高级表单组件</h2>
-      <p>支持多种表单控件、自动校验、动态表单等功能</p>
+      <h2>AbForm 表单组件</h2>
+      <p>基于 Arco Design Vue 的独立新版表单组件</p>
     </div>
 
-    <el-card class="demo-card">
-      <template #header>
-        <div class="card-header">
-          <span>基础表单示例</span>
-          <div class="card-actions">
-            <el-radio-group v-model="enableBeauty">
-              <el-radio-button :value="true">样式美化</el-radio-button>
-              <el-radio-button :value="false">原生样式</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="mode">
-              <el-radio-button value="edit">编辑模式</el-radio-button>
-              <el-radio-button value="detail">详情模式</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="schemaProps.formItemProps.labelPosition">
-              <el-radio-button value="top">居上</el-radio-button>
-              <el-radio-button value="left">居左</el-radio-button>
-              <el-radio-button value="right">居右</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="enableAnchor">
-              <el-radio-button :value="true">导航锚点</el-radio-button>
-              <el-radio-button :value="false">隐藏导航</el-radio-button>
-            </el-radio-group>
-            <el-button type="primary" @click="onSubmit">提交</el-button>
-            <el-button style="margin-left: 0" @click="onReset">重置</el-button>
-          </div>
-        </div>
+    <Card class="demo-card" title="基础能力：全部输入组件">
+      <template #extra>
+        <Space wrap>
+          <Select v-model="basicLayout" size="small" :style="{ width: '132px' }" :options="layoutOptions" />
+          <Select v-model="basicAlign" size="small" :style="{ width: '116px' }" :options="alignOptions" />
+          <Switch v-model="basicDisabled" size="small" />
+          <Button size="small" type="primary" @click="validateBasic">校验</Button>
+          <Button size="small" @click="clearBasic">清空</Button>
+        </Space>
       </template>
-
-      <AeForm
-        ref="AeFormRef"
-        :model="formModel"
-        :schemas="formSchemas"
-        :schema-props="schemaProps"
-        :type="'form'"
-        :excontext="{}"
-        :anchor="enableAnchor"
-        :anchor-props="anchorProps"
-        :anchor-affix-style="anchorAffixStyle"
-        :auto-init-field="true"
-        :scroll-ref="containerRef"
-        :disabled="mode === 'detail'"
-        :imports="imports"
-        :class="enableBeauty ? 'element-plus-beauty' : ''"
+      <AbForm
+        ref="basicFormRef"
+        v-model:model="basicModel"
+        controlled
+        :schemas="basicSchemas"
+        :disabled="basicDisabled"
+        :disabled-styles="basicDisabledStyles"
+        :layout="basicLayout"
+        :label-align="basicAlign"
+        label-col-flex="112px"
+        :schema-props="basicSchemaProps"
+        @change="handleChange"
       />
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card">
-      <template #header>
-        <div class="card-header">
-          <span>描述表单示例</span>
-          <div class="card-actions">
-            <el-radio-group v-model="descriptionsDirection">
-              <el-radio-button value="vertical">垂直布局</el-radio-button>
-              <el-radio-button value="horizontal">水平布局</el-radio-button>
-            </el-radio-group>
-            <el-radio-group v-model="mode2">
-              <el-radio-button value="edit">编辑模式</el-radio-button>
-              <el-radio-button value="detail">详情模式</el-radio-button>
-            </el-radio-group>
-            <el-button type="primary" @click="onSubmit2">提交</el-button>
-            <el-button style="margin-left: 0" @click="onReset2">重置</el-button>
-          </div>
-        </div>
+    <Card class="demo-card" title="扩展信息：extra / help">
+      <AbForm
+        v-model:model="infoModel"
+        controlled
+        :schemas="infoSchemas"
+        layout="horizontal"
+        label-align="right"
+        label-col-flex="120px"
+        :schema-props="{ layoutProps: { span: 12 }, componentProps: { allowClear: true } }"
+      >
+        <template #slotExtra--extra>
+          <Tag color="green">extra 插槽：始终显示在控件下方</Tag>
+        </template>
+        <template #slotHelp--help>
+          <span class="help-slot">help 插槽：会与校验提示共享位置</span>
+        </template>
+      </AbForm>
+    </Card>
+
+    <Card class="demo-card" title="容器与锚点">
+      <div ref="anchorScrollRef" class="anchor-frame">
+        <AbForm
+          v-model:model="containerModel"
+          controlled
+          anchor
+          :scroll-ref="anchorScrollRef"
+          :schemas="containerSchemas"
+          :imports="containerImports"
+          :anchor-props="{ smooth: true, changeHash: false, boundary: 12 }"
+          :anchor-affix-style="{ position: 'absolute', left: '12px', top: '12px' }"
+          :schema-props="{ layoutProps: { span: 12 }, componentProps: { allowClear: true } }"
+        />
+      </div>
+    </Card>
+
+    <Card class="demo-card" title="编辑能力：禁用态与嵌套表格">
+      <template #extra>
+        <Space>
+          <Switch v-model="editDisabled" size="small" />
+          <Button size="small" type="primary" @click="validateEdit">校验</Button>
+          <Button size="small" @click="clearEdit">清空</Button>
+        </Space>
       </template>
-      <AeForm
-        ref="AeDescFormRef"
-        :model="formModel2"
-        :schemas="formSchemas2"
-        :schema-props="schemaProps2"
-        :type="'desc'"
-        :excontext="{}"
-        :auto-init-field="true"
-        :disabled="mode2 === 'detail'"
-        :class="enableBeauty ? 'element-plus-beauty' : ''"
+      <AbForm
+        ref="editFormRef"
+        v-model:model="editModel"
+        controlled
+        :disabled="editDisabled"
+        :disabled-styles="editDisabledStyles"
+        :schemas="editSchemas"
+        layout="horizontal"
+        label-align="right"
+        label-col-flex="118px"
+        :schema-props="{ layoutProps: { span: 8 }, componentProps: { allowClear: true } }"
       />
-    </el-card>
+    </Card>
 
-    <el-card class="demo-card feature-card">
-      <template #header>
-        <span>✨ 核心特性</span>
-      </template>
-      <ul class="feature-list">
-        <li>🎯 支持多种表单控件（Input、Select、DatePicker 等）</li>
-        <li>✅ 内置自动校验规则（必填、邮箱、手机号等）</li>
-        <li>🔄 支持动态表单项（显示/隐藏、禁用/启用）</li>
-        <li>📋 支持表格嵌套（可编辑表格）</li>
-        <li>🎨 灵活的布局配置（栅格布局）</li>
-        <li>🔧 丰富的插槽支持（前置、后置、自定义渲染）</li>
-      </ul>
-    </el-card>
+    <Card class="demo-card" title="当前表单数据">
+      <pre class="state-view">{{
+        JSON.stringify({ basicModel, infoModel, containerModel, editModel }, null, 2)
+      }}</pre>
+    </Card>
   </div>
 </template>
 
 <script setup lang="tsx">
-import '@/styles/element-plus-beauty.less'
-import { ref, reactive } from 'vue'
-import { Form as AeForm, FormSchema, FormSchemaProps } from '@/components/Form'
+import { computed, defineComponent, h, ref } from 'vue'
+import {
+  Button,
+  Card,
+  Message,
+  Select,
+  Space,
+  Switch,
+  Tag
+} from '@arco-design/web-vue'
+import {
+  AbForm,
+  type FormImportItem,
+  type FormInstance,
+  type FormDisabledStyles,
+  type FormLayout,
+  type FormLabelAlign,
+  type FormSchema,
+  type FormSchemaProps
+} from '@/components/Form'
 import type { TableColumn } from '@/components/Table'
-import { ElMessage, ElUpload, ElCard } from 'element-plus'
-import type { UploadRawFile } from '@/components/Upload'
-import type { FormImportItem } from '@/types/imports'
-const props = defineProps({
-  containerRef: null
-})
-const imports: FormImportItem[] = [
+
+const basicFormRef = ref<FormInstance>()
+const editFormRef = ref<FormInstance>()
+const anchorScrollRef = ref<HTMLElement | null>(null)
+
+const basicLayout = ref<FormLayout>('horizontal')
+const basicAlign = ref<FormLabelAlign>('right')
+const basicDisabled = ref(true)
+const editDisabled = ref(false)
+const basicDisabledStyles: FormDisabledStyles = {
+  noPadding: true,
+  defaultCursor: true,
+  noSuffix: true
+}
+const editDisabledStyles: FormDisabledStyles = {
+  bgColor: false,
+  noPadding: true,
+  defaultCursor: true,
+  noSuffix: true
+}
+
+const layoutOptions = [
+  { label: 'horizontal', value: 'horizontal' },
+  { label: 'vertical', value: 'vertical' },
+  { label: 'inline', value: 'inline' }
+]
+
+const alignOptions = [
+  { label: 'right', value: 'right' },
+  { label: 'left', value: 'left' }
+]
+
+const departmentOptions = [
+  { label: '研发中心', value: 'rd' },
+  { label: '交付中心', value: 'delivery' },
+  { label: '客户成功', value: 'success' }
+]
+
+const roleOptions = [
+  { label: '管理员', value: 'admin' },
+  { label: '项目经理', value: 'pm' },
+  { label: '开发工程师', value: 'dev' }
+]
+
+const treeOptions = [
   {
-    name: 'ElUpload',
-    component: ElUpload,
-    config: {
-      modelValueKey: 'fileList'
-    },
-    isArrayFn: () => true
-  },
-  {
-    name: 'ElCard',
-    component: ElCard
+    label: '总部',
+    value: 'hq',
+    children: [
+      {
+        label: '华东区',
+        value: 'east',
+        children: [
+          { label: '上海', value: 'shanghai' },
+          { label: '杭州', value: 'hangzhou' }
+        ]
+      },
+      {
+        label: '华南区',
+        value: 'south',
+        children: [{ label: '深圳', value: 'shenzhen' }]
+      }
+    ]
   }
 ]
-const enableBeauty = ref(true)
-const enableAnchor = ref(false)
-const mode = ref('edit')
-const mode2 = ref('edit')
-const anchorProps = reactive({
-  container: props.containerRef,
-  offset: 50,
-  bound: 15,
-  duration: 300,
-  type: 'underline',
-  selectScrollTop: false
-})
-const anchorAffixStyle = {
-  width: '150px',
-  boxShadow: '1px 0px 4px 0 rgba(169,169,169,1)'
+
+const transferOptions = [
+  { label: '线索导入', value: 'lead' },
+  { label: '合同审批', value: 'contract' },
+  { label: '回款提醒', value: 'payment' },
+  { label: '售后工单', value: 'ticket' }
+]
+
+const tableColumns: TableColumn[] = [
+  { field: 'name', label: '事项', width: 160 },
+  { field: 'owner', label: '负责人', width: 120 },
+  { field: 'status', label: '状态', width: 120 }
+]
+
+const basicTableData = [
+  { id: 1, name: '需求确认', owner: '张三', status: 'done' },
+  { id: 2, name: '联调排期', owner: '李四', status: 'doing' }
+]
+
+const uploadFile = {
+  name: '迁移说明.txt',
+  url: 'https://example.com/ab-form-demo.txt'
 }
-const schemaProps = reactive<FormSchemaProps>({
-  layoutProps: {
-    span: 12
-  },
+
+const basicModel = ref<Recordable>({
+  autoComplete: 'AB-2026-001',
+  autoCompleteSearch: 'AB-2026-002',
+  cascader: ['hq', 'east', 'shanghai'],
+  cascaderMultiple: [
+    ['hq', 'east', 'shanghai'],
+    ['hq', 'south', 'shenzhen']
+  ],
+  checkboxGroup: ['pm'],
+  checkboxGroupVertical: ['admin', 'dev'],
+  colorPicker: '#165dff',
+  colorPickerDisabledAlpha: '#ff7d00',
+  comboInput: 'SKU-2026/研发中心',
+  datePicker: '2026-06-02',
+  datePickerMonth: '2026-06',
+  datePickerYear: '2026',
+  rangePicker: ['2026-06-02', '2026-06-09'],
+  rangePickerTime: ['2026-06-02 09:00:00', '2026-06-09 18:30:00'],
+  input: 'Arco 迁移项目',
+  inputPassword: 'secret-2026',
+  inputSearch: '迁移检索关键字',
+  inputNumber: 12,
+  inputNumberButton: 88,
+  inputTag: ['Arco', 'Form'],
+  inputTagCollapsed: ['表单', '禁用态', 'Arco', '多标签'],
+  mention: '@owner 请确认',
+  radioGroup: 'project',
+  radioGroupNormal: 'dev',
+  rate: 4,
+  rateHalf: 3.5,
+  select: 'rd',
+  selectMultiple: ['rd', 'delivery'],
+  slider: 62,
+  sliderRange: [20, 80],
+  switchValue: true,
+  table: basicTableData,
+  timePicker: '09:30:00',
+  timeRange: ['09:00:00', '18:30:00'],
+  transfer: ['lead', 'payment'],
+  treeSelect: 'shanghai',
+  treeSelectMultiple: ['shanghai', 'hangzhou'],
+  textarea: '这是一个用于验证 Textarea 的较长备注内容。',
+  textareaCount: '开启字数统计与禁用态阅读效果。',
+  upload: [uploadFile],
+  uploadPicture: [uploadFile],
+  verificationCode: '123456'
+})
+
+const basicSchemaProps = computed<FormSchemaProps>(() => ({
+  layoutProps: { span: basicLayout.value === 'inline' ? 24 : 8 },
+  componentProps: { allowClear: true },
   formItemProps: {
-    labelPosition: 'top'
+    validateTrigger: ['change', 'blur']
+  }
+}))
+
+const basicSchemas: FormSchema[] = [
+  {
+    field: 'autoComplete',
+    component: 'AutoComplete',
+    label: 'AutoComplete',
+    componentProps: { data: ['AB-2026-001', 'AB-2026-002', 'AB-2026-003'] },
+    formItemProps: { autoRules: ['isRequired'] }
   },
-  componentProps: {
-    clearable: true,
-    autoPlaceholder: true
+  {
+    field: 'autoCompleteSearch',
+    component: 'AutoComplete',
+    label: 'AutoComplete 搜索',
+    componentProps: {
+      data: ['AB-2026-001', 'AB-2026-002', 'AB-2026-003'],
+      allowSearch: true
+    }
+  },
+  {
+    field: 'cascader',
+    component: 'Cascader',
+    label: 'Cascader',
+    componentProps: { options: treeOptions }
+  },
+  {
+    field: 'cascaderMultiple',
+    component: 'Cascader',
+    label: 'Cascader 多选',
+    componentProps: { options: treeOptions, multiple: true }
+  },
+  {
+    field: 'checkboxGroup',
+    component: 'CheckboxGroup',
+    label: 'CheckboxGroup',
+    componentProps: { options: roleOptions }
+  },
+  {
+    field: 'checkboxGroupVertical',
+    component: 'CheckboxGroup',
+    label: 'Checkbox 纵向',
+    componentProps: { options: roleOptions, direction: 'vertical' }
+  },
+  {
+    field: 'colorPicker',
+    component: 'ColorPicker',
+    label: 'ColorPicker'
+  },
+  {
+    field: 'colorPickerDisabledAlpha',
+    component: 'ColorPicker',
+    label: 'ColorPicker 文本',
+    componentProps: { showText: true, disabledAlpha: true }
+  },
+  {
+    field: 'comboInput',
+    component: 'ComboInput',
+    label: 'ComboInput',
+    componentProps: {
+      template: [
+        { tag: 'input', prop: 'sku', componentProps: { placeholder: '编号' } },
+        { tag: 'span', content: ' / ' },
+        {
+          tag: 'select',
+          prop: 'area',
+          componentProps: { options: departmentOptions, placeholder: '部门' }
+        }
+      ]
+    }
+  },
+  {
+    field: 'datePicker',
+    component: 'DatePicker',
+    label: 'DatePicker',
+    componentProps: { valueFormat: 'YYYY-MM-DD' }
+  },
+  {
+    field: 'datePickerMonth',
+    component: 'DatePicker',
+    label: 'DatePicker 月',
+    componentProps: { mode: 'month', valueFormat: 'YYYY-MM' }
+  },
+  {
+    field: 'datePickerYear',
+    component: 'DatePicker',
+    label: 'DatePicker 年',
+    componentProps: { mode: 'year', valueFormat: 'YYYY' }
+  },
+  {
+    field: 'rangePicker',
+    component: 'RangePicker',
+    label: 'RangePicker',
+    componentProps: { valueFormat: 'YYYY-MM-DD' }
+  },
+  {
+    field: 'rangePickerTime',
+    component: 'RangePicker',
+    label: 'RangePicker 时间',
+    componentProps: {
+      showTime: true,
+      valueFormat: 'YYYY-MM-DD HH:mm:ss'
+    }
+  },
+  {
+    field: 'input',
+    component: 'Input',
+    label: 'Input'
+  },
+  {
+    field: 'inputPassword',
+    component: 'Input',
+    label: 'Input 密码',
+    componentProps: { type: 'password' }
+  },
+  {
+    field: 'inputSearch',
+    component: 'Input',
+    label: 'Input 前后缀',
+    insideProps: {
+      renders: {
+        prefix: 'Q',
+        suffix: 'Enter'
+      }
+    }
+  },
+  {
+    field: 'inputNumber',
+    component: 'InputNumber',
+    label: 'InputNumber',
+    componentProps: { min: 0, max: 100 }
+  },
+  {
+    field: 'inputNumberButton',
+    component: 'InputNumber',
+    label: 'InputNumber 按钮',
+    componentProps: { min: 0, max: 100, mode: 'button' }
+  },
+  {
+    field: 'inputTag',
+    component: 'InputTag',
+    label: 'InputTag'
+  },
+  {
+    field: 'inputTagCollapsed',
+    component: 'InputTag',
+    label: 'InputTag 折叠',
+    componentProps: { maxTagCount: 2 }
+  },
+  {
+    field: 'mention',
+    component: 'Mention',
+    label: 'Mention',
+    componentProps: { options: ['owner', 'pm', 'dev'] }
+  },
+  {
+    field: 'radioGroup',
+    component: 'RadioGroup',
+    label: 'RadioGroup',
+    componentProps: {
+      type: 'button',
+      options: [
+        { label: '项目', value: 'project' },
+        { label: '运维', value: 'ops' }
+      ]
+    }
+  },
+  {
+    field: 'radioGroupNormal',
+    component: 'RadioGroup',
+    label: 'Radio 普通',
+    componentProps: { options: roleOptions }
+  },
+  {
+    field: 'rate',
+    component: 'Rate',
+    label: 'Rate'
+  },
+  {
+    field: 'rateHalf',
+    component: 'Rate',
+    label: 'Rate 半星',
+    componentProps: { allowHalf: true }
+  },
+  {
+    field: 'select',
+    component: 'Select',
+    label: 'Select',
+    componentProps: { options: departmentOptions }
+  },
+  {
+    field: 'selectMultiple',
+    component: 'Select',
+    label: 'Select 多选',
+    componentProps: { options: departmentOptions, multiple: true }
+  },
+  {
+    field: 'slider',
+    component: 'Slider',
+    label: 'Slider'
+  },
+  {
+    field: 'sliderRange',
+    component: 'Slider',
+    label: 'Slider 范围',
+    componentProps: { range: true }
+  },
+  {
+    field: 'switchValue',
+    component: 'Switch',
+    label: 'Switch'
+  },
+  {
+    field: 'table',
+    component: 'Table',
+    label: 'Table',
+    layoutProps: { span: 24 },
+    componentProps: {
+      columns: tableColumns,
+      bordered: { cell: true },
+      indexable: { label: '序号', width: 70 },
+      pagination: false
+    }
+  },
+  {
+    field: 'timePicker',
+    component: 'TimePicker',
+    label: 'TimePicker'
+  },
+  {
+    field: 'timeRange',
+    component: 'TimePicker',
+    label: 'TimePicker 范围',
+    componentProps: { type: 'time-range' }
+  },
+  {
+    field: 'transfer',
+    component: 'Transfer',
+    label: 'Transfer',
+    layoutProps: { span: 16 },
+    componentProps: { options: transferOptions }
+  },
+  {
+    field: 'treeSelect',
+    component: 'TreeSelect',
+    label: 'TreeSelect',
+    componentProps: { options: treeOptions }
+  },
+  {
+    field: 'treeSelectMultiple',
+    component: 'TreeSelect',
+    label: 'TreeSelect 多选',
+    componentProps: { options: treeOptions, multiple: true }
+  },
+  {
+    field: 'textarea',
+    component: 'Textarea',
+    label: 'Textarea',
+    layoutProps: { span: 16 },
+    componentProps: { autoSize: { minRows: 2, maxRows: 4 } }
+  },
+  {
+    field: 'textareaCount',
+    component: 'Textarea',
+    label: 'Textarea 字数',
+    layoutProps: { span: 16 },
+    componentProps: { maxLength: 120, showWordLimit: true, autoSize: { minRows: 2, maxRows: 4 } }
+  },
+  {
+    field: 'upload',
+    component: 'Upload',
+    label: 'Upload',
+    value: [],
+    layoutProps: { span: 16 },
+    componentProps: {
+      listType: 'text',
+      limit: 3,
+      tips: 'AbUpload 列表模式',
+      upload: async (file: File) => ({ name: file.name, url: URL.createObjectURL(file) })
+    }
+  },
+  {
+    field: 'uploadPicture',
+    component: 'Upload',
+    label: 'Upload 图片',
+    value: [],
+    layoutProps: { span: 16 },
+    componentProps: {
+      listType: 'picture',
+      limit: 2,
+      tips: 'AbUpload 图片模式',
+      upload: async (file: File) => ({ name: file.name, url: URL.createObjectURL(file) })
+    }
+  },
+  {
+    field: 'verificationCode',
+    component: 'VerificationCode',
+    label: 'VerificationCode',
+    componentProps: { length: 6 }
+  }
+]
+
+const infoModel = ref<Recordable>({
+  staticInfo: '静态说明',
+  dynamicInfo: 'dynamic',
+  slotExtra: 'slot-extra',
+  slotHelp: '',
+  validateHelp: ''
+})
+
+const infoSchemas: FormSchema[] = [
+  {
+    field: 'staticInfo',
+    component: 'Input',
+    label: '静态 extra/help',
+    formItemProps: {
+      extra: '静态 extra：适合放长期展示的补充信息',
+      help: '静态 help：未触发校验时显示'
+    }
+  },
+  {
+    field: 'dynamicInfo',
+    component: 'Select',
+    label: '动态 extra',
+    componentProps: {
+      options: [
+        { label: '标准模式', value: 'standard' },
+        { label: '高级模式', value: 'dynamic' }
+      ]
+    },
+    formItemProps: {
+      extraRender: form => form.dynamicInfo === 'dynamic'
+        ? h(Tag, { color: 'arcoblue' }, () => 'extraRender：高级模式已启用')
+        : 'extraRender：标准模式',
+      helpRender: form => `helpRender：当前值 ${form.dynamicInfo || '-'}`
+    }
+  },
+  {
+    field: 'slotExtra',
+    component: 'Input',
+    label: 'extra 插槽',
+    formItemProps: {
+      extra: '该文本会被同名 extra 插槽覆盖'
+    }
+  },
+  {
+    field: 'slotHelp',
+    component: 'Input',
+    label: 'help 插槽',
+    formItemProps: {
+      help: '该文本会被同名 help 插槽覆盖'
+    }
+  },
+  {
+    field: 'validateHelp',
+    component: 'Input',
+    label: '校验覆盖 help',
+    formItemProps: {
+      autoRules: ['isRequired'],
+      help: '点击校验后，必填错误会占用 help 位置'
+    }
+  }
+]
+
+const CardContainer = defineComponent({
+  name: 'AbFormDemoCardContainer',
+  props: {
+    label: String,
+    extra: String
+  },
+  setup(props, { slots }) {
+    return () =>
+      h(
+        Card,
+        { class: 'custom-container-card', title: props.label, bordered: true },
+        {
+          extra: props.extra ? () => props.extra : undefined,
+          default: () => slots.default?.()
+        }
+      )
   }
 })
 
-const schemaProps2 = reactive<FormSchemaProps>({
-  layoutProps: {
-    span: 12
-  },
-  formItemProps: {},
-  componentProps: {
-    clearable: true,
-    autoPlaceholder: true
+const containerImports: FormImportItem[] = [
+  {
+    name: 'CardContainer',
+    component: CardContainer
   }
+]
+
+const containerModel = ref<Recordable>({
+  projectName: 'AbForm 重构',
+  owner: '张三',
+  summary: '容器示例',
+  budget: 180000,
+  deliveryTime: '10:00:00',
+  risk: '中',
+  comment: ''
 })
 
-const formModel = ref({
-  username: '张三',
-  idCard: '',
-  age: 24,
-  sex: 'male',
-  skills: ['html', 'css', 'vue'],
-  amount: '12345.01',
-  email: '123456',
-  emailDomain: '@163.com',
-  major: '1',
-  status: '',
-  hobby: ['eat', 'sleep'],
-  list: [{ name: '', age: '', sex: '' }],
-  address: [],
-  longLabel:
-    '臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间：尔来二十有一年矣。',
-  longLabel2: '',
-  images: [
-    {
-      id: 1,
-      name: '示例图片1.png',
-      url: 'http://image.howcat.cn/thumbnails/d51a6dbd5758ab999d1246154f2d3178.png'
-    },
-    {
-      id: 2,
-      name: '示例图片2.png',
-      url: 'https://image.howcat.cn/thumbnails/5d0a2d8352a09debab8f8d233a8fc67d.png'
-    }
-  ],
-  files: [
-    {
-      name: '示例文件.pdf',
-      url: 'https://example.com/template.pdf'
-    },
-    {
-      name: '示例文件.xlsx',
-      url: 'https://example.com/template.xlsx'
-    },
-    {
-      name: '示例文件.docx',
-      url: 'https://example.com/template.docx'
-    }
-  ],
-  files2: [
-    {
-      name: 'food.jpeg',
-      url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-    },
-    {
-      name: 'food2.jpeg',
-      url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-    }
+const containerSchemas: FormSchema[] = [
+  {
+    key: 'baseGroup',
+    type: 'Container',
+    component: 'Group',
+    label: '内置 Group 容器',
+    componentProps: { decor: true, bg: true },
+    layoutProps: { span: 24 },
+    children: [
+      { field: 'projectName', component: 'Input', label: '项目名称' },
+      { field: 'owner', component: 'Input', label: '负责人' }
+    ]
+  },
+  {
+    key: 'blankGroup',
+    type: 'Container',
+    component: 'Blank',
+    label: '内置 Blank 容器',
+    layoutProps: { span: 24 },
+    children: [
+      { field: 'summary', component: 'Textarea', label: '摘要', layoutProps: { span: 24 } }
+    ]
+  },
+  {
+    key: 'customCardGroup',
+    type: 'Container',
+    component: 'CardContainer',
+    label: '自定义 Card 容器',
+    componentProps: { extra: '通过 imports 注册' },
+    layoutProps: { span: 24 },
+    children: [
+      { field: 'budget', component: 'InputNumber', label: '预算', componentProps: { min: 0 } },
+      { field: 'deliveryTime', component: 'TimePicker', label: '交付时间' }
+    ]
+  },
+  {
+    key: 'deliveryDisclosure',
+    type: 'Container',
+    component: 'Disclosure',
+    label: '内置 Disclosure 容器',
+    componentProps: { expand: true, dividerPosition: 'left', extra: '可折叠' },
+    layoutProps: { span: 24 },
+    children: [
+      {
+        field: 'risk',
+        component: 'Select',
+        label: '风险等级',
+        componentProps: {
+          options: [
+            { label: '低', value: '低' },
+            { label: '中', value: '中' },
+            { label: '高', value: '高' }
+          ]
+        }
+      },
+      {
+        field: 'comment',
+        component: 'Textarea',
+        label: '备注',
+        layoutProps: { span: 24 },
+        componentProps: { autoSize: { minRows: 3, maxRows: 5 } }
+      }
+    ]
+  }
+]
+
+const editModel = ref<Recordable>({
+  name: '实施服务包',
+  type: 'service',
+  owners: ['pm'],
+  region: ['hq', 'east', 'shanghai'],
+  startDate: '2026-06-02',
+  activeRange: ['2026-06-02', '2026-07-02'],
+  hour: '09:00:00',
+  amount: 25000,
+  progress: 45,
+  enabled: true,
+  theme: '#00b42a',
+  tags: ['重点'],
+  remark: '编辑态示例',
+  items: [
+    { id: 1, name: '需求分析', quantity: 2, role: 'pm', date: '2026-06-02', enabled: true },
+    { id: 2, name: '上线支持', quantity: 1, role: 'dev', date: '2026-06-10', enabled: false }
   ]
 })
 
-const formModel2 = ref({
-  avatar: [
-    {
-      name: '示例图片1.png',
-      url: 'http://image.howcat.cn/thumbnails/d51a6dbd5758ab999d1246154f2d3178.png'
-    }
-  ],
-  username: '张三',
-  idCard: '420521202001010011',
-  sex: 'male',
-  skills: ['html', 'css', 'vue'],
-  amount: '12345.01',
-  email: '123456',
-  emailDomain: '@163.com',
-  status: 'active',
-  hobby: ['eat', 'sleep'],
-  list: [{ name: '', age: '', sex: '' }],
-  longLabel:
-    '臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间：尔来二十有一年矣。'
-})
-const descriptionsDirection = ref<'vertical' | 'horizontal'>('horizontal')
-const formSchemas = reactive<FormSchema[]>([
+const editItemColumns: TableColumn[] = [
   {
-    key: 'baseInfo',
-    type: 'Decorator',
-    component: 'Divider',
-    insideProps: {
-      renders: {
-        default: () => '基本信息'
-      }
-    },
-    anchorLinkProps: {
-      enable: true,
-      title: '基本信息'
-    },
-    layoutProps: { alone: true, span: 24 }
-  },
-  {
-    field: 'username',
-    label: '用户名',
-    value: '',
-    component: 'Input',
-    layoutProps: { span: 12 },
-    formItemProps: {
-      autoRules: ['isRequired']
+    field: 'name',
+    label: '事项',
+    width: 180,
+    editProps: {
+      component: 'Input',
+      formItemProps: { autoRules: ['isRequired'] }
     }
   },
   {
-    field: 'idCard',
-    label: '证件号码',
-    value: '',
-    component: 'Input',
-    layoutProps: { span: 12 },
-    formItemProps: {
-      autoRules: ['isRequired', 'isIdCard']
+    field: 'quantity',
+    label: '数量',
+    width: 130,
+    editProps: {
+      component: 'InputNumber',
+      componentProps: { min: 1 },
+      formItemProps: { autoRules: ['isRequired'] }
     }
   },
   {
-    field: 'amount',
-    label: '余额',
-    value: '',
-    component: 'Input',
-    insideProps: {
-      renders: {
-        append: () => '元'
-      }
-    },
-    formItemProps: {
-      autoRules: ['isRequired']
-    },
-    layoutProps: { span: 12 }
+    field: 'role',
+    label: '角色',
+    width: 160,
+    editProps: {
+      component: 'Select',
+      componentProps: { options: roleOptions },
+      formItemProps: { autoRules: ['isRequired'] }
+    }
   },
   {
-    field: 'email',
-    label: '邮箱号',
-    value: '',
-    component: 'Input',
+    field: 'date',
+    label: '日期',
+    width: 190,
+    editProps: {
+      component: 'DatePicker',
+      componentProps: { valueFormat: 'YYYY-MM-DD' }
+    }
+  },
+  {
+    field: 'enabled',
+    label: '启用',
+    width: 120,
+    editProps: {
+      component: 'Switch'
+    }
+  }
+]
+
+const editSchemas: FormSchema[] = [
+  { field: 'name', component: 'Input', label: '名称', formItemProps: { autoRules: ['isRequired'] } },
+  {
+    field: 'type',
+    component: 'RadioGroup',
+    label: '类型',
     componentProps: {
-      style: { flex: 1 }
-    },
-    outsideProps: {
-      enable: true,
-      direction: 'row',
-      style: { gap: '10px' },
-      appendRender: (form: Recordable, column: FormSchema, disabled: boolean) => {
-        const domains = ['@163.com', '@qq.com', '@gmail.com']
-        return (
-          <el-select vModel={form.emailDomain} style={'width: 120px'} disabled={disabled}>
-            {domains.map(domain => (
-              <el-option value={domain}></el-option>
-            ))}
-          </el-select>
-        )
-      }
-    },
-    formItemProps: {
-      autoRules: ['isRequired']
-    },
-    layoutProps: { span: 12 }
-  },
-  {
-    key: 'age1',
-    field: 'age',
-    label: '年龄',
-    value: null,
-    component: 'InputNumber',
-    layoutProps: { span: 8 },
-    componentProps: {
-      style: { width: '100%' },
-      precision: 0,
-      min: 1,
-      step: 1
-    },
-    formItemProps: {
-      subLabel: '使用 InputNumber 默认控制按钮',
-      autoRules: ['isRequired', 'onlyNumber']
-    }
-  },
-  {
-    key: 'age2',
-    field: 'age',
-    label: '年龄',
-    value: null,
-    component: 'InputNumber',
-    layoutProps: { span: 8 },
-    componentProps: {
-      style: { width: '100%' },
-      precision: 0,
-      min: 1,
-      step: 1,
-      controlsPosition: 'right'
-    },
-    formItemProps: {
-      subLabel: '使用 InputNumber 居右控制按钮',
-      autoRules: ['isRequired', 'onlyNumber']
-    }
-  },
-  {
-    key: 'age3',
-    field: 'age',
-    label: '年龄',
-    value: null,
-    component: 'InputNumber',
-    layoutProps: { span: 8 },
-    componentProps: {
-      style: { width: '100%' },
-      precision: 0,
-      min: 1,
-      step: 1,
-      controls: false,
-      align: 'left'
-    },
-    insideProps: {
-      renders: {
-        suffix: () => '周岁'
-      }
-    },
-    formItemProps: {
-      subLabel: '无控制按钮 使用插槽添加后缀',
-      autoRules: ['isRequired', 'onlyNumber']
-    }
-  },
-  {
-    key: 'sex1',
-    field: 'sex',
-    label: '性别',
-    value: '',
-    component: 'Radio',
-    componentProps: {
+      type: 'button',
       options: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' }
+        { label: '服务', value: 'service' },
+        { label: '产品', value: 'product' }
       ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 Radio 默认类型',
-      autoRules: ['isRequired']
     }
   },
   {
-    key: 'sex2',
-    field: 'sex',
-    label: '性别',
-    value: '',
-    component: 'Radio',
-    componentProps: {
-      options: [
-        { label: '男', value: 'male', border: true },
-        { label: '女', value: 'female', border: true }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 Radio + border',
-      autoRules: ['isRequired']
-    }
+    field: 'owners',
+    component: 'CheckboxGroup',
+    label: '成员',
+    componentProps: { options: roleOptions }
   },
   {
-    key: 'sex3',
-    field: 'sex',
-    label: '性别',
-    component: 'RadioButton',
-    componentProps: {
-      options: [
-        { label: '男', value: 'male' },
-        { label: '女', value: 'female' }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 RadioButton 类型',
-      autoRules: ['isRequired']
-    }
-  },
-  {
-    key: 'skillsAndMajor',
-    type: 'Decorator',
-    component: 'Divider',
-    insideProps: {
-      renders: {
-        default: () => '专业与技能'
-      }
-    },
-    anchorLinkProps: {
-      enable: true,
-      title: '专业与技能'
-    },
-    layoutProps: { alone: true, span: 24 }
-  },
-  {
-    key: 'skills1',
-    field: 'skills',
-    label: '技能',
-    value: [],
-    component: 'Checkbox',
-    componentProps: {
-      options: [
-        { label: 'HTML', value: 'html' },
-        { label: 'CSS', value: 'css' },
-        { label: 'JavaScript', value: 'javascript' },
-        { label: 'Vue', value: 'vue' },
-        { label: 'React', value: 'react' }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'skills2',
-    field: 'skills',
-    label: '技能',
-    value: [],
-    component: 'Checkbox',
-    componentProps: {
-      options: [
-        { label: 'HTML', value: 'html', border: true },
-        { label: 'CSS', value: 'css', border: true },
-        { label: 'JavaScript', value: 'javascript', border: true },
-        { label: 'Vue', value: 'vue', border: true },
-        { label: 'React', value: 'react', border: true }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'skills3',
-    field: 'skills',
-    label: '技能',
-    value: [],
-    component: 'CheckboxButton',
-    componentProps: {
-      options: [
-        { label: 'HTML', value: 'html' },
-        { label: 'CSS', value: 'css' },
-        { label: 'JavaScript', value: 'javascript' },
-        { label: 'Vue', value: 'vue' },
-        { label: 'React', value: 'react' }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    field: 'major',
-    label: '专业',
-    value: '',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '计算机与科学', value: '1' },
-        { label: '软件工程', value: '2' },
-        { label: '物联网工程', value: '3' },
-        { label: 'AI 人工智能', value: '4' },
-        { label: '网络工程', value: '5' }
-      ]
-    },
-    formItemProps: {
-      autoRules: ['isRequired']
-    },
-    layoutProps: { span: 12 }
-  },
-  {
-    field: 'status',
-    label: '状态',
-    value: '',
-    component: 'Select',
-    componentProps: {
-      options: [
-        { label: '正常', value: 'active', type: 'success' },
-        { label: '禁用', value: 'inactive', type: 'danger' }
-      ]
-    },
-    formItemProps: {
-      autoRules: ['isRequired']
-    },
-    layoutProps: { span: 12 }
-  },
-  {
-    key: 'hobby1',
-    field: 'hobby',
-    label: '爱好',
-    value: [],
-    component: 'Select',
-    componentProps: {
-      multiple: true,
-      options: [
-        { label: '吃饭', value: 'eat' },
-        { label: '睡觉', value: 'sleep' },
-        { label: '打游戏', value: 'game' },
-        { label: '看电影', value: 'movie' }
-      ]
-    },
-    formItemProps: {
-      subLabel: '多选模式 默认为信息色 禁用时效果不好'
-      // autoRules: ['isRequiredArray']
-    },
-    layoutProps: { span: 8 }
-  },
-  {
-    key: 'hobby2',
-    field: 'hobby',
-    label: '爱好',
-    value: [],
-    component: 'Select',
-    componentProps: {
-      multiple: true,
-      tagType: 'success',
-      options: [
-        { label: '吃饭', value: 'eat' },
-        { label: '睡觉', value: 'sleep' },
-        { label: '打游戏', value: 'game' },
-        { label: '看电影', value: 'movie' }
-      ]
-    },
-    formItemProps: {
-      subLabel: '多选模式 成功色'
-      // autoRules: ['isRequiredArray']
-    },
-    layoutProps: { span: 8 }
-  },
-  {
-    key: 'hobby3',
-    field: 'hobby',
-    label: '爱好',
-    value: [],
-    component: 'Select',
-    componentProps: {
-      multiple: true,
-      tagType: 'primary',
-      tagEffect: 'dark',
-      options: [
-        { label: '吃饭', value: 'eat' },
-        { label: '睡觉', value: 'sleep' },
-        { label: '打游戏', value: 'game' },
-        { label: '看电影', value: 'movie' }
-      ]
-    },
-    formItemProps: {
-      subLabel: '多选模式 主题色 深色效果'
-      // autoRules: ['isRequiredArray']
-    },
-    layoutProps: { span: 8 }
-  },
-  {
-    key: 'address1',
-    field: 'address',
-    label: '地址',
-    value: [],
+    field: 'region',
     component: 'Cascader',
-    componentProps: {
-      style: { width: '100%' },
-      options: [
-        {
-          label: '中国',
-          value: 'CN',
-          children: [
-            { label: '北京', value: 'CN-BJ' },
-            { label: '上海', value: 'CN-SH' },
-            { label: '天津', value: 'CN-TJ' },
-            { label: '河北', value: 'CN-HE' },
-            { label: '山西', value: 'CN-SX' },
-            { label: '辽宁', value: 'CN-LN' },
-            { label: '吉林', value: 'CN-JL' },
-            { label: '黑龙江', value: 'CN-HL' },
-            { label: '江苏', value: 'CN-JS' },
-            { label: '浙江', value: 'CN-ZJ' },
-            { label: '安徽', value: 'CN-AH' },
-            { label: '江西', value: 'CN-JX' },
-            { label: '山东', value: 'CN-SD' },
-            { label: '河南', value: 'CN-HEN' },
-            { label: '湖北', value: 'CN-HB' }
-          ]
-        },
-        {
-          label: '美国',
-          value: 'US',
-          children: [
-            { label: '纽约', value: 'US-NY' },
-            { label: '洛杉矶', value: 'US-LA' }
-          ]
-        }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 Cascader 默认属性',
-      autoRules: ['isRequiredArray']
-    }
+    label: '区域',
+    componentProps: { options: treeOptions }
+  },
+  { field: 'startDate', component: 'DatePicker', label: '开始日期', componentProps: { valueFormat: 'YYYY-MM-DD' } },
+  { field: 'activeRange', component: 'RangePicker', label: '有效期', componentProps: { valueFormat: 'YYYY-MM-DD' } },
+  { field: 'hour', component: 'TimePicker', label: '时间' },
+  { field: 'amount', component: 'InputNumber', label: '金额', componentProps: { min: 0 } },
+  { field: 'progress', component: 'Slider', label: '进度' },
+  { field: 'enabled', component: 'Switch', label: '启用' },
+  { field: 'theme', component: 'ColorPicker', label: '主题色' },
+  { field: 'tags', component: 'InputTag', label: '标签' },
+  {
+    field: 'remark',
+    component: 'Textarea',
+    label: '备注',
+    layoutProps: { span: 24 },
+    componentProps: { autoSize: { minRows: 2, maxRows: 4 } }
   },
   {
-    key: 'address2',
-    field: 'address2',
-    label: '地址',
-    value: '',
-    component: 'Cascader',
-    componentProps: {
-      style: { width: '100%' },
-      props: {
-        checkStrictly: true,
-        emitPath: false
-      },
-      options: [
-        {
-          label: '中国',
-          value: 'CN',
-          children: [
-            { label: '北京', value: 'CN-BJ' },
-            { label: '上海', value: 'CN-SH' },
-            { label: '天津', value: 'CN-TJ' },
-            { label: '河北', value: 'CN-HE' },
-            { label: '山西', value: 'CN-SX' },
-            { label: '辽宁', value: 'CN-LN' },
-            { label: '吉林', value: 'CN-JL' },
-            { label: '黑龙江', value: 'CN-HL' },
-            { label: '江苏', value: 'CN-JS' },
-            { label: '浙江', value: 'CN-ZJ' },
-            { label: '安徽', value: 'CN-AH' },
-            { label: '江西', value: 'CN-JX' },
-            { label: '山东', value: 'CN-SD' },
-            { label: '河南', value: 'CN-HEN' },
-            { label: '湖北', value: 'CN-HB' }
-          ]
-        },
-        {
-          label: '美国',
-          value: 'US',
-          children: [
-            { label: '纽约', value: 'US-NY' },
-            { label: '洛杉矶', value: 'US-LA' }
-          ]
-        }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 Cascader + checkStrictly',
-      autoRules: ['isRequired']
-    }
-  },
-  {
-    key: 'address3',
-    field: 'address3',
-    label: '地址（多选）',
-    value: [],
-    component: 'Cascader',
-    componentProps: {
-      style: { width: '100%' },
-      props: { multiple: true },
-      tagType: 'primary',
-      tagEffect: 'dark',
-      options: [
-        {
-          label: '中国',
-          value: 'CN',
-          children: [
-            { label: '北京', value: 'CN-BJ' },
-            { label: '上海', value: 'CN-SH' },
-            { label: '天津', value: 'CN-TJ' },
-            { label: '河北', value: 'CN-HE' },
-            { label: '山西', value: 'CN-SX' },
-            { label: '辽宁', value: 'CN-LN' },
-            { label: '吉林', value: 'CN-JL' },
-            { label: '黑龙江', value: 'CN-HL' },
-            { label: '江苏', value: 'CN-JS' },
-            { label: '浙江', value: 'CN-ZJ' },
-            { label: '安徽', value: 'CN-AH' },
-            { label: '江西', value: 'CN-JX' },
-            { label: '山东', value: 'CN-SD' },
-            { label: '河南', value: 'CN-HEN' },
-            { label: '湖北', value: 'CN-HB' }
-          ]
-        },
-        {
-          label: '美国',
-          value: 'US',
-          children: [
-            { label: '纽约', value: 'US-NY' },
-            { label: '洛杉矶', value: 'US-LA' }
-          ]
-        }
-      ]
-    },
-    layoutProps: { span: 8 },
-    formItemProps: {
-      subLabel: '采用 Cascader + multiple',
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'longLabel1',
-    field: 'longLabel',
-    label: '这是一个非常长的标题',
-    value: '',
-    component: 'Input',
-    componentProps: {
-      type: 'textarea',
-      rows: 5,
-      placeholder: '请输入内容'
-    },
-    layoutProps: { span: 12 },
-    formItemProps: {
-      subLabel: '请切换到居左或居右模式查看效果，使用了labelMaxWidth属性来美化长标题',
-      labelMaxWidth: 100,
-      autoRules: ['isRequired']
-    }
-  },
-  {
-    key: 'longLabel2',
-    field: 'longLabel2',
-    label: '这是一个非常非常非常非常非常非常非常非常非常非常非常非常长的标题',
-    value: '',
-    component: 'Input',
-    componentProps: {
-      type: 'textarea',
-      rows: 5,
-      placeholder: '请输入内容'
-    },
-    layoutProps: { span: 12 },
-    formItemProps: {
-      subLabel: '请切换到居左或居右模式查看效果，使用了labelMaxWidth属性来美化长标题',
-      labelMaxWidth: 100,
-      autoRules: ['isRequired']
-    }
-  },
-  {
-    key: 'upload1',
-    field: 'images',
-    label: '内置图片上传',
-    value: [],
-    component: 'Upload',
-    componentProps: {
-      listType: 'picture',
-      previewable: true,
-      downloadable: true,
-      objectFit: 'contain',
-      size: 'default',
-      accept: 'image/*',
-      tips: '支持上传图片，最多可上传 5 张图片，每张图片不超过 2MB',
-      sizeLimit: '2MB',
-      limit: 5,
-      upload: async (file: UploadRawFile) => {
-        // 模拟异步上传
-        return new Promise(resolve => {
-          resolve({
-            url: URL.createObjectURL(file),
-            name: file.name
-          })
-        })
-      }
-    },
-    layoutProps: { span: 12 },
-    formItemProps: {
-      subLabel: '使用了内置的ab-upload组件的照片墙模式',
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'upload2',
-    field: 'files',
-    label: '内置列表上传',
-    value: [],
-    component: 'Upload',
-    componentProps: {
-      listType: 'text',
-      previewable: true,
-      downloadable: true,
-      size: 'default',
-      accept: '*/*',
-      tips: '支持上传任意文件，最多可上传 5 个文件，每个文件不超过 2MB',
-      sizeLimit: '2MB',
-      limit: 5,
-      upload: async (file: UploadRawFile) => {
-        // 模拟异步上传
-        return new Promise(resolve => {
-          resolve({
-            url: URL.createObjectURL(file),
-            name: file.name
-          })
-        })
-      }
-    },
-    layoutProps: { span: 12 },
-    formItemProps: {
-      subLabel: '使用了内置的ab-upload组件的文件列表模式',
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'upload3',
-    field: 'files2',
-    label: '使用el-upload',
-    value: [],
-    component: 'ElUpload',
-    componentProps: {
-      accept: '*/*',
-      limit: 5,
-      listType: 'picture',
-      style: { width: '100%' },
-      action: 'https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15'
-    },
-    insideProps: {
-      renders: {
-        default: (form, column, disabled) =>
-          !disabled && <el-button type="primary">Click to upload</el-button>,
-        tip: (form, column, disabled) =>
-          !disabled && <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
-      }
-    },
-    layoutProps: { span: 12, alone: true },
-    formItemProps: {
-      subLabel: '通过imports按需加载了el-upload组件',
-      autoRules: ['isRequiredArray']
-    }
-  },
-  {
-    key: 'group',
-    label: '内置分组容器',
-    type: 'Container',
-    component: 'Group',
-    componentProps: {
-      subLabel: '内置分组容器，默认支持折叠展开功能'
-    },
-    children: [
-      {
-        field: 'groupInput',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      },
-      {
-        field: 'groupInput2',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      }
-    ],
-    layoutProps: { span: 24 }
-  },
-  {
-    key: 'group2',
-    label: '内置分组容器(无边框)',
-    type: 'Container',
-    component: 'Group',
-    componentProps: {
-      border: false,
-      bg: false,
-      toggleable: false,
-      decor: true,
-      subLabel: '无边框容器，使用了decor属性来显示装饰块'
-    },
-    children: [
-      {
-        field: 'groupInput',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      },
-      {
-        field: 'groupInput2',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      }
-    ],
-    layoutProps: { span: 24 }
-  },
-  {
-    key: 'tip',
-    label: '使用内置提示容器',
-    type: 'Decorator',
-    component: 'Alert',
-    componentProps: {
-      type: 'info',
-      title: '提示',
-      description:
-        'Form组件本身未初始引入el-card组件，但您可以通过imports属性来按需引入任何组件，下方为按需引入后渲染的el-card作为新的容器组件，容器组件会默认将children中的组件渲染到默认插槽中'
-    }
-  },
-  {
-    key: 'card',
-    label: '使用el-card',
-    type: 'Container',
-    component: 'ElCard',
-    componentProps: {
-      shadow: 'never'
-    },
-    insideProps: {
-      renders: {
-        header: () => <span>卡片标题</span>
-      }
-    },
-    children: [
-      {
-        field: 'cardInput',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      },
-      {
-        field: 'cardInput2',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      }
-    ],
-    layoutProps: { span: 24 }
-  },
-  {
-    key: 'disclosure',
-    label: '内置折叠容器',
-    type: 'Container',
-    component: 'Disclosure',
-    componentProps: {
-      subLabel: '内置折叠容器，默认支持折叠展开功能'
-    },
-    children: [
-      {
-        field: 'groupInput',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      },
-      {
-        field: 'groupInput2',
-        label: '输入框',
-        value: '',
-        component: 'Input'
-      }
-    ],
-    layoutProps: { span: 24 }
-  },
-  {
-    field: 'list',
-    label: '列表',
+    field: 'items',
     component: 'Table',
-    value: [],
+    label: '明细',
+    layoutProps: { span: 24 },
     componentProps: {
-      border: true,
-      columns: [
-        { key: 'listIndex', type: 'index', label: '序号' },
-        {
-          key: 'listName',
-          field: 'name',
-          label: '名称',
-          editProps: {
-            component: 'Input',
-            rules: [{ required: true, message: '请输入名称', trigger: 'change' }]
-          }
-        },
-        {
-          key: 'listAge',
-          field: 'age',
-          label: '年龄',
-          editProps: {
-            component: 'Input',
-            rules: [{ required: true, message: '请输入年龄', trigger: 'change' }]
-          }
-        },
-        {
-          key: 'listSex',
-          field: 'sex',
-          label: '性别',
-          editProps: {
-            component: 'Select',
-            componentProps: {
-              options: [
-                { label: '男', value: 'male' },
-                { label: '女', value: 'female' }
-              ]
-            },
-            rules: [{ required: true, message: '请选择性别', trigger: 'change' }]
-          }
-        },
-        {
-          key: 'listAction',
-          label: '操作',
-          type: 'action',
-          hidden: (row, index, column, form, excontext, editable) => !editable,
-          fixed: 'right',
-          width: 100,
-          editable: false,
-          typeProps: {
-            actions: [
-              {
-                label: '删除',
-                name: 'delete',
-                event: (row, index, column, form) => {
-                  form.list.splice(index, 1)
-                },
-                type: 'primary',
-                buttonAttrs: { size: 'small' }
-              }
-            ]
-          }
-        }
-      ] as TableColumn[]
-    },
-    outsideProps: {
-      enable: true,
-      direction: 'column',
-      style: { alignItems: 'flex-start', gap: '10px' },
-      prependRender: (form, column, disabled, excontext) => {
-        const onAdd = () => {
-          console.log('add', form)
-          form.list.push({ name: '', age: '', sex: '' })
-        }
-        return !disabled ? (
-          <el-button type="primary" onclick={() => onAdd()}>
-            添加
-          </el-button>
-        ) : undefined
-      }
+      columns: editItemColumns,
+      bordered: { cell: true },
+      indexable: { label: '序号', width: 70 },
+      pagination: false
     },
     formItemProps: {
-      autoRules: ['isRequiredArray']
-    },
-    layoutProps: { span: 24 }
+      extra: '切换禁用态时，表格编辑态会同步关闭'
+    }
   }
-])
-const formSchemas2 = reactive<FormSchema[]>([
-  {
-    key: 'desc',
-    label: '基本信息',
-    type: 'Descriptions',
-    componentProps: {
-      column: 3,
-      extra: '自定义扩展信息',
-      labelWidth: '80px',
-      _v_direction: () => {
-        return descriptionsDirection.value
-      }
-    },
-    children: [
-      {
-        field: 'avatar',
-        label: '头像',
-        value: [],
-        component: 'Upload',
-        componentProps: {
-          accept: 'image/*',
-          limit: 1,
-          listType: 'picture',
-          upload: async (file: UploadRawFile) => {
-            // 模拟异步上传
-            return new Promise(resolve => {
-              resolve({
-                url: URL.createObjectURL(file),
-                name: file.name
-              })
-            })
-          }
-        },
-        descriptionsItemProps: {
-          span: 1,
-          rowspan: 2,
-          width: 140,
-          labelWidth: 50
-        },
-        formItemProps: {
-          subLabel:
-            '在formItemProps.subLabel配置副标题时，主标题将展现为特殊样式，并通过tooltip组件展示副标题内容'
-        }
-      },
-      {
-        field: 'username',
-        label: '用户名',
-        value: '',
-        component: 'Input',
-        descriptionsItemProps: { span: 1 },
-        formItemProps: {
-          autoRules: ['isRequired']
-        }
-      },
-      {
-        field: 'phone',
-        label: '手机号码',
-        value: '',
-        component: 'Input',
-        descriptionsItemProps: { span: 1 },
-        formItemProps: {
-          autoRules: ['isRequired', 'isTelephone']
-        }
-      },
-      {
-        field: 'place',
-        label: '地点',
-        value: '',
-        component: 'Cascader',
-        componentProps: {
-          style: { width: '100%' },
-          options: [
-            {
-              label: '中国',
-              value: 'CN',
-              children: [
-                { label: '北京', value: 'CN-BJ' },
-                { label: '上海', value: 'CN-SH' },
-                { label: '天津', value: 'CN-TJ' },
-                { label: '河北', value: 'CN-HE' },
-                { label: '山西', value: 'CN-SX' },
-                { label: '辽宁', value: 'CN-LN' },
-                { label: '吉林', value: 'CN-JL' },
-                { label: '黑龙江', value: 'CN-HL' },
-                { label: '江苏', value: 'CN-JS' },
-                { label: '浙江', value: 'CN-ZJ' },
-                { label: '安徽', value: 'CN-AH' },
-                { label: '江西', value: 'CN-JX' },
-                { label: '山东', value: 'CN-SD' },
-                { label: '河南', value: 'CN-HEN' },
-                { label: '湖北', value: 'CN-HB' }
-              ]
-            },
-            {
-              label: '美国',
-              value: 'US',
-              children: [
-                { label: '纽约', value: 'US-NY' },
-                { label: '洛杉矶', value: 'US-LA' }
-              ]
-            }
-          ]
-        },
-        descriptionsItemProps: { span: 1 }
-      },
-      {
-        field: 'sex',
-        label: '性别',
-        value: '',
-        component: 'Radio',
-        componentProps: {
-          options: [
-            { label: '男', value: 'male' },
-            { label: '女', value: 'female' }
-          ]
-        },
-        descriptionsItemProps: { span: 1 },
-        formItemProps: {
-          autoRules: ['isRequired']
-        }
-      },
-      {
-        key: 'skills1',
-        field: 'skills',
-        label: '技能',
-        value: [],
-        component: 'Checkbox',
-        componentProps: {
-          options: [
-            { label: 'HTML', value: 'html' },
-            { label: 'CSS', value: 'css' },
-            { label: 'JavaScript', value: 'javascript' },
-            { label: 'Vue', value: 'vue' },
-            { label: 'React', value: 'react' }
-          ]
-        },
-        descriptionsItemProps: { span: 3 },
-        formItemProps: {
-          autoRules: ['isRequiredArray']
-        }
-      },
-      {
-        field: 'address',
-        label: '详细地址',
-        value: '',
-        component: 'Input',
-        componentProps: {
-          type: 'textarea',
-          rows: 2
-        },
-        descriptionsItemProps: { span: 3 },
-        formItemProps: {
-          autoRules: ['isRequired']
-        }
-      }
-    ]
-  },
-  {
-    key: 'desc2',
-    label: '其他信息',
-    type: 'Descriptions',
-    componentProps: {
-      column: 24,
-      extra: '自定义扩展信息',
-      labelWidth: '80px',
-      _v_direction: () => {
-        return descriptionsDirection.value
-      }
-    },
-    children: [
-      {
-        field: 'amount',
-        label: '余额',
-        value: '',
-        component: 'Input',
-        insideProps: {
-          renders: {
-            append: () => '元'
-          }
-        },
-        formItemProps: {
-          autoRules: ['isRequired']
-        },
-        descriptionsItemProps: { span: 12 }
-      },
-      {
-        field: 'email',
-        label: '邮箱号',
-        value: '',
-        component: 'Input',
-        componentProps: {
-          style: { flex: 1 }
-        },
-        outsideProps: {
-          enable: true,
-          direction: 'row',
-          style: { gap: '10px' },
-          appendRender: (form: Recordable, column: FormSchema, disabled: boolean) => {
-            const domains = ['@163.com', '@qq.com', '@gmail.com']
-            return (
-              <el-select vModel={form.emailDomain} style={'width: 120px'} disabled={disabled}>
-                {domains.map(domain => (
-                  <el-option value={domain}></el-option>
-                ))}
-              </el-select>
-            )
-          }
-        },
-        formItemProps: {
-          autoRules: ['isRequired']
-        },
-        descriptionsItemProps: { span: 12 }
-      },
-      {
-        field: 'status',
-        label: '状态',
-        value: '',
-        type: 'Inputer',
-        component: 'Select',
-        componentProps: {
-          options: [
-            { label: '正常', value: 'active', type: 'success' },
-            { label: '禁用', value: 'inactive', type: 'danger' }
-          ]
-        },
-        formItemProps: {
-          autoRules: ['isRequired']
-        },
-        descriptionsItemProps: { span: 12 }
-      },
-      {
-        field: 'hobby',
-        label: '爱好',
-        value: [],
-        component: 'Select',
-        componentProps: {
-          multiple: true,
-          tagType: 'primary',
-          tagEffect: 'dark',
-          options: [
-            { label: '吃饭', value: 'eat' },
-            { label: '睡觉', value: 'sleep' },
-            { label: '打游戏', value: 'game' },
-            { label: '看电影', value: 'movie' }
-          ]
-        },
-        formItemProps: {
-          // autoRules: ['isRequiredArray']
-        },
-        descriptionsItemProps: { span: 12 }
-      },
-      {
-        key: 'longLabel1',
-        field: 'longLabel',
-        label: '这是一个非常长的标题',
-        value: '',
-        component: 'Input',
-        componentProps: {
-          type: 'textarea',
-          rows: 5
-        },
-        descriptionsItemProps: { span: 24 },
-        formItemProps: {
-          subLabel: '',
-          autoRules: ['isRequired']
-        }
-      },
-      {
-        key: 'longLabel2',
-        field: 'longLabel',
-        label: '这是一个非常非常非常非常非常非常非常非常非常非常非常非常长的标题',
-        value: '',
-        component: 'Input',
-        componentProps: {
-          type: 'textarea',
-          rows: 5
-        },
-        descriptionsItemProps: { span: 24 },
-        formItemProps: {
-          subLabel: '',
-          autoRules: ['isRequired']
-        }
-      }
-    ]
-  }
-])
+]
 
-const AeFormRef = ref()
-const AeDescFormRef = ref()
-
-async function onSubmit() {
-  if (await AeFormRef?.value?.validate()) {
-    ElMessage.success('表单校验成功！请在控制台查看表单数据')
-    const formData = AeFormRef?.value?.getFormModel()
-    console.log('表单数据：', formData)
-  }
+function handleChange(data: { value: any; field: string }) {
+  Message.info(`${data.field} 已更新`)
 }
 
-function onReset() {
-  AeFormRef?.value?.clearValues()
-  ElMessage.info('表单已重置')
+async function validateBasic() {
+  const valid = await basicFormRef.value?.validate()
+  valid ? Message.success('校验通过') : Message.error('请检查输入')
 }
 
-async function onSubmit2() {
-  if (await AeDescFormRef?.value?.validate()) {
-    ElMessage.success('表单校验成功！请在控制台查看表单数据')
-    const formData = AeDescFormRef?.value?.getFormModel()
-    console.log('表单数据：', formData)
-  }
+function clearBasic() {
+  basicFormRef.value?.clearValues()
+  Message.info('已清空')
 }
 
-function onReset2() {
-  AeDescFormRef?.value?.clearValues()
-  ElMessage.info('表单已重置')
+async function validateEdit() {
+  const valid = await editFormRef.value?.validate()
+  valid ? Message.success('校验通过') : Message.error('请检查编辑内容')
+}
+
+function clearEdit() {
+  editFormRef.value?.clearValues()
+  Message.info('已清空')
 }
 </script>
+
+<style scoped>
+.anchor-frame {
+  position: relative;
+  height: 460px;
+  overflow: auto;
+  padding-left: 160px;
+  padding-right: 8px;
+}
+
+.custom-container-card {
+  width: 100%;
+}
+
+.help-slot {
+  color: var(--color-warning-6);
+}
+
+.state-view {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--color-text-2);
+}
+</style>

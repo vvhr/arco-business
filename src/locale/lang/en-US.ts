@@ -132,29 +132,29 @@ const enUS: LocaleConfig = {
     },
     form: {
       componentNotExist:
-        '[AeForm] The configuration of the {type} type component is abnormal, The component {component} does not exist',
+        '[Form] The configuration of the {type} type component is abnormal, The component {component} does not exist',
       componentError:
-        '[AeForm] The configuration of the {type} type component is abnormal, please check if the component {component} is correct!',
+        '[Form] The configuration of the {type} type component is abnormal, please check if the component {component} is correct!',
       customComponentError:
-        '[AeForm] Custom component configuration exception, if you expect to use a custom render component, please write the component content using the render property or slot!',
+        '[Form] Custom component configuration exception, if you expect to use a custom render component, please write the component content using the render property or slot!',
       keyRequired:
-        '[AeForm] The component must set the key property or the field property, unable to render schema',
+        '[Form] The component must set the key property or the field property, unable to render schema',
       nestedStepNotSupported:
-        '[AeForm] Unsupported nested Step type child components, unable to render schema',
+        '[Form] Unsupported nested Step type child components, unable to render schema',
       nestedDescriptionsNotSupported:
-        '[AeForm] Nested Descriptions type child components are not supported, unable to render schema',
+        '[Form] Nested Descriptions type child components are not supported, unable to render schema',
       nestedContainerNotSupported:
-        '[AeForm] Nested Container type child components are not supported, cannot render schema',
+        '[Form] Nested Container type child components are not supported, cannot render schema',
       wrapInDescriptions:
-        '[AeForm] In desc mode, please wrap all components within the Descriptions component, the current component is not wrapped within Descriptions, please check schema',
+        '[Form] In desc mode, please wrap all components within the Descriptions component, the current component is not wrapped within Descriptions, please check schema',
       expressionCompileError: 'Expression compile failed: {code}',
       expressionExecuteError: 'Expression execute failed: {code}',
       dynamicPropertyError: 'Dynamic property {key} error',
-      componentExists: '[AeForm] The component {name} already exists and will be overwritten',
+      componentExists: '[Form] The component {name} already exists and will be overwritten',
       configExists:
-        '[AeForm] The component configuration {name} already exists and will be overwritten',
+        '[Form] The component configuration {name} already exists and will be overwritten',
       componentRegistered:
-        '[AeForm] The component {name} imported via the imports property has been successfully registered!'
+        '[Form] The component {name} imported via the imports property has been successfully registered!'
     },
     upload: {
       compressError: 'Image compression failed'

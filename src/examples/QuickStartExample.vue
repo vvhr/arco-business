@@ -59,7 +59,7 @@ setLocale('zh-CN')</code></pre>
       </template>
       <pre
         class="code-block"
-      ><code>import { AeForm, AbTable, AbIcon } from 'acro-business'
+      ><code>import { AbForm, AbTable, AbIcon } from 'acro-business'
 import 'acro-business/dist/style.css'</code></pre>
     </el-card>
 
@@ -89,7 +89,7 @@ import 'acro-business/dist/style.css'</code></pre>
       </template>
       <pre class="code-block"><code>&lt;template&gt;
   &lt;!-- ✅ 全局注册后可直接使用，无需导入组件 --&gt;
-  &lt;AeForm :model="formModel" :schemas="formSchemas" /&gt;
+  &lt;AbForm :model="formModel" :schemas="formSchemas" /&gt;
   &lt;AbTable :columns="columns" v-model="tableData" /&gt;
 &lt;/template&gt;
 
@@ -125,13 +125,13 @@ const tableData = ref([
       </template>
       <pre class="code-block"><code>&lt;template&gt;
   &lt;!-- ❌ 按需引入需要显式导入组件 --&gt;
-  &lt;AeForm :model="formModel" :schemas="formSchemas" /&gt;
+  &lt;AbForm :model="formModel" :schemas="formSchemas" /&gt;
 &lt;/template&gt;
 
 &lt;script setup lang="ts"&gt;
 import { ref } from 'vue'
 // ✅ 按需引入时需要导入组件和类型
-import { AeForm, type FormSchema } from 'acro-business'
+import { AbForm, type FormSchema } from 'acro-business'
 
 const formModel = ref&lt;Recordable&gt;({})
 

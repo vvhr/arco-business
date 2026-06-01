@@ -2,25 +2,29 @@ import type { Component } from 'vue'
 
 export interface FormImportItemConfig {
   /**
-   * 组件的modelValue键名
+   * 组件的 modelValue 键名
    */
   modelValueKey?: string
   /**
-   * 是否需要自动添加clearable属性
+   * 是否需要自动添加 allowClear 属性
    */
-  needClearable?: boolean
+  needAllowClear?: boolean
   /**
-   * 是否需要自动添加input placeholder属性
+   * 是否需要自动添加 input placeholder 属性
    */
   needInputPlaceholder?: boolean
   /**
-   * 是否需要自动添加select placeholder属性
+   * 是否需要自动添加 select placeholder 属性
    */
   needSelectPlaceholder?: boolean
   /**
-   * 是否需要自动添加options属性
+   * 是否需要自动添加 options 属性
    */
   needOptions?: boolean
+  /**
+   * options 透传给组件时使用的属性名
+   */
+  optionsPropName?: 'options' | 'data'
 }
 
 export interface FormImportItem {

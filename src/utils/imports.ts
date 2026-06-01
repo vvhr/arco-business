@@ -1,6 +1,5 @@
 import type { Component } from 'vue'
 import type { FormImportItem, TableFormImportItem } from '@/types/imports'
-import type { AbFormImportItem } from '@/components/Form2'
 import { shallowReactive } from 'vue'
 import { logger } from '@/locale'
 
@@ -19,65 +18,6 @@ class GlobalFormImports {
   arrayStrategies: ArrayStrategies = shallowReactive<ArrayStrategies>({})
 
   registerComponents(imports: FormImportItem[]) {
-    const loggerRecords = {
-      componentExists: [],
-      componentRegistered: [],
-      configExists: []
-    }
-    imports.forEach(item => {
-      this.registerComponent(loggerRecords, item.name, item.component, item.config, item.isArrayFn)
-    })
-    if (loggerRecords.componentExists.length) {
-      logger.warn('console.form.componentExists', {
-        name: loggerRecords.componentExists.join(', ')
-      })
-    }
-    if (loggerRecords.configExists.length) {
-      logger.warn('console.form.configExists', { name: loggerRecords.configExists.join(', ') })
-    }
-    if (loggerRecords.componentRegistered.length) {
-      logger.success('console.form.componentRegistered', {
-        name: loggerRecords.componentRegistered.join(', ')
-      })
-    }
-  }
-
-  registerComponent(
-    loggerRecords: any,
-    name: string,
-    component: Component,
-    config?: any,
-    isArrayFn?: (cps: Recordable) => boolean
-  ) {
-    if (this.components[name]) {
-      loggerRecords.componentExists.push(name)
-    }
-    this.components[name] = component
-
-    if (config) {
-      if (this.componentConfigs[name]) {
-        loggerRecords.configExists.push(name)
-      }
-      this.componentConfigs[name] = config
-    }
-
-    if (isArrayFn) {
-      this.arrayStrategies[name] = isArrayFn
-    }
-
-    loggerRecords.componentRegistered.push(name)
-  }
-}
-
-/**
- * 全局AbForm组件注册器
- */
-class GlobalAbFormImports {
-  components: Components = shallowReactive<Components>({})
-  componentConfigs: ComponentConfigs = shallowReactive<ComponentConfigs>({})
-  arrayStrategies: ArrayStrategies = shallowReactive<ArrayStrategies>({})
-
-  registerComponents(imports: AbFormImportItem[]) {
     const loggerRecords = {
       componentExists: [],
       componentRegistered: [],
@@ -191,5 +131,4 @@ class GlobalTableImports {
 
 // 导出全局单例
 export const globalFormImports = new GlobalFormImports()
-export const globalAbFormImports = new GlobalAbFormImports()
 export const globalTableImports = new GlobalTableImports()

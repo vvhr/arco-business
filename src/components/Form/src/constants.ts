@@ -1,57 +1,53 @@
-import type { DescriptionsProps, InputerName } from './types'
-
-export const DEFAULT_DESCS_ATTRS: DescriptionsProps = {
-  border: true,
-  column: 3,
-  direction: 'horizontal'
-}
+import type { FormInputName } from './types'
 
 export const SchemaType = {
   STEP: 'Step',
   CONTAINER: 'Container',
   DECORATOR: 'Decorator',
   INPUTER: 'Inputer',
-  CUSTOM: 'Custom',
-  DESCRIPTIONS: 'Descriptions'
+  CUSTOM: 'Custom'
 } as const
 
-export const needClearable: InputerName[] = [
-  'Autocomplete',
+export const needAllowClear: FormInputName[] = [
+  'AutoComplete',
   'Cascader',
   'DatePicker',
-  'Editor',
+  'RangePicker',
   'Input',
   'InputNumber',
   'InputTag',
   'Mention',
   'Select',
   'TimePicker',
-  'TimeSelect'
+  'TreeSelect'
 ]
-export const needOptions: InputerName[] = ['Select', 'Cascader', 'Transfer', 'Segmented', 'Mention']
-export const noNeedOptions: InputerName[] = ['RadioButton', 'CheckboxButton', 'Radio', 'Checkbox']
-export const dateRangeTypes = [
-  'years',
-  'months',
-  'dates',
-  'datetimerange',
-  'daterange',
-  'monthrange',
-  'yearrange'
+
+export const needOptions: FormInputName[] = [
+  'Cascader',
+  'CheckboxGroup',
+  'Mention',
+  'RadioGroup',
+  'Select'
 ]
-export const needInputPlaceholder: InputerName[] = [
-  'Autocomplete',
-  'Editor',
+
+export const needDataOptions: FormInputName[] = ['Transfer', 'TreeSelect']
+
+export const needInputPlaceholder: FormInputName[] = [
+  'AutoComplete',
   'Input',
   'InputNumber',
   'Mention',
   'InputTag'
 ]
-export const needSelectPlaceholder: InputerName[] = [
+
+export const needSelectPlaceholder: FormInputName[] = [
   'Cascader',
   'DatePicker',
   'Select',
   'TimePicker',
-  'TimeSelect'
+  'TreeSelect'
 ]
-export const COMPONENTS_NEEDING_REF = ['Table']
+
+export const needRangePlaceholder: FormInputName[] = ['RangePicker']
+
+export const componentsNeedingRef: FormInputName[] = ['Table']

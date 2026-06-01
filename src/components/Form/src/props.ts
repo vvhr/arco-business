@@ -1,18 +1,18 @@
 import type { PropType } from 'vue'
 import type {
-  AbFormDesignableColProps,
-  AbFormDesignableDirectives,
-  AbFormImportItem,
-  AbFormLabelAlign,
-  AbFormLayout,
-  AbFormProps,
-  AbFormSchema,
-  AbFormSchemaProps,
-  AbFormSize
+  FormDesignableColProps,
+  FormDesignableDirectives,
+  FormImportItem,
+  FormLabelAlign,
+  FormLayout,
+  FormProps,
+  FormSchema,
+  FormSchemaProps,
+  FormSize
 } from './types'
 
-type AbFormRuntimePropKey = keyof Pick<
-  AbFormProps,
+type FormRuntimePropKey = keyof Pick<
+  FormProps,
   | 'model'
   | 'controlled'
   | 'schemas'
@@ -41,7 +41,7 @@ type AbFormRuntimePropKey = keyof Pick<
   | 'anchorAffixStyle'
 >
 
-type AbFormRuntimeProps = Record<AbFormRuntimePropKey, any> & Partial<Record<keyof AbFormProps, any>>
+type FormRuntimeProps = Record<FormRuntimePropKey, any> & Partial<Record<keyof FormProps, any>>
 
 export const abFormProps = {
   model: {
@@ -53,7 +53,7 @@ export const abFormProps = {
     default: false
   },
   schemas: {
-    type: Array as PropType<AbFormSchema[]>,
+    type: Array as PropType<FormSchema[]>,
     default: () => []
   },
   stepValue: {
@@ -65,7 +65,7 @@ export const abFormProps = {
     default: false
   },
   disabledStyles: {
-    type: Object as PropType<AbFormProps['disabledStyles']>,
+    type: Object as PropType<FormProps['disabledStyles']>,
     default: () => ({
       textColor: 'var(--color-text-1)',
       borderColor: 'rgb(var(--arcoblue-6))',
@@ -76,15 +76,15 @@ export const abFormProps = {
     })
   },
   size: {
-    type: String as PropType<AbFormSize>,
+    type: String as PropType<FormSize>,
     default: 'medium'
   },
   layout: {
-    type: String as PropType<AbFormLayout>,
+    type: String as PropType<FormLayout>,
     default: 'horizontal'
   },
   labelAlign: {
-    type: String as PropType<AbFormLabelAlign>,
+    type: String as PropType<FormLabelAlign>,
     default: 'right'
   },
   labelColProps: {
@@ -96,11 +96,11 @@ export const abFormProps = {
     default: () => ({ span: 19 })
   },
   labelColStyle: {
-    type: Object as PropType<AbFormProps['labelColStyle']>,
+    type: Object as PropType<FormProps['labelColStyle']>,
     default: undefined
   },
   wrapperColStyle: {
-    type: Object as PropType<AbFormProps['wrapperColStyle']>,
+    type: Object as PropType<FormProps['wrapperColStyle']>,
     default: undefined
   },
   labelColFlex: {
@@ -112,11 +112,11 @@ export const abFormProps = {
     default: false
   },
   designableDirectives: {
-    type: Object as PropType<AbFormDesignableDirectives>,
+    type: Object as PropType<FormDesignableDirectives>,
     default: () => ({})
   },
   designableColProps: {
-    type: Function as PropType<AbFormDesignableColProps>,
+    type: Function as PropType<FormDesignableColProps>,
     default: () => ({})
   },
   excontext: {
@@ -124,7 +124,7 @@ export const abFormProps = {
     default: () => ({})
   },
   schemaProps: {
-    type: Object as PropType<AbFormSchemaProps>,
+    type: Object as PropType<FormSchemaProps>,
     default: () => ({})
   },
   showErrorNotice: {
@@ -140,7 +140,7 @@ export const abFormProps = {
     default: true
   },
   imports: {
-    type: Array as PropType<AbFormImportItem[]>,
+    type: Array as PropType<FormImportItem[]>,
     default: () => []
   },
   anchor: {
@@ -152,7 +152,7 @@ export const abFormProps = {
     default: () => ({})
   },
   anchorAffixStyle: {
-    type: Object as PropType<AbFormProps['anchorAffixStyle']>,
+    type: Object as PropType<FormProps['anchorAffixStyle']>,
     default: () => ({})
   }
-} satisfies AbFormRuntimeProps
+} satisfies FormRuntimeProps

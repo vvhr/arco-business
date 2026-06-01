@@ -17,9 +17,7 @@
       "types": "./global.d.ts"
     },
     "./dist/style.css": "./dist/style.css",
-    "./style.css": "./dist/style.css",
-    "./dist/element-plus-beauty.css": "./dist/element-plus-beauty.css",
-    "./element-plus-beauty.css": "./dist/element-plus-beauty.css"
+    "./style.css": "./dist/style.css"
   },
   "files": [
     "dist",
@@ -58,7 +56,7 @@
   "keywords": [
     "vue",
     "vue3",
-    "element-plus",
+    "acro-design-vue",
     "component-library",
     "typescript",
     "form",
