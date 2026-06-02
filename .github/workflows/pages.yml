@@ -1,0 +1,78 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect docs publish commit
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.commit-message.outputs.should_deploy }}
+    steps:
+      - name: Check commit messages
+        id: commit-message
+        shell: bash
+        run: |
+          messages="$(jq -r '[.head_commit.message?, (.commits[]?.message?)] | map(select(. != null)) | join("\n")' "$GITHUB_EVENT_PATH")"
+
+          if grep -Eq 'chore\(publish\)|docs\(publish\)' <<< "$messages"; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    name: Build and deploy docs
+    needs: detect
+    if: ${{ needs.detect.outputs.should_deploy == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.0
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm docs:build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload docs artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
