@@ -1,13 +1,5 @@
 <script lang="tsx">
-import {
-  computed,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  toRaw,
-  unref,
-  watch
-} from 'vue'
+import { computed, defineComponent, onBeforeUnmount, onMounted, toRaw, unref, watch } from 'vue'
 import { abFormProps } from './props'
 import { useForm } from './hook/useForm'
 import { useImport } from './hook/useImport'
@@ -152,6 +144,10 @@ export default defineComponent({
     .arco-form-item-message,
     .arco-form-item-extra {
       color: var(--color-text-4);
+    }
+
+    .arco-form-item-label-col > .arco-form-item-label {
+      font-size: var(--ab-form-disabled-label-font-size);
     }
 
     &.ab-form-item-disabled-default-cursor {

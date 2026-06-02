@@ -89,6 +89,9 @@ export function useFormItem(
     if (disabledStyles.bgColor !== false) {
       style['--color-fill-2'] = disabledStyles.bgColor
     }
+    if (disabledStyles.labelFontSize !== false) {
+      style['--ab-form-disabled-label-font-size'] = disabledStyles.labelFontSize
+    }
     style.marginBottom = disabledStyles.itemMarginBottom
     return Object.keys(style).length > 0 ? style : undefined
   }
@@ -99,6 +102,7 @@ export function useFormItem(
       borderColor: 'rgb(var(--arcoblue-6))',
       bgColor: 'transparent',
       itemMarginBottom: '0px',
+      labelFontSize: false,
       noPadding: false,
       defaultCursor: false,
       noSuffix: false,

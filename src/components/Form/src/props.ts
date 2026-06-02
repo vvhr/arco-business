@@ -71,6 +71,7 @@ export const abFormProps = {
       borderColor: 'rgb(var(--arcoblue-6))',
       bgColor: 'transparent',
       itemMarginBottom: '0px',
+      labelFontSize: false as false,
       noPadding: false,
       defaultCursor: false,
       noSuffix: false

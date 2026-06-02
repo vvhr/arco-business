@@ -19,6 +19,7 @@ export type FormDisabledStyles = {
   borderColor?: false | string
   bgColor?: false | string
   itemMarginBottom?: string
+  labelFontSize?: false | string
   noPadding?: boolean
   defaultCursor?: boolean
   noSuffix?: boolean
