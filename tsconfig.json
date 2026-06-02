@@ -24,7 +24,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "~/*": ["./*"]
+      "~/*": ["./*"],
+      "@docs/*": ["docs/src/*"]
     },
 
     /* Type definitions */
@@ -34,7 +35,18 @@
       "vue"
     ]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/types/*.d.ts", "types/*.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "docs/src/**/*.ts",
+    "docs/src/**/*.tsx",
+    "docs/src/**/*.vue",
+    "docs/vite.config.ts",
+    "src/types/*.d.ts",
+    "types/*.d.ts"
+  ],
   "exclude": ["node_modules", "dist"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

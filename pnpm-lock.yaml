@@ -102,6 +102,9 @@ importers:
       vue-eslint-parser:
         specifier: ^10.2.0
         version: 10.4.0(eslint@9.39.4(jiti@2.7.0))
+      vue-router:
+        specifier: ^4.5.1
+        version: 4.6.4(vue@3.5.35(typescript@5.9.3))
       vue-tsc:
         specifier: ^3.0.2
         version: 3.3.3(typescript@5.9.3)
@@ -2180,6 +2183,11 @@ packages:
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: '>=6.0.0'
+
+  vue-router@4.6.4:
+    resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
+    peerDependencies:
+      vue: ^3.5.0
 
   vue-tsc@3.3.3:
     resolution: {integrity: sha512-SWUEG7YRUeDJHT7Xsuhf02elYX2gxPzzAII7OxDAh4KNOr4QHQ0Lls0YfnaO5GNd560CwVa2HTfdqmA5MqvRqQ==}
@@ -4373,6 +4381,11 @@ snapshots:
       semver: 7.8.1
     transitivePeerDependencies:
       - supports-color
+
+  vue-router@4.6.4(vue@3.5.35(typescript@5.9.3)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.35(typescript@5.9.3)
 
   vue-tsc@3.3.3(typescript@5.9.3):
     dependencies:

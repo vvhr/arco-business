@@ -69,6 +69,7 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', '@vueuse/core'],
       resolvers: [ArcoResolver()],
+      exclude: [/docs[\\/].*/],
       dts: 'types/auto-imports.d.ts',
       eslintrc: {
         enabled: true,
@@ -80,7 +81,8 @@ export default defineConfig({
       // 只解析 Arco 组件，排除所有自定义组件
       dirs: [], // 不扫描任何目录
       resolvers: [ArcoResolver({ sideEffect: true })],
-      dts: 'types/components.d.ts'
+      exclude: [/docs[\\/].*/],
+      dts: false
     }),
     dts({
       include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue', 'src/global.d.ts'],

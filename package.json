@@ -1,7 +1,7 @@
 {
   "name": "acro-business",
   "version": "0.0.1",
-  "buildVersion": "beta.20260531",
+  "buildVersion": "dev-20260601-0528",
   "description": "Advanced Component Library Based on Vue3 + Arco Design Vue",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,15 +29,16 @@
     "CHANGELOG.zh.md"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config docs/vite.config.ts",
+    "docs:dev": "vite --config docs/vite.config.ts",
+    "docs:build": "vite build --config docs/vite.config.ts",
+    "docs:preview": "vite preview --config docs/vite.config.ts --outDir dist-docs",
     "dev:lib": "vite build --watch",
     "update-build": "node scripts/update-build-version.js",
     "check": "vue-tsc --noEmit",
     "build": "node scripts/update-build-version.js && vue-tsc --noEmit && vite build",
-    "build:demo": "vite build --config vite.config.demo.ts",
     "build:types": "vue-tsc --declaration --emitDeclarationOnly --outDir dist",
     "preview": "vite preview",
-    "preview:demo": "vite preview --config vite.config.demo.ts --outDir dist-demo",
     "prepack:check": "node scripts/check-package-files.js",
     "prepublishOnly": "npm run build",
     "publish:npm": "npm publish --registry=https://registry.npmjs.org/ --access public",
@@ -107,6 +108,7 @@
     "vite": "^5.0.0",
     "vite-plugin-dts": "^4.0.0",
     "vue": "^3.4.0",
+    "vue-router": "^4.5.1",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.0.2"
   },
