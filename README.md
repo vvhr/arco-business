@@ -1,8 +1,28 @@
-# Acro Business
+<div align="center">
+
+  <a href="https://github.com/vvhr/acro-business">
+    <img src="https://arco.vvhrdesign.com/logo.svg" alt="Acro Business" width="174" height="24" />
+  </a>
+
+  <p>基于 Vue 3 和 Arco Design Vue 构建的<strong>配置驱动</strong>高级组件库</p>
+  
+  [![npm version](https://img.shields.io/npm/v/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
+  [![npm downloads](https://img.shields.io/npm/dt/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
+  [![license](https://img.shields.io/npm/l/acro-business.svg?style=flat-square)](https://github.com/vvhr/acro-business/blob/main/LICENSE)
+  [![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=flat-square)](https://pnpm.io/)
+  [![Vue](https://img.shields.io/badge/Vue-≥3.2.0-green?style=flat-square&logo=vue.js)](https://vuejs.org/)
+  [![Arco Design Vue](https://img.shields.io/badge/Arco%20Design%20Vue-≥2.58.0-165dff?style=flat-square)](https://arco.design/vue/docs/start)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+  
+</div>  
 
 基于 Vue 3 和 Arco Design Vue 的高级业务组件库，面向中后台系统沉淀表单、表格、上传、图标、弹窗、抽屉和文本状态等高频业务范式。
 
 Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之上提供更贴近业务交付的配置协议、组合组件和扩展入口。
+
+## 文档
+
+[Acro Business Docs](https://arco.vvhrdesign.com)
 
 ## 特性
 
