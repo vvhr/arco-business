@@ -28,7 +28,7 @@
           <h1>{{ currentTitle }}</h1>
         </div>
         <Space>
-          <Button href="https://github.com/vvhr/acro-business" target="_blank">GitHub</Button>
+          <Button href="https://github.com/vvhr/arco-business" target="_blank">GitHub</Button>
           <Switch v-model="isDark" @change="toggleTheme">
             <template #checked-icon>
               <icon-moon-fill />

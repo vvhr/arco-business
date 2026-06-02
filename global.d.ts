@@ -2,14 +2,14 @@
 declare module 'vue' {
   // GlobalComponents for Volar
   export interface GlobalComponents {
-    AbForm: typeof import('acro-business')['AbForm']
-    AbIcon: typeof import('acro-business')['AbIcon']
-    AbTable: typeof import('acro-business')['AbTable']
-    AbUpload: typeof import('acro-business')['AbUpload']
-    AbModal: typeof import('acro-business')['AbModal']
-    AbDrawer: typeof import('acro-business')['AbDrawer']
-    AbText: typeof import('acro-business')['AbText']
-    AbComboInput: typeof import('acro-business')['AbComboInput']
+    AbForm: typeof import('arco-business')['AbForm']
+    AbIcon: typeof import('arco-business')['AbIcon']
+    AbTable: typeof import('arco-business')['AbTable']
+    AbUpload: typeof import('arco-business')['AbUpload']
+    AbModal: typeof import('arco-business')['AbModal']
+    AbDrawer: typeof import('arco-business')['AbDrawer']
+    AbText: typeof import('arco-business')['AbText']
+    AbComboInput: typeof import('arco-business')['AbComboInput']
   }
 }
 

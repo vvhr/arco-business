@@ -3,7 +3,7 @@
 
   <SectionBlock id="extend-components-global" kicker="Global" title="全局注册" description="适合业务系统中频繁复用的输入组件，如用户选择器、组织树、文件选择器。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">import AcroBusiness from 'acro-business'
+      <pre class="docs-code-inline">import AcroBusiness from 'arco-business'
 import UserPicker from './components/UserPicker.vue'
 
 app.use(AcroBusiness, {

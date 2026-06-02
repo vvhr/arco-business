@@ -99,7 +99,7 @@ const imports: FormImportItem[] = [{ name: 'BusinessField', component: BusinessF
   <ApiTable
     id="form-types"
     title="Types API"
-    description="重要导出类型来自组件源码，使用时可从 acro-business 直接导入。"
+    description="重要导出类型来自组件源码，使用时可从 arco-business 直接导入。"
     :rows="typesRows"
   />
   <ApiTable

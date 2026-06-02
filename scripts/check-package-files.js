@@ -23,10 +23,10 @@ const missingFiles = requiredFiles.filter(file => {
 })
 
 if (missingFiles.length) {
-  console.error('[acro-business] Missing package files:')
+  console.error('[arco-business] Missing package files:')
   missingFiles.forEach(file => console.error(`- ${file}`))
   console.error('\nRun `pnpm build` before packing or publishing.')
   process.exit(1)
 }
 
-console.log('[acro-business] Package files check passed.')
+console.log('[arco-business] Package files check passed.')

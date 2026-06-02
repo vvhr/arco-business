@@ -77,7 +77,7 @@ jobs:
 
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "Publishing acro-business@$version with npm dist-tag: $tag"
+          echo "Publishing arco-business@$version with npm dist-tag: $tag"
 
       - name: Publish to npm
         run: npm publish --registry=https://registry.npmjs.org/ --access public --tag "${{ steps.package.outputs.tag }}" --provenance

@@ -8,7 +8,7 @@
         <RouterLink to="/guide/quick-start">指南</RouterLink>
         <RouterLink to="/components/form">组件</RouterLink>
         <RouterLink to="/components/table">表格</RouterLink>
-        <a href="https://github.com/vvhr/acro-business" target="_blank">GitHub</a>
+        <a href="https://github.com/vvhr/arco-business" target="_blank">GitHub</a>
         <Switch v-model="isDark" size="small" @change="toggleTheme">
           <template #checked-icon>
             <icon-moon-fill />

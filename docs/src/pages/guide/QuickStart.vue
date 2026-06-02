@@ -8,7 +8,7 @@
 
   <SectionBlock id="quick-install" kicker="Install" title="安装依赖" description="业务项目需要同时安装组件库和 Arco Design Vue，Vue 由宿主项目提供。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">pnpm add acro-business @arco-design/web-vue</pre>
+      <pre class="docs-code-inline">pnpm add arco-business @arco-design/web-vue</pre>
     </div>
   </SectionBlock>
 
@@ -17,8 +17,8 @@
       <pre class="docs-code-inline">import { createApp } from 'vue'
 import ArcoVue from '@arco-design/web-vue'
 import '@arco-design/web-vue/dist/arco.css'
-import AcroBusiness from 'acro-business'
-import 'acro-business/style.css'
+import AcroBusiness from 'arco-business'
+import 'arco-business/style.css'
 
 createApp(App).use(ArcoVue).use(AcroBusiness).mount('#app')</pre>
     </div>

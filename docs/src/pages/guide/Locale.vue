@@ -3,7 +3,7 @@
 
   <SectionBlock id="locale-install" kicker="Install" title="安装时设置语言" description="通过 install options 设置默认语言，适合应用启动时确定语言的场景。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">import AcroBusiness from 'acro-business'
+      <pre class="docs-code-inline">import AcroBusiness from 'arco-business'
 
 app.use(AcroBusiness, {
   locale: 'en-US'
@@ -13,7 +13,7 @@ app.use(AcroBusiness, {
 
   <SectionBlock id="locale-runtime" kicker="Runtime" title="运行时切换" description="setLocale 会同步组件库内部文案，并触发依赖语言的格式化逻辑。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">import { setLocale, getCurrentLocale, supportedLocales } from 'acro-business'
+      <pre class="docs-code-inline">import { setLocale, getCurrentLocale, supportedLocales } from 'arco-business'
 
 setLocale('zh-CN')
 console.log(getCurrentLocale(), supportedLocales)</pre>

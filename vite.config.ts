@@ -39,7 +39,7 @@ async function generateGlobalDts() {
 
   // 生成组件声明
   const declarations = components
-    .map(name => `    ${name}: typeof import('acro-business')['${name}']`)
+    .map(name => `    ${name}: typeof import('arco-business')['${name}']`)
     .join('\n')
 
   const content = `/* prettier-ignore */

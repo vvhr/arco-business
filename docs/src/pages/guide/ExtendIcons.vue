@@ -3,7 +3,7 @@
 
   <SectionBlock id="extend-icons-install" kicker="Install" title="安装时注册图标集" description="适合业务系统内置的私有图标集，注册后可直接使用 prefix:name。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">import AcroBusiness from 'acro-business'
+      <pre class="docs-code-inline">import AcroBusiness from 'arco-business'
 
 app.use(AcroBusiness, {
   iconCollections: [{
@@ -18,7 +18,7 @@ app.use(AcroBusiness, {
 
   <SectionBlock id="extend-icons-runtime" kicker="Runtime" title="运行时注册" description="工具函数来自 Iconify 数据结构，适合按模块延迟加载图标。">
     <div class="docs-callout">
-      <pre class="docs-code-inline">import { addIcon, addIconCollection, addIconCollections } from 'acro-business'
+      <pre class="docs-code-inline">import { addIcon, addIconCollection, addIconCollections } from 'arco-business'
 
 addIcon('biz:approve', { body: '&lt;path d="M4 12l4 4L20 6"/&gt;' })</pre>
     </div>

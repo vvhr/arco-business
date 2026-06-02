@@ -1,5 +1,5 @@
 {
-  "name": "acro-business",
+  "name": "arco-business",
   "version": "0.0.1",
   "buildVersion": "dev-20260601-0528",
   "description": "Advanced Component Library Based on Vue3 + Arco Design Vue",
@@ -46,12 +46,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vvhr/acro-business.git"
+    "url": "git+https://github.com/vvhr/arco-business.git"
   },
   "bugs": {
-    "url": "https://github.com/vvhr/acro-business/issues"
+    "url": "https://github.com/vvhr/arco-business/issues"
   },
-  "homepage": "https://github.com/vvhr/acro-business#readme",
+  "homepage": "https://github.com/vvhr/arco-business#readme",
   "keywords": [
     "vue",
     "vue3",

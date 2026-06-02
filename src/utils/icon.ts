@@ -46,7 +46,7 @@ export interface IconCollection {
  * @param data 图标数据
  * @example
  * ```ts
- * import { addIcon } from 'acro-business'
+ * import { addIcon } from 'arco-business'
  *
  * addIcon('my-icons:home', {
  *   body: '<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
@@ -65,7 +65,7 @@ export function addIcon(name: string, data: IconData): void {
  * @returns 是否添加成功
  * @example
  * ```ts
- * import { addIconCollection } from 'acro-business'
+ * import { addIconCollection } from 'arco-business'
  *
  * addIconCollection({
  *   prefix: 'my-icons',
@@ -89,7 +89,7 @@ export function addIconCollection(collection: IconCollection): boolean {
  * @param collections 图标集数组
  * @example
  * ```ts
- * import { addIconCollections } from 'acro-business'
+ * import { addIconCollections } from 'arco-business'
  *
  * addIconCollections([
  *   { prefix: 'brand', icons: { ... } },
