@@ -70,6 +70,7 @@ export const abFormProps = {
       textColor: 'var(--color-text-1)',
       borderColor: 'rgb(var(--arcoblue-6))',
       bgColor: 'transparent',
+      itemMarginBottom: '0px',
       noPadding: false,
       defaultCursor: false,
       noSuffix: false

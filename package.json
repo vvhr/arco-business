@@ -101,6 +101,7 @@
     "less": "^4.2.0",
     "pinia": "^2.1.7",
     "prettier": "^3.1.1",
+    "shiki": "^4.1.0",
     "typescript": "^5.3.3",
     "unocss": "^66.5.7",
     "unplugin-auto-import": "^0.17.2",
@@ -108,8 +109,8 @@
     "vite": "^5.0.0",
     "vite-plugin-dts": "^4.0.0",
     "vue": "^3.4.0",
-    "vue-router": "^4.5.1",
     "vue-eslint-parser": "^10.2.0",
+    "vue-router": "^4.5.1",
     "vue-tsc": "^3.0.2"
   },
   "engines": {

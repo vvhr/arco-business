@@ -1,12 +1,6 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
 import type { FieldRule } from '@arco-design/web-vue'
-import type {
-  FormComponentProps,
-  FormItemProps,
-  FormProps,
-  FormSchema,
-  FormSlots
-} from '../types'
+import type { FormComponentProps, FormItemProps, FormProps, FormSchema, FormSlots } from '../types'
 import { getAutoRulesMap } from '@/utils/rules'
 import { isArray, isString } from 'lodash-es'
 import { getSlot } from '@/utils/get'
@@ -26,11 +20,7 @@ export function useFormItem(
   schema: FormSchema,
   formModel: Ref<Recordable>
 ) {
-  const componentProps: FormComponentProps = getTrueComponentProps(
-    schema,
-    formModel.value,
-    props
-  )
+  const componentProps: FormComponentProps = getTrueComponentProps(schema, formModel.value, props)
   const formItemLabel = computed<string>(() => getFormItemLabel())
   const isDisabled = computed<boolean>(() => getDisabled())
   const slotKey = getSlotKey(schema)
@@ -43,18 +33,16 @@ export function useFormItem(
       ...schemaItemProps,
       field: schema.field || '',
       label: formItemLabel.value,
-      class: [
-        'ab-form-item',
-        getNoLabelClass(),
-        getAddClass(),
-        getDisabledClass()
-      ]
+      class: ['ab-form-item', getNoLabelClass(), getAddClass(), getDisabledClass()]
         .filter(Boolean)
         .join(' '),
       required: getRequired(),
       rules: getItemRules(),
       labelColFlex: schemaItemProps.labelColFlex ?? props.labelColFlex,
-      style: mergeDisabledStyle(itemPropsStyle(globalItemProps, schemaItemProps), getDisabledStyleVariables())
+      style: mergeDisabledStyle(
+        itemPropsStyle(globalItemProps, schemaItemProps),
+        getDisabledStyleVariables()
+      )
     }
     if ((schemaItemProps.layout ?? props.layout) === 'vertical') {
       itemProps.labelColProps = { span: 24, ...(itemProps.labelColProps || {}) }
@@ -101,6 +89,7 @@ export function useFormItem(
     if (disabledStyles.bgColor !== false) {
       style['--color-fill-2'] = disabledStyles.bgColor
     }
+    style.marginBottom = disabledStyles.itemMarginBottom
     return Object.keys(style).length > 0 ? style : undefined
   }
 
@@ -109,6 +98,7 @@ export function useFormItem(
       textColor: 'var(--color-text-1)',
       borderColor: 'rgb(var(--arcoblue-6))',
       bgColor: 'transparent',
+      itemMarginBottom: '0px',
       noPadding: false,
       defaultCursor: false,
       noSuffix: false,
@@ -138,7 +128,9 @@ export function useFormItem(
     if (!originStyle) {
       return disabledStyle
     }
-    return Array.isArray(originStyle) ? [...originStyle, disabledStyle] : [originStyle, disabledStyle]
+    return Array.isArray(originStyle)
+      ? [...originStyle, disabledStyle]
+      : [originStyle, disabledStyle]
   }
 
   function getItemRules(): FieldRule | FieldRule[] {
@@ -189,7 +181,9 @@ export function useFormItem(
     if (schema.formItemProps?.required) {
       return true
     }
-    const rules = schema.formItemProps?.autoRules?.length ? getItemRules() : schema.formItemProps?.rules
+    const rules = schema.formItemProps?.autoRules?.length
+      ? getItemRules()
+      : schema.formItemProps?.rules
     const ruleList = Array.isArray(rules) ? rules : rules ? [rules] : []
     return ruleList.some(rule => rule.required) ? true : undefined
   }

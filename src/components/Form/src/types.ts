@@ -6,9 +6,9 @@ import type {
 import type { Component, CSSProperties, Slots, VNode, VNodeChild } from 'vue'
 import type { AutoRules } from '@/types/rules'
 
-type ArcoFormPublicProps = InstanceType<typeof import('@arco-design/web-vue')['Form']>['$props']
+type ArcoFormPublicProps = InstanceType<(typeof import('@arco-design/web-vue'))['Form']>['$props']
 type ArcoFormItemPublicProps = InstanceType<
-  typeof import('@arco-design/web-vue')['FormItem']
+  (typeof import('@arco-design/web-vue'))['FormItem']
 >['$props']
 
 export type FormSize = 'mini' | 'small' | 'medium' | 'large'
@@ -18,6 +18,7 @@ export type FormDisabledStyles = {
   textColor?: false | string
   borderColor?: false | string
   bgColor?: false | string
+  itemMarginBottom?: string
   noPadding?: boolean
   defaultCursor?: boolean
   noSuffix?: boolean
@@ -44,19 +45,18 @@ export interface FormEmits {
   (e: 'update:model', model: Recordable): void
 }
 
-export interface FormProps
-  extends Omit<
-    Partial<ArcoFormPublicProps>,
-    | 'model'
-    | 'layout'
-    | 'labelAlign'
-    | 'disabled'
-    | 'rules'
-    | 'autoLabelWidth'
-    | 'id'
-    | 'scrollToFirstError'
-    | 'size'
-  > {
+export interface FormProps extends Omit<
+  Partial<ArcoFormPublicProps>,
+  | 'model'
+  | 'layout'
+  | 'labelAlign'
+  | 'disabled'
+  | 'rules'
+  | 'autoLabelWidth'
+  | 'id'
+  | 'scrollToFirstError'
+  | 'size'
+> {
   model: Recordable
   controlled: boolean
   schemas: FormSchema[]
