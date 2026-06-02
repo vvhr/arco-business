@@ -1,8 +1,6 @@
 <div align="center">
 
-  <a href="https://github.com/vvhr/acro-business">
-    <img src="http://arco.vvhrdesign.com/logo.svg" alt="Acro Business" width="200" height="40" />
-  </a>
+  <img src="http://arco.vvhrdesign.com/logo.svg" alt="Acro Business" width="200" height="40" />
 
   <p>基于 Vue 3 和 Arco Design Vue 构建的<strong>配置驱动</strong>高级组件库</p>
   
