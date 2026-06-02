@@ -4,9 +4,9 @@
 
   <p>基于 Vue 3 和 Arco Design Vue 构建的<strong>配置驱动</strong>高级组件库</p>
   
-  [![npm version](https://img.shields.io/npm/v/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
-  [![npm downloads](https://img.shields.io/npm/dt/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
-  [![license](https://img.shields.io/npm/l/acro-business.svg?style=flat-square)](https://github.com/vvhr/acro-business/blob/main/LICENSE)
+  [![npm version](https://img.shields.io/npm/v/arco-business.svg?style=flat-square)](https://www.npmjs.com/package/arco-business)
+  [![npm downloads](https://img.shields.io/npm/dt/arco-business.svg?style=flat-square)](https://www.npmjs.com/package/arco-business)
+  [![license](https://img.shields.io/npm/l/arco-business.svg?style=flat-square)](https://github.com/vvhr/arco-business/blob/main/LICENSE)
   [![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=flat-square)](https://pnpm.io/)
   [![Vue](https://img.shields.io/badge/Vue-≥3.2.0-green?style=flat-square&logo=vue.js)](https://vuejs.org/)
   [![Arco Design Vue](https://img.shields.io/badge/Arco%20Design%20Vue-≥2.58.0-165dff?style=flat-square)](https://arco.design/vue/docs/start)

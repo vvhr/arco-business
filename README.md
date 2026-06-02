@@ -4,9 +4,9 @@
 
   <p>基于 Vue 3 和 Arco Design Vue 构建的<strong>配置驱动</strong>高级组件库</p>
   
-  [![npm version](https://img.shields.io/npm/v/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
-  [![npm downloads](https://img.shields.io/npm/dt/acro-business.svg?style=flat-square)](https://www.npmjs.com/package/acro-business)
-  [![license](https://img.shields.io/npm/l/acro-business.svg?style=flat-square)](https://github.com/vvhr/acro-business/blob/main/LICENSE)
+  [![npm version](https://img.shields.io/npm/v/arco-business.svg?style=flat-square)](https://www.npmjs.com/package/arco-business)
+  [![npm downloads](https://img.shields.io/npm/dt/arco-business.svg?style=flat-square)](https://www.npmjs.com/package/arco-business)
+  [![license](https://img.shields.io/npm/l/arco-business.svg?style=flat-square)](https://github.com/vvhr/arco-business/blob/main/LICENSE)
   [![pnpm](https://img.shields.io/badge/maintained%20with-pnpm-cc00ff.svg?style=flat-square)](https://pnpm.io/)
   [![Vue](https://img.shields.io/badge/Vue-≥3.2.0-green?style=flat-square&logo=vue.js)](https://vuejs.org/)
   [![Arco Design Vue](https://img.shields.io/badge/Arco%20Design%20Vue-≥2.58.0-165dff?style=flat-square)](https://arco.design/vue/docs/start)
@@ -43,7 +43,7 @@ Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之�
 ## 安装
 
 ```bash
-pnpm add acro-business @arco-design/web-vue
+pnpm add arco-business @arco-design/web-vue
 ```
 
 ## 快速开始
@@ -54,8 +54,8 @@ pnpm add acro-business @arco-design/web-vue
 import { createApp } from 'vue'
 import ArcoVue from '@arco-design/web-vue'
 import '@arco-design/web-vue/dist/arco.css'
-import AcroBusiness from 'acro-business'
-import 'acro-business/style.css'
+import AcroBusiness from 'arco-business'
+import 'arco-business/style.css'
 import App from './App.vue'
 
 createApp(App).use(ArcoVue).use(AcroBusiness).mount('#app')
@@ -70,8 +70,8 @@ createApp(App).use(ArcoVue).use(AcroBusiness).mount('#app')
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { AbForm, type FormSchema } from 'acro-business'
-import 'acro-business/style.css'
+import { AbForm, type FormSchema } from 'arco-business'
+import 'arco-business/style.css'
 
 const model = ref({})
 
@@ -106,7 +106,7 @@ const schemas: FormSchema[] = [
 ### 注册自定义组件
 
 ```ts
-import AcroBusiness from 'acro-business'
+import AcroBusiness from 'arco-business'
 import UserPicker from './components/UserPicker.vue'
 
 app.use(AcroBusiness, {
@@ -132,7 +132,7 @@ app.use(AcroBusiness, {
 ### 注册自定义图标集
 
 ```ts
-import AcroBusiness from 'acro-business'
+import AcroBusiness from 'arco-business'
 
 app.use(AcroBusiness, {
   iconCollections: [
@@ -151,7 +151,7 @@ app.use(AcroBusiness, {
 ### 设置语言
 
 ```ts
-import AcroBusiness, { setLocale } from 'acro-business'
+import AcroBusiness, { setLocale } from 'arco-business'
 
 app.use(AcroBusiness, {
   locale: 'zh-CN'
