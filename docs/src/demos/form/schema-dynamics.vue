@@ -26,8 +26,13 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { Button, Message, Space } from '@arco-design/web-vue'
-import { AbForm, type FormInstance, type FormSchema, type FormSchemaProps } from '@/components/Form'
-import { editDisabledStyles } from './shared'
+import {
+  AbForm,
+  type FormDisabledStyles,
+  type FormInstance,
+  type FormSchema,
+  type FormSchemaProps
+} from '@/components/Form'
 
 const formRef = ref<FormInstance>()
 const readonly = ref(false)
@@ -63,7 +68,12 @@ const schemaProps: FormSchemaProps = {
   componentProps: { allowClear: true }
 }
 
-const disabledStyles = editDisabledStyles
+const disabledStyles: FormDisabledStyles = {
+  bgColor: false,
+  noPadding: true,
+  defaultCursor: true,
+  noSuffix: true
+}
 
 const schemas: FormSchema[] = [
   {

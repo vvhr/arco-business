@@ -27,8 +27,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button, Message, Space, Tag } from '@arco-design/web-vue'
-import { AbForm, type FormInstance } from '@/components/Form'
-import { infoSchemas } from './shared'
+import { AbForm, type FormInstance, type FormSchema } from '@/components/Form'
 
 const formRef = ref<FormInstance>()
 const model = ref<Recordable>({
@@ -36,6 +35,30 @@ const model = ref<Recordable>({
   slotExtra: '展示 extra 插槽',
   slotHelp: ''
 })
+
+const infoSchemas: FormSchema[] = [
+  {
+    field: 'title',
+    label: '标题',
+    component: 'Input',
+    formItemProps: { extra: '这里展示 extra 文本' }
+  },
+  {
+    field: 'slotExtra',
+    label: '扩展插槽',
+    component: 'Input',
+    formItemProps: { extra: 'slotExtra--extra' }
+  },
+  {
+    field: 'slotHelp',
+    label: '帮助插槽',
+    component: 'Input',
+    formItemProps: {
+      help: 'slotHelp--help',
+      rules: [{ required: true, message: '校验错误会覆盖 help 区域' }]
+    }
+  }
+]
 
 async function validate() {
   const valid = await formRef.value?.validate()
