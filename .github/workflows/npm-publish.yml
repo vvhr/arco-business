@@ -47,8 +47,7 @@ jobs:
 
       - name: Setup pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.5.0 --activate
+          npm install --global pnpm@11.5.0
           node --version
           pnpm --version
 
