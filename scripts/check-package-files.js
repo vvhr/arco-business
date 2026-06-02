@@ -13,10 +13,8 @@ const requiredFiles = [
   'dist/style.css',
   'global.d.ts',
   'README.md',
-  'README.zh.md',
   'LICENSE',
-  'CHANGELOG.md',
-  'CHANGELOG.zh.md'
+  'CHANGELOG.md'
 ]
 
 const missingFiles = requiredFiles.filter(file => {

@@ -23,10 +23,8 @@
     "dist",
     "global.d.ts",
     "README.md",
-    "README.zh.md",
     "LICENSE",
-    "CHANGELOG.md",
-    "CHANGELOG.zh.md"
+    "CHANGELOG.md"
   ],
   "scripts": {
     "dev": "vite --config docs/vite.config.ts",
