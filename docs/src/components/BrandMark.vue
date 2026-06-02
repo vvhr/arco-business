@@ -1,12 +1,14 @@
 <template>
-  <span class="brand-mark" :class="[`brand-mark--${size}`, { 'brand-mark--flat': flat }]">
-    <span class="brand-mark__grid" />
-    <span class="brand-mark__path" />
-    <span class="brand-mark__core" />
-  </span>
+  <span
+    class="brand-mark"
+    :class="[`brand-mark--${size}`, { 'brand-mark--flat': flat }]"
+    v-html="logoSvg"
+  />
 </template>
 
 <script setup lang="ts">
+import logoSvg from '../assets/logo.svg?raw'
+
 withDefaults(
   defineProps<{
     size?: 'sm' | 'md' | 'lg'

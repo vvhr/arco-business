@@ -193,6 +193,7 @@ export default defineComponent({
 <style lang="less">
 .ab-table {
   width: 100%;
+  min-width: 0;
 
   &.is-adaptive {
     height: 100%;
@@ -237,6 +238,11 @@ export default defineComponent({
 
   .ab-table-body {
     width: 100%;
+    min-width: 0;
+  }
+
+  .ab-table-form {
+    min-width: 0;
   }
 
   .copyable-icon {

@@ -70,6 +70,9 @@ export function isEditable(
   if (!props.editable) {
     return false
   }
+  if (column.type === 'action') {
+    return false
+  }
   return resolveColumnFn(column.editable, true, row, index, column, props)
 }
 

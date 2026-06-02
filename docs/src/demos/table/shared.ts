@@ -66,6 +66,38 @@ export function createHeightRows() {
   }))
 }
 
+export function createFormatRows() {
+  return [
+    {
+      id: 1,
+      name: '张三',
+      status: 'active',
+      createTime: '2026-05-28 10:30:00',
+      amount: 128560.45,
+      phone: '13800138000',
+      email: 'zhangsan@example.com'
+    },
+    {
+      id: 2,
+      name: '李四',
+      status: 'pending',
+      createTime: '2026-05-30 14:20:00',
+      amount: 20480,
+      phone: '13900139000',
+      email: 'lisi@example.com'
+    },
+    {
+      id: 3,
+      name: '王五',
+      status: 'disabled',
+      createTime: '2026-06-01 09:15:00',
+      amount: 9876.3,
+      phone: '13700137000',
+      email: 'wangwu@example.com'
+    }
+  ]
+}
+
 export const simpleColumns: TableColumn[] = [
   { field: 'name', label: '姓名', width: 130 },
   { field: 'age', label: '年龄', width: 100, align: 'center' },
@@ -76,6 +108,47 @@ export const simpleColumns: TableColumn[] = [
     width: 120,
     type: 'dict',
     typeProps: { dictOptions: statusOptions, dictViewType: 'tag' }
+  }
+]
+
+export const formatColumns: TableColumn[] = [
+  { field: 'name', label: '客户', width: 120, fixed: 'left' },
+  {
+    field: 'status',
+    label: '状态字典',
+    width: 140,
+    type: 'dict',
+    typeProps: { dictOptions: statusOptions, dictViewType: 'dot-tag' }
+  },
+  {
+    field: 'createTime',
+    label: '创建时间',
+    width: 180,
+    type: 'date',
+    typeProps: { dateFormat: 'YYYY-MM-DD HH:mm' }
+  },
+  {
+    field: 'amount',
+    label: '合同金额',
+    width: 180,
+    align: 'right',
+    type: 'amount',
+    summable: true,
+    typeProps: { amountThousand: true, amountDigits: 2, amountUnit: '元' }
+  },
+  {
+    field: 'phone',
+    label: '手机号脱敏',
+    width: 160,
+    type: 'sensitive',
+    typeProps: { sensitiveType: 'phone', sensitiveHover: true }
+  },
+  {
+    field: 'email',
+    label: '邮箱脱敏',
+    minWidth: 220,
+    type: 'sensitive',
+    typeProps: { sensitiveType: 'email' }
   }
 ]
 

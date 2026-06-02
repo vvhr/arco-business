@@ -3,11 +3,7 @@
   <div v-else class="docs-app">
     <aside class="docs-sidebar">
       <RouterLink class="docs-brand" to="/">
-        <BrandMark />
-        <span>
-          <strong>Acro Business</strong>
-          <small>组件文档</small>
-        </span>
+        <BrandMark size="sm" />
       </RouterLink>
 
       <nav class="docs-nav" aria-label="文档导航">

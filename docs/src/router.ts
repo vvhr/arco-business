@@ -13,7 +13,13 @@ export type NavGroup = {
 export const navGroups: NavGroup[] = [
   {
     title: '指南',
-    items: [{ label: '快速开始', path: '/guide/quick-start' }]
+    items: [
+      { label: '介绍', path: '/guide/introduction' },
+      { label: '快速开始', path: '/guide/quick-start' },
+      { label: '国际化', path: '/guide/locale' },
+      { label: '扩展组件', path: '/guide/extend-components' },
+      { label: '扩展图标', path: '/guide/extend-icons' }
+    ]
   },
   {
     title: '组件',
@@ -33,8 +39,24 @@ export const navGroups: NavGroup[] = [
 const routes: RouteRecordRaw[] = [
   { path: '/', component: () => import('./pages/HomePage.vue') },
   {
+    path: '/guide/introduction',
+    component: () => import('./pages/guide/Introduction.vue')
+  },
+  {
     path: '/guide/quick-start',
     component: () => import('./pages/guide/QuickStart.vue')
+  },
+  {
+    path: '/guide/locale',
+    component: () => import('./pages/guide/Locale.vue')
+  },
+  {
+    path: '/guide/extend-components',
+    component: () => import('./pages/guide/ExtendComponents.vue')
+  },
+  {
+    path: '/guide/extend-icons',
+    component: () => import('./pages/guide/ExtendIcons.vue')
   },
   {
     path: '/components/form',

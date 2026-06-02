@@ -3,7 +3,6 @@
     <header class="home-nav">
       <RouterLink class="home-brand" to="/">
         <BrandMark />
-        <span>Acro Business</span>
       </RouterLink>
       <nav>
         <RouterLink to="/guide/quick-start">指南</RouterLink>
@@ -26,15 +25,15 @@
         <div class="home-hero__content">
           <div class="home-hero__brand">
             <BrandMark size="lg" />
-            <span>Vue 3 business components</span>
+            <span>Arco Design Vue business components</span>
           </div>
-          <h1>为 Arco Design Vue 打造的高级业务组件系统</h1>
+          <h1>面向中后台的高级业务组件库</h1>
           <p>
-            将表单、表格、上传、弹窗和业务文本能力沉淀为可复用组件，并用独立文档站承载示例、API 与迁移说明。
+            以表单、表格、图标和业务容器为核心，把商业项目里的高频页面模式沉淀成可配置、可扩展、可继承的组件引擎。
           </p>
           <div class="home-hero__actions">
             <RouterLink class="home-button home-button--primary" to="/guide/quick-start">开始使用</RouterLink>
-            <RouterLink class="home-button" to="/components/table">查看组件</RouterLink>
+            <RouterLink class="home-button" to="/components/form">查看表单引擎</RouterLink>
           </div>
         </div>
 
@@ -47,70 +46,77 @@
           <div class="home-product__header">
             <BrandMark flat />
             <div>
-              <strong>Documentation workspace</strong>
-              <small>preview + source + api</small>
+              <strong>Business component engine</strong>
+              <small>schema + slots + native arco props</small>
             </div>
           </div>
-          <div class="home-product__grid">
+          <div class="home-product__flow">
             <article>
-              <b>Schema Form</b>
-              <span>layout, containers, anchors</span>
+              <b>创建页</b>
+              <span>配置字段、布局、校验和提交行为</span>
             </article>
             <article>
-              <b>Business Table</b>
-              <span>selection, edit, summary</span>
+              <b>编辑页</b>
+              <span>复用同一份 schema 和组件插槽</span>
             </article>
             <article>
-              <b>Preview Blocks</b>
-              <span>runtime demo with raw source</span>
-            </article>
-            <article>
-              <b>API Surface</b>
-              <span>typed props and events</span>
+              <b>详情页</b>
+              <span>切换只读态，保留字段语义和展示规则</span>
             </article>
           </div>
-          <pre>pnpm dev
-pnpm docs:build
-pnpm build</pre>
+          <div class="home-product__stack">
+            <span>AbForm</span>
+            <span>AbTable</span>
+            <span>AbIcon</span>
+            <span>AbUpload</span>
+          </div>
         </div>
       </section>
 
-      <section class="home-band" data-anchor-title="Identity">
+      <section class="home-band" data-anchor-title="Components">
         <div>
-          <p>Brand system</p>
-          <h2>清晰、克制、面向开发者的组件品牌</h2>
+          <p>Component library</p>
+          <h2>组件库解决的是业务页面的重复建设，而不是单个 UI 控件的再次封装</h2>
+          <span>
+            Acro Business 基于 Arco Design Vue，面向表单录入、列表查询、图标表达和上传交互等中后台高频场景，提供更贴近业务交付的组合能力。
+          </span>
         </div>
-        <div class="home-identity">
-          <div class="home-identity__tile">
-            <BrandMark size="lg" />
-            <span>主标识</span>
-          </div>
-          <div class="home-identity__tile home-identity__tile--accent">
-            <span class="home-swatch" />
-            <span>核心强调色</span>
-          </div>
-          <div class="home-identity__tile">
-            <strong>AB</strong>
-            <span>短标识</span>
-          </div>
+        <div class="home-system">
+          <article>
+            <strong>配置驱动</strong>
+            <span>用 schema 描述字段、列、布局和交互，把页面差异收敛到配置层。</span>
+          </article>
+          <article>
+            <strong>业务组合</strong>
+            <span>把 Arco 原子能力组合成表单、表格、上传、文本等业务组件。</span>
+          </article>
+          <article>
+            <strong>工程复用</strong>
+            <span>同一套组件可沉淀团队范式，降低不同业务线的实现分歧。</span>
+          </article>
         </div>
       </section>
 
-      <section class="home-capabilities">
-        <article>
-          <span>01</span>
-          <h3>组件示例从源码迁出</h3>
-          <p>组件库不再承担示例站职责，文档站独立运行、独立构建、独立部署。</p>
+      <section class="home-advantages">
+        <article class="home-advantage home-advantage--large">
+          <span>高可用</span>
+          <h3>商业级沉淀的表单、表格和图标范式引擎</h3>
+          <p>组件来自中后台项目的长期复用场景，覆盖查询、编辑、只读、嵌套、校验、选择、合计和状态展示等高频交互。</p>
         </article>
-        <article>
-          <span>02</span>
-          <h3>示例和源码同步</h3>
-          <p>每个 DemoBlock 渲染真实 Vue 示例，并通过 raw import 展示同源代码。</p>
+        <article class="home-advantage">
+          <span>可扩展</span>
+          <h3>自定义组件和插槽能力完整开放</h3>
+          <p>表单引擎支持字段级、容器级和渲染级自定义，可接入团队已有组件。</p>
         </article>
-        <article>
-          <span>03</span>
-          <h3>文档页带锚点导航</h3>
-          <p>章节标题、说明、示例和 API 组成可扫描的二级文档结构。</p>
+        <article class="home-advantage">
+          <span>高效率</span>
+          <h3>一份配置复用多种页面状态</h3>
+          <p>创建页、编辑页和详情页共享字段定义，通过状态切换完成编辑态和只读态复用。</p>
+        </article>
+        <article class="home-advantage home-advantage--wide">
+          <span>原生继承</span>
+          <h3>基于 Arco Design Vue，并保留原组件的原生能力</h3>
+          <p>在增强业务封装的同时，继续继承 Arco Design Vue 的 props、事件、插槽和主题体系，避免业务组件成为新的能力边界。</p>
         </article>
       </section>
     </main>
