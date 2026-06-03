@@ -1,7 +1,7 @@
 {
   "name": "arco-business",
-  "version": "0.0.1",
-  "buildVersion": "dev-20260601-0528",
+  "version": "0.0.2-beta.1",
+  "buildVersion": "dev-20260603",
   "description": "Advanced Component Library Based on Vue3 + Arco Design Vue",
   "type": "module",
   "main": "./dist/index.cjs",

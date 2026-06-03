@@ -52,10 +52,16 @@ pnpm add arco-business @arco-design/web-vue
 
 ```ts
 import { createApp } from 'vue'
+// 引入Arco组件库
 import ArcoVue from '@arco-design/web-vue'
 import '@arco-design/web-vue/dist/arco.css'
+// 引入Arco图标库
+import ArcoVueIcon from '@arco-design/web-vue/es/icon';
+// 引入本项目组件库
 import AcroBusiness from 'arco-business'
+// 引入本项目样式
 import 'arco-business/style.css'
+
 import App from './App.vue'
 
 createApp(App).use(ArcoVue).use(AcroBusiness).mount('#app')
