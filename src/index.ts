@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import 'virtual:uno.css'
+import './styles/index.less'
 
 // Import components
 import { AbForm } from './components/Form'
