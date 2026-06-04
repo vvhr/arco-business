@@ -311,7 +311,6 @@ export interface TableColumnIndex {
 
 /** 顶层选择列配置，会转换为 Arco rowSelection。 */
 export interface TableColumnSelect extends Omit<TableRowSelection, 'title' | 'width'> {
-  label?: string
   width?: number
   /** 返回 false 时禁用当前行选择。 */
   selectable?: TableColumnFn<boolean>
@@ -397,7 +396,7 @@ export interface TableAction {
   name: string
   icon?: string
   noIcon?: boolean
-  type?: 'primary' | 'second' | ''
+  type?: ButtonProps['type']
   /** 按钮是否进入更多菜单。 */
   dropdown?: 'always' | 'auto' | 'never'
   /** 点击按钮后的业务回调。 */

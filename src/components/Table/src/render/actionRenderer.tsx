@@ -116,24 +116,11 @@ function renderActionButton(
 function getButtonAttrs(action: TableAction, ctx: ActionRenderContext) {
   const { row, index, props, column } = ctx
   const buttonAttrs: any = {
-    type: 'secondary',
+    type: action.type || 'secondary',
     ...(action.buttonAttrs || {}),
     disabled: isDisabledAction(action, row, index, props, column),
     loading: isLoadingAction(action, row, index, props, column)
   }
-
-  switch (action.type) {
-    case 'primary':
-      buttonAttrs.type = 'primary'
-      break
-    case 'second':
-      buttonAttrs.type = 'outline'
-      break
-    default:
-      buttonAttrs.type = buttonAttrs.type || 'secondary'
-      break
-  }
-
   return buttonAttrs
 }
 
