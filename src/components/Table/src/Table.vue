@@ -307,9 +307,12 @@ export default defineComponent({
   }
 
   .ab-table-append-selection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     background: var(--color-bg-1);
-    > .total {
+    .total {
       color: rgb(var(--primary-6));
     }
   }

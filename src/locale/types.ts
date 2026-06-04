@@ -53,6 +53,7 @@ export interface LocaleConfig {
     selection: {
       selected: string
       items: string
+      clear: string
     }
     action: {
       more: string

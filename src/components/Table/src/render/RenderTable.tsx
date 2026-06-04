@@ -1,4 +1,4 @@
-import { Form, Table } from '@arco-design/web-vue'
+import { Button, Form, Table } from '@arco-design/web-vue'
 import type {
   TableColumn,
   TableEmits,
@@ -57,6 +57,11 @@ export function renderTable(
   const draggable = computed(() => buildDraggable(props))
   const summary = computed(() => buildSummary(props))
 
+  const clearSelection = () => {
+    selectedKeys.value = []
+    emit('selection-change', [])
+  }
+
   /** 在选择列启用且存在选中行时追加选择统计，不覆盖用户 footer 插槽。 */
   const renderSelectedFooter = () => {
     if (selectedKeys.value.length <= 0) {
@@ -64,11 +69,17 @@ export function renderTable(
     }
     const selectedText = t('table.selection.selected')
     const itemsText = t('table.selection.items')
+    const clearText = t('table.selection.clear')
     return (
       <>
         {getSlot(slots, 'footer')}
         <div class="ab-table-append-selection">
-          {selectedText} <span class="total">{selectedKeys.value.length}</span> {itemsText}
+          <span>
+            {selectedText} <span class="total">{selectedKeys.value.length}</span> {itemsText}
+          </span>
+          <Button type="secondary" size="medium" onClick={clearSelection}>
+            {clearText}
+          </Button>
         </div>
       </>
     )

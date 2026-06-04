@@ -36,7 +36,8 @@ const enUS: LocaleConfig = {
     },
     selection: {
       selected: 'Selected',
-      items: 'items'
+      items: 'items',
+      clear: 'Clear selection'
     },
     action: {
       more: 'More'

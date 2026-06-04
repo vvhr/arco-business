@@ -36,7 +36,8 @@ const zhCN: LocaleConfig = {
     },
     selection: {
       selected: '当前已选择',
-      items: '条数据'
+      items: '条数据',
+      clear: '清空选择'
     },
     action: {
       more: '更多'
