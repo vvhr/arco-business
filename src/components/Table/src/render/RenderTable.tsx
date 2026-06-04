@@ -144,7 +144,6 @@ function buildRowSelection(props: TableProps): TableRowSelection | undefined {
     type: config.type ?? 'checkbox',
     showCheckedAll: config.type === 'radio' ? false : (config.showCheckedAll ?? true),
     ...config,
-    title: config.label ?? '',
     width: config.width ?? 50
   }
 }

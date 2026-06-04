@@ -86,7 +86,6 @@ const simpleColumns: TableColumn[] = [
 ]
 
 const checkboxSelection: TableColumnSelect = {
-  label: '',
   width: 56,
   fixed: true,
   selectable: row => row.status !== 'disabled'
