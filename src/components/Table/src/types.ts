@@ -9,7 +9,7 @@ import type {
   TableExpandable,
   TableRowSelection
 } from '@arco-design/web-vue'
-import type { Component, CSSProperties, Slots, VNode, VNodeChild } from 'vue'
+import type { Component, CSSProperties, Slots, VNodeChild } from 'vue'
 import type { DictItem, DictMap } from '@/types/dict'
 import type { TableFormImportItem } from '@/types/imports'
 
@@ -172,6 +172,18 @@ export type TableColumnFn<T> = (
   editable: boolean
 ) => T
 
+/** 兼容消费端 TSX 生成的 VNode，避免绑定到组件库自身的 @vue/runtime-core 实例。 */
+export interface TableVNodeLike {
+  type: any
+  props?: any
+  children?: any
+  key?: any
+  el?: any
+}
+
+/** Table 渲染回调允许返回的节点内容。 */
+export type TableRenderNode = VNodeChild | TableVNodeLike | TableVNodeLike[]
+
 /** Table 内置业务渲染类型；结构列已迁移到顶层 props。 */
 export type TableColumnType =
   | 'default'
@@ -209,7 +221,7 @@ export type TableColumnTypeProps = {
   /** 字典展示方式。 */
   dictViewType?: 'tag' | 'text' | 'dot-tag'
   /** 自定义字典展示渲染函数。 */
-  dictViewRender?: (originValue: any, value: any, option: any) => VNode | string
+  dictViewRender?: (originValue: any, value: any, option: any) => TableRenderNode
   /** 日期格式化模板。 */
   dateFormat?: string
   /** 金额是否显示千分位。 */
@@ -244,7 +256,7 @@ export interface TableColumn {
   /** 列级空值展示文本。 */
   emptyValue?: string
   /** 自定义表头渲染函数。 */
-  headerRender?: TableColumnFn<VNode | string>
+  headerRender?: TableColumnFn<TableRenderNode>
   /** 动态隐藏函数或静态隐藏标记。 */
   hidden?: TableColumnFn<boolean> | boolean
   /** 静态显隐开关，false 时不参与列渲染。 */
@@ -264,9 +276,9 @@ export interface TableColumn {
   /** 列对齐方式。 */
   align?: 'left' | 'center' | 'right'
   /** 兼容旧渲染引擎的格式化函数，不依赖 Arco column formatter。 */
-  formatter?: TableColumnFn<string | number | VNode>
+  formatter?: TableColumnFn<TableRenderNode>
   /** 自定义单元格渲染函数。 */
-  render?: TableColumnFn<VNode | string | number>
+  render?: TableColumnFn<TableRenderNode>
   /** 是否开启单元格省略。 */
   ellipsis?: boolean
   /** 是否开启 Arco tooltip；默认跟随 ellipsis。 */
@@ -296,7 +308,7 @@ export interface TableColumn {
   /** 默认合计逻辑是否统计该列。 */
   summable?: boolean
   /** 列级合计函数。 */
-  summaryMethod?: (values: any[]) => string | number | VNode
+  summaryMethod?: (values: any[]) => TableRenderNode
   [key: string]: any
 }
 
@@ -439,7 +451,7 @@ export type TableFormInsidePropsRenders = Recordable<TableFormInsidePropsRender>
 
 /** 编辑组件内部插槽单项渲染配置。 */
 export type TableFormInsidePropsRender =
-  | TableColumnFn<VNode | string | false>
+  | TableColumnFn<TableRenderNode | false>
   | false
   | string
 

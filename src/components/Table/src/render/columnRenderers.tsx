@@ -5,10 +5,9 @@ import SensitiveSwitch from '../components/SensitiveSwitch.vue'
 import { isArray } from '@/utils/is'
 import { formatAmount, formatDate, formatSensitive } from '@/utils/format'
 import { copyToClipboard } from '@/utils/copy'
-import type { TableColumn, TableEmits, TableProps } from '../types'
+import type { TableColumn, TableEmits, TableProps, TableRenderNode } from '../types'
 import type { DictItem } from '@/types/dict'
 import type { UseDictTools } from '@/utils/dict'
-import type { VNode } from 'vue'
 import { isClickable, isCopyable } from '../utils'
 import { t, logger } from '@/locale'
 
@@ -28,7 +27,7 @@ export interface RenderContext {
 /** 展示态列渲染器统一返回结构。 */
 export interface RenderResult {
   value: string | number
-  valueRender?: VNode | string | number
+  valueRender?: TableRenderNode
 }
 
 /** 渲染字典列，支持普通数组字典、树形字典、tag 和 dot-tag。 */
@@ -221,15 +220,11 @@ function renderSensitiveByType(
 /** 给展示值追加复制、点击、对齐和省略等 Table 自建能力。 */
 export function wrapValueWithFeatures(
   ctx: RenderContext,
-  result: RenderResult | string | VNode
-): VNode | string | number {
+  result: RenderResult | string | TableRenderNode
+): TableRenderNode {
   const { props, column, row, index, emit } = ctx
 
-  if (typeof result === 'string') {
-    return result
-  }
-
-  if (typeof result === 'object' && 'type' in result) {
+  if (!isRenderResult(result)) {
     return result
   }
 
@@ -297,5 +292,15 @@ export function wrapValueWithFeatures(
         {valueRender || value}
       </div>
     </div>
+  )
+}
+
+function isRenderResult(result: RenderResult | string | TableRenderNode): result is RenderResult {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    !Array.isArray(result) &&
+    !('type' in result) &&
+    'value' in result
   )
 }
