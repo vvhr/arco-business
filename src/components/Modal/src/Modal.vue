@@ -83,6 +83,9 @@ const getBindValue = computed(() => {
     'cancel-text',
     'okText',
     'ok-text',
+    // open/close 由 AbModal 自身接管并重新 emit，避免透传给 Arco Modal 后外部监听触发两次
+    'onOpen',
+    'onClose',
     'simple',
     'titleAlign',
     'title-align',
@@ -186,8 +189,8 @@ defineExpose({
     v-bind="getBindValue"
     v-model:visible="visible"
     :fullscreen="fullscreenLocal"
-    @open.prevent.stop="onOpen"
-    @close.prevent.stop="onClose"
+    @open="onOpen"
+    @close="onClose"
   >
     <template v-if="!hideTitle" #title>
       <div class="flex justify-between items-center relative w-full">

@@ -74,6 +74,9 @@ const getBindValue = computed(() => {
     'cancel-text',
     'okText',
     'ok-text',
+    // open/close 由 AbDrawer 自身接管并重新 emit，避免透传给 Arco Drawer 后外部监听触发两次
+    'onOpen',
+    'onClose',
     // 排除扩展属性
     'scrollable',
     'scrollbarHeight',
@@ -160,8 +163,8 @@ defineExpose({
   <Drawer
     v-bind="getBindValue"
     v-model:visible="visible"
-    @open.prevent.stop="onOpen"
-    @close.prevent.stop="onClose"
+    @open="onOpen"
+    @close="onClose"
   >
     <template v-if="!!header" #header>
       <div class="flex justify-between items-center w-full">
