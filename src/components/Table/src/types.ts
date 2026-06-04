@@ -192,7 +192,7 @@ export type TableColumnTypeProps = {
     icon?: string
     iconSize?: number
     size?: ButtonProps['size']
-    buttonAttrs?: ButtonProps
+    buttonAttrs?: ButtonProps & Recordable
   }
   /** 字典名称，配合全局或局部 dict 数据查找。 */
   dictName?: string

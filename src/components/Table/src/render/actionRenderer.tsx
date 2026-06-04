@@ -144,7 +144,7 @@ function renderMoreDropdown(
               <AbIcon
                 icon={column?.typeProps?.actionDropdown?.icon ?? 'icon-park-outline:more'}
                 size={column?.typeProps?.actionDropdown?.iconSize ?? 14}
-                class="mr-1"
+                class={column?.typeProps?.actionDropdown?.noLabel ? '' : 'mr-1'}
               />
             )}
             {!column?.typeProps?.actionDropdown?.noLabel && <span>{t('table.action.more')}</span>}
