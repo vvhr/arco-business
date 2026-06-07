@@ -18,11 +18,13 @@ export type FormDisabledStyles = {
   textColor?: false | string
   borderColor?: false | string
   bgColor?: false | string
-  itemMarginBottom?: string
+  itemMarginBottom?: false | string
+  labelMarginBottom?: false | string
   labelFontSize?: false | string
   noPadding?: boolean
   defaultCursor?: boolean
   noSuffix?: boolean
+  noRequiredSymbol?: boolean
 }
 export type FormValidationErrors = Record<string, ValidatedError>
 

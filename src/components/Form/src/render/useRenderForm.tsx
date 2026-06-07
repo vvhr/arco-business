@@ -34,6 +34,16 @@ const applyDirectives = (vnode: any, directivesObj: Record<string, any>) => {
   return directiveBindings.length > 0 ? withDirectives(vnode, directiveBindings as any) : vnode
 }
 
+export function mergeContainerSlots(
+  insideSlots: Recordable = {},
+  defaultRender?: () => VNode | undefined
+): Recordable {
+  return {
+    ...insideSlots,
+    default: () => defaultRender?.()
+  }
+}
+
 export function useRenderForm(
   props: FormProps,
   emits: FormEmits,
@@ -70,9 +80,10 @@ export function useRenderForm(
       logger.error('console.form.componentError', { type: SchemaType.CONTAINER, component: schema.component }, schema)
       return undefined
     }
+    const { getInsideSlots } = useFormItem(props, slots, schema, formModel)
     return (
       <AnyComponent {...setComponentProps()} key={freshKey}>
-        {{ default: () => defaultRender?.() }}
+        {mergeContainerSlots(getInsideSlots(), defaultRender)}
       </AnyComponent>
     )
   }

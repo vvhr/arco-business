@@ -92,6 +92,9 @@ function onTransitionEnd() {
         :icon="isExpanded ? 'icon-park-outline:up' : 'icon-park-outline:down'"
         class="ab-form-group-header__icon"
       />
+      <div class="ab-form-group-header__action" v-else>
+        <slot name="action"></slot>
+      </div>
     </div>
     <div
       ref="bodyRef"
@@ -143,6 +146,12 @@ function onTransitionEnd() {
 
     &.toggleable {
       cursor: pointer;
+    }
+    .ab-form-group-header__action {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
     }
   }
 

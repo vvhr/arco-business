@@ -145,11 +145,17 @@ export default defineComponent({
     .arco-form-item-extra {
       color: var(--color-text-4);
     }
-
-    .arco-form-item-label-col > .arco-form-item-label {
-      font-size: var(--ab-form-disabled-label-font-size);
+    .arco-form-item-label-col {
+      margin-bottom: var(--ab-form-disabled-label-margin-bottom);
+      > .arco-form-item-label {
+        font-size: var(--ab-form-disabled-label-font-size);
+      }
     }
-
+    &.ab-form-item-disabled-no-required-symbol {
+      .arco-form-item-label-required-symbol {
+        display: none;
+      }
+    }
     &.ab-form-item-disabled-default-cursor {
       &,
       * {

@@ -92,7 +92,12 @@ export function useFormItem(
     if (disabledStyles.labelFontSize !== false) {
       style['--ab-form-disabled-label-font-size'] = disabledStyles.labelFontSize
     }
-    style.marginBottom = disabledStyles.itemMarginBottom
+    if (disabledStyles.labelMarginBottom !== false) {
+      style['--ab-form-disabled-label-margin-bottom'] = disabledStyles.labelMarginBottom
+    }
+    if (disabledStyles.itemMarginBottom !== false) {
+      style.marginBottom = disabledStyles.itemMarginBottom
+    }
     return Object.keys(style).length > 0 ? style : undefined
   }
 
@@ -102,10 +107,12 @@ export function useFormItem(
       borderColor: 'rgb(var(--arcoblue-6))',
       bgColor: 'transparent',
       itemMarginBottom: '0px',
+      labelMarginBottom: '0px',
       labelFontSize: false,
       noPadding: false,
       defaultCursor: false,
       noSuffix: false,
+      noRequiredSymbol: false,
       ...(props.disabledStyles || {})
     }
   }
@@ -119,7 +126,8 @@ export function useFormItem(
       'ab-form-item-is-disabled',
       disabledStyles.noPadding ? 'ab-form-item-disabled-no-padding' : '',
       disabledStyles.defaultCursor ? 'ab-form-item-disabled-default-cursor' : '',
-      disabledStyles.noSuffix ? 'ab-form-item-disabled-no-suffix' : ''
+      disabledStyles.noSuffix ? 'ab-form-item-disabled-no-suffix' : '',
+      disabledStyles.noRequiredSymbol ? 'ab-form-item-disabled-no-required-symbol' : '',
     ]
       .filter(Boolean)
       .join(' ')
