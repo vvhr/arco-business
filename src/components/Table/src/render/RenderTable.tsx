@@ -104,7 +104,7 @@ export function renderTable(
       selectedKeys: selectedKeys.value,
       summary: summary.value,
       summarySpanMethod: props.summarySpanMethod,
-      scroll: props.adaptive ? { y: '100%' } : undefined,
+      scroll: buildScroll(props),
       ...unref(tableAttrs),
       'onUpdate:selectedKeys': (keys: (string | number)[]) => {
         selectedKeys.value = keys
@@ -145,6 +145,24 @@ export function renderTable(
   return renderArcoTable()
 }
 
+/** 合并 AbTable 自适应高度和调用方显式滚动配置。 */
+function buildScroll(props: TableProps): TableProps['scroll'] | undefined {
+  if (!props.adaptive) {
+    return props.scroll
+  }
+
+  const scroll = {
+    ...(props.scroll || {}),
+    y: props.scroll?.y ?? '100%'
+  }
+
+  if (scroll.x === undefined && scroll.minWidth === undefined) {
+    scroll.x = 'max-content'
+  }
+
+  return scroll
+}
+
 /** 将 Table 顶层 selectable 配置翻译为 Arco rowSelection。 */
 function buildRowSelection(props: TableProps): TableRowSelection | undefined {
   if (!props.selectable) {
@@ -154,6 +172,7 @@ function buildRowSelection(props: TableProps): TableRowSelection | undefined {
   return {
     type: config.type ?? 'checkbox',
     showCheckedAll: config.type === 'radio' ? false : (config.showCheckedAll ?? true),
+    fixed: true,
     ...config,
     width: config.width ?? 50
   }
@@ -169,6 +188,7 @@ function buildExpandable(props: TableProps, slots: TableSlots): TableExpandable 
     ...rest,
     title: label ?? '',
     width: width ?? 50,
+    fixed: true,
     expandedRowRender: record => {
       const raw = getRawRecord(record)
       if (render) {
@@ -187,6 +207,7 @@ function buildDraggable(props: TableProps): TableDraggable | undefined {
   const config = typeof props.draggable === 'object' ? props.draggable : {}
   return {
     type: config.type ?? 'handle',
+    fixed: true,
     ...config,
     title: config.label ?? '',
     width: config.width ?? 40

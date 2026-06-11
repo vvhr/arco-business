@@ -50,6 +50,7 @@ export type {
   TablePagination,
   TableProps,
   TableRawInstance,
+  TableScroll,
   TableSize,
   TableSlotDefault,
   TableSlots

@@ -33,6 +33,7 @@ type TableRuntimePropKey = keyof Pick<
   | 'rowKey'
   | 'emptyValue'
   | 'adaptive'
+  | 'scroll'
   | 'showSummary'
   | 'summaryMethod'
   | 'summarySpanMethod'
@@ -121,6 +122,10 @@ export const tableProps = {
   adaptive: {
     type: Boolean,
     default: false
+  },
+  scroll: {
+    type: Object as PropType<TableProps['scroll']>,
+    default: undefined
   },
   showSummary: {
     type: Boolean,

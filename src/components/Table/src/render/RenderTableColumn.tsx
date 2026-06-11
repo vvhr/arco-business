@@ -61,7 +61,7 @@ export function renderTableColumns(
       title: config.label ?? t('table.index'),
       width: config.width ?? 70,
       minWidth: config.minWidth ?? 70,
-      fixed: config.fixed,
+      fixed: config.fixed ?? 'left',
       align: config.align ?? 'center',
       render: ({ record, rowIndex }) => {
         const rawRow = getRawRecord(record)

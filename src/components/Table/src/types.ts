@@ -14,6 +14,7 @@ import type { DictItem, DictMap } from '@/types/dict'
 import type { TableFormImportItem } from '@/types/imports'
 
 type ArcoTablePublicProps = InstanceType<typeof import('@arco-design/web-vue')['Table']>['$props']
+export type TableScroll = NonNullable<ArcoTablePublicProps['scroll']>
 
 /** Table 继承 Arco Table 后保留的尺寸枚举。 */
 export type TableSize = 'mini' | 'small' | 'medium' | 'large'
@@ -105,6 +106,8 @@ export interface TableProps
   emptyValue: string
   /** 是否启用父级高度自适应。 */
   adaptive: boolean
+  /** Arco Table 横向/纵向滚动配置，adaptive 模式下会自动补齐 y: '100%'。 */
+  scroll?: TableScroll
   /** 是否显示合计行，内部转换为 Arco Table 的 summary。 */
   showSummary: boolean
   /** 自定义 Arco summary 数据生成函数。 */

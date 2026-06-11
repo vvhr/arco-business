@@ -128,6 +128,7 @@ const propsRows: ApiRow[] = [
   { name: 'rowKey', description: '行主键字段，用于选择、展开和拖拽定位。', type: 'string', defaultValue: 'id' },
   { name: 'emptyValue', description: '空值展示文本。', type: 'string', defaultValue: '-' },
   { name: 'adaptive', description: '是否根据父级高度自适应滚动区域。', type: 'boolean', defaultValue: 'false' },
+  { name: 'scroll', description: 'Arco Table 滚动配置；adaptive 模式会默认补齐 y: 100% 和横向滚动宽度。', type: 'TableScroll', defaultValue: '-' },
   { name: 'showSummary', description: '是否显示合计行。', type: 'boolean', defaultValue: 'false' },
   { name: 'summaryMethod', description: '自定义合计数据生成函数。', type: '(param: TableSummaryParams) => TableData[]', defaultValue: 'null' },
   { name: 'summarySpanMethod', description: '合计行单元格合并函数。', type: '(data: TableSummarySpanParams) => { rowspan?; colspan? } | void', defaultValue: '-' },
@@ -171,6 +172,7 @@ const typesRows: ApiRow[] = [
   { name: 'TableColumnExpand', description: '展开列配置，会转换为 Arco expandable.expandedRowRender。', type: 'Omit<TableExpandable, ...> & { label?; width?; render? }', defaultValue: '-' },
   { name: 'TableColumnDraggable', description: '拖拽列配置，会转换为 Arco draggable。', type: 'Omit<TableDraggable, "title" | "width"> & { label?; width? }', defaultValue: '-' },
   { name: 'TablePagination', description: '独立分页器配置，current、pageSize 和 total 由 AbTable 接管。', type: 'Omit<PaginationProps, "current" | "pageSize" | "total"> & { total?: number }', defaultValue: '-' },
+  { name: 'TableScroll', description: 'Arco Table scroll 配置，支持 x、y、minWidth 和 maxHeight。', type: '{ x?; y?; minWidth?; maxHeight? }', defaultValue: '-' },
   { name: 'TableColumnFn<T>', description: '列级动态函数统一签名。', type: '(row, index, column, form, excontext, editable) => T', defaultValue: '-' },
   { name: 'TableRawInstance', description: 'Arco Table 原始实例能力的最小暴露类型。', type: '{ select?; selectAll?; expand?; expandAll?; resetFilters?; clearFilters?; resetSorters?; clearSorters? }', defaultValue: '-' }
 ]

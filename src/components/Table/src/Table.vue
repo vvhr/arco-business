@@ -62,6 +62,7 @@ export default defineComponent({
         'pagination',
         'emptyValue',
         'adaptive',
+        'scroll',
         'showSummary',
         'summaryMethod',
         'summarySpanMethod',
@@ -322,6 +323,10 @@ export default defineComponent({
     display: flex;
     justify-content: flex-end;
     flex: 0 0 auto;
+  }
+
+  .arco-scrollbar-track-direction-horizontal {
+    height: 10px;
   }
 }
 </style>

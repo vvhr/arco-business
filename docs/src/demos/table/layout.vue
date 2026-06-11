@@ -29,6 +29,18 @@
         bordered
       />
     </div>
+    <div class="fixed-column-frame">
+      <AbTable
+        v-model="rows"
+        :columns="fixedColumns"
+        :form="{}"
+        :excontext="{}"
+        :dict="{}"
+        adaptive
+        :indexable="{ label: '序号', width: 76, fixed: 'left' }"
+        bordered
+      />
+    </div>
   </div>
 </template>
 
@@ -71,6 +83,24 @@ const simpleColumns: TableColumn[] = [
   }
 ]
 
+const fixedColumns: TableColumn[] = [
+  { field: 'name', label: '姓名', width: 140, fixed: 'left' },
+  { field: 'age', label: '年龄', width: 100, align: 'center' },
+  { field: 'email', label: '邮箱', width: 260, ellipsis: true },
+  { field: 'phone', label: '手机号', width: 180 },
+  { field: 'amount', label: '合同金额', width: 180, type: 'amount' },
+  {
+    field: 'status',
+    label: '状态',
+    width: 140,
+    type: 'dict',
+    typeProps: { dictOptions: statusOptions, dictViewType: 'tag' }
+  },
+  { field: 'createTime', label: '创建时间', width: 220 },
+  { field: 'remark', label: '备注', width: 260, ellipsis: true },
+  { key: 'operation', label: '操作', width: 160, fixed: 'right' }
+]
+
 const rows = ref(createHeightRows())
 const adaptiveEnabled = ref(true)
 </script>
@@ -83,6 +113,12 @@ const adaptiveEnabled = ref(true)
 
 .adaptive-height-frame {
   height: 420px;
+  min-height: 0;
+}
+
+.fixed-column-frame {
+  width: 720px;
+  height: 360px;
   min-height: 0;
 }
 </style>
