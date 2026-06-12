@@ -61,12 +61,18 @@ function createHeightRows() {
     id: index + 1,
     name: `用户${index + 1}`,
     age: 22 + (index % 12),
-    email: `user${index + 1}@example.com`,
+    email:
+      index === 0
+        ? 'very-long-email-address-without-breaks-abcdefghijklmnopqrstuvwxyz-0123456789@example-business-domain.com'
+        : `user${index + 1}@example.com`,
     phone: `1380013${String(8000 + index).slice(-4)}`,
     amount: 1000 + index * 125.5,
     status: statusOptions[index % statusOptions.length]?.value,
     createTime: '2024-05-01 12:00:00',
-    remark: '用于验证滚动高度。'
+    remark:
+      index === 0
+        ? '这是一段较长的备注内容，用于验证固定列自适应横向滚动时单元格省略是否仍然生效。'
+        : '用于验证滚动高度。'
   }))
 }
 

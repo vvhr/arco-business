@@ -14,11 +14,19 @@ import type {
   TableExpandable,
   TableRowSelection
 } from '@arco-design/web-vue'
+import type { TableComponents, TableOperationColumn } from '@arco-design/web-vue/es/table/interface'
 import type { TableFormImportItemConfig } from '@/types/imports'
 import { computed, unref, type Component, type Ref } from 'vue'
 import { renderTableColumns } from './RenderTableColumn'
 import type { UseDictTools } from '@/utils/dict'
-import { findColumnByField, findColumnByKey, getRawRecord } from '../utils'
+import {
+  findColumnByField,
+  findColumnByKey,
+  getRawRecord,
+  getVisibleTreeRows,
+  setIndex,
+  shouldUseIndexOperation
+} from '../utils'
 import { formatAmount } from '@/utils/format'
 import { getSlot } from '@/utils/get'
 import { t } from '@/locale'
@@ -34,6 +42,7 @@ export function renderTable(
   formRef: Ref<any>,
   tableAttrs: Ref<Recordable>,
   selectedKeys: Ref<(string | number)[]>,
+  expandedKeys: Ref<(string | number)[]>,
   tableData: Ref<TableData[]>,
   dictTools: UseDictTools,
   components: Partial<Recordable<Component, TableFormComponentName>>,
@@ -88,6 +97,7 @@ export function renderTable(
   /** 组装最终传给 Arco Table 的属性和事件桥接。 */
   const renderArcoTable = () => {
     const tableClass = `ab-table-main ${selectedKeys.value.length > 0 ? 'has-append' : ''}`
+    const attrs = unref(tableAttrs)
     const tableProps = {
       ref: tableRef,
       key: props.freshKey,
@@ -105,7 +115,8 @@ export function renderTable(
       summary: summary.value,
       summarySpanMethod: props.summarySpanMethod,
       scroll: buildScroll(props),
-      ...unref(tableAttrs),
+      ...attrs,
+      components: buildComponents(props, attrs, pageSizeRef, pageRef, expandedKeys),
       'onUpdate:selectedKeys': (keys: (string | number)[]) => {
         selectedKeys.value = keys
       },
@@ -124,6 +135,14 @@ export function renderTable(
           emit('update:modelValue', nextData)
           emit('drag-change', nextData)
         }
+      },
+      onExpandedChange: (keys: (string | number)[]) => {
+        expandedKeys.value = keys
+        attrs.onExpandedChange?.(keys)
+      },
+      'onUpdate:expandedKeys': (keys: (string | number)[]) => {
+        expandedKeys.value = keys
+        attrs['onUpdate:expandedKeys']?.(keys)
       }
     }
 
@@ -145,6 +164,75 @@ export function renderTable(
   return renderArcoTable()
 }
 
+/** 树形表的序号列使用 operation 列，避免占用 Arco 树展开按钮所在的首个数据列。 */
+function buildComponents(
+  props: TableProps,
+  attrs: Recordable,
+  pageSizeRef: Ref<number>,
+  pageRef: Ref<number>,
+  expandedKeys: Ref<(string | number)[]>
+): TableComponents | undefined {
+  if (!shouldUseIndexOperation(props)) {
+    return attrs.components
+  }
+
+  const originComponents = attrs.components as TableComponents | undefined
+  return {
+    ...(originComponents || {}),
+    operations: operations => {
+      const originOperations = originComponents?.operations
+        ? originComponents.operations(operations)
+        : [operations.dragHandle, operations.expand, operations.selection].filter(Boolean)
+      const indexOperation = buildIndexOperation(props, pageSizeRef, pageRef, expandedKeys)
+
+      if (!indexOperation.fixed) {
+        return [...originOperations, indexOperation]
+      }
+
+      return [
+        ...originOperations.map(operation =>
+          operation.fixed ? { ...operation, isLastLeftFixed: false } : operation
+        ),
+        { ...indexOperation, isLastLeftFixed: true }
+      ]
+    }
+  }
+}
+
+/** 构建树形表序号 operation 列。 */
+function buildIndexOperation(
+  props: TableProps,
+  pageSizeRef: Ref<number>,
+  pageRef: Ref<number>,
+  expandedKeys: Ref<(string | number)[]>
+): TableOperationColumn {
+  const config = typeof props.indexable === 'object' ? props.indexable : {}
+  const indexMap = new Map<string | number, number>()
+  getVisibleTreeRows(props.modelValue, props.rowKey, expandedKeys.value).forEach((row, index) => {
+    const key = row?.[props.rowKey]
+    if (key !== undefined) {
+      indexMap.set(key, index)
+    }
+  })
+
+  return {
+    name: '__abIndex',
+    title: config.label ?? t('table.index'),
+    width: config.width ?? 70,
+    fixed: (config.fixed ?? 'left') === 'left',
+    render: record => {
+      const rawRow = getRawRecord(record)
+      if (rawRow?.__abSummary) {
+        return rawRow.__abIndex || props.emptyValue
+      }
+      const index = indexMap.get(rawRow?.[props.rowKey])
+      return index === undefined
+        ? props.emptyValue
+        : setIndex(index, pageSizeRef.value || 10, pageRef.value || 1)
+    }
+  }
+}
+
 /** 合并 AbTable 自适应高度和调用方显式滚动配置。 */
 function buildScroll(props: TableProps): TableProps['scroll'] | undefined {
   if (!props.adaptive) {
@@ -157,7 +245,7 @@ function buildScroll(props: TableProps): TableProps['scroll'] | undefined {
   }
 
   if (scroll.x === undefined && scroll.minWidth === undefined) {
-    scroll.x = 'max-content'
+    scroll.minWidth = '100%'
   }
 
   return scroll

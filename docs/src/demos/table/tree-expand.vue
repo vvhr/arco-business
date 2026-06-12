@@ -7,6 +7,7 @@
       :excontext="{}"
       :dict="{}"
       row-key="id"
+      :indexable="true"
       bordered
     />
     <AbTable

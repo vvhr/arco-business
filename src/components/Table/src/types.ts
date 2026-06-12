@@ -106,7 +106,7 @@ export interface TableProps
   emptyValue: string
   /** 是否启用父级高度自适应。 */
   adaptive: boolean
-  /** Arco Table 横向/纵向滚动配置，adaptive 模式下会自动补齐 y: '100%'。 */
+  /** Arco Table 横向/纵向滚动配置，adaptive 模式下会自动补齐 y: '100%' 和横向滚动状态。 */
   scroll?: TableScroll
   /** 是否显示合计行，内部转换为 Arco Table 的 summary。 */
   showSummary: boolean

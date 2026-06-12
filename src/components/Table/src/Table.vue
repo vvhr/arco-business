@@ -5,7 +5,8 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  unref
+  unref,
+  watch
 } from 'vue'
 import type {
   TableColumn,
@@ -20,6 +21,7 @@ import { useDict, type UseDictTools } from '@/utils/dict'
 import { useImport } from './hook/useImport'
 import { logger } from '@/locale'
 import { tableProps } from './props'
+import { getTreeRowKeys } from './utils'
 
 export default defineComponent({
   name: 'Table',
@@ -44,6 +46,7 @@ export default defineComponent({
     const tableRef = ref<TableRawInstance>()
     const formRef = ref<any>()
     const selectedKeys = ref<(string | number)[]>([])
+    const expandedKeys = ref<(string | number)[]>([])
     const dictTools: UseDictTools = useDict(props.dict)
     const { pageSizeRef, currentPageRef, pagination, watchPage } = usePagination(props as any, emit as any)
     const stopWatchPage = watchPage()
@@ -103,6 +106,26 @@ export default defineComponent({
         return clone
       })
     })
+
+    watch(
+      () => [attrs.expandedKeys, attrs.defaultExpandedKeys, attrs.defaultExpandAllRows, props.modelValue],
+      () => {
+        if (Array.isArray(attrs.expandedKeys)) {
+          expandedKeys.value = attrs.expandedKeys as (string | number)[]
+          return
+        }
+        if (Array.isArray(attrs.defaultExpandedKeys)) {
+          expandedKeys.value = attrs.defaultExpandedKeys as (string | number)[]
+          return
+        }
+        if (attrs.defaultExpandAllRows) {
+          expandedKeys.value = getTreeRowKeys(props.modelValue, props.rowKey)
+          return
+        }
+        expandedKeys.value = []
+      },
+      { immediate: true }
+    )
 
     onMounted(() => {
       emit('register', tableRef.value)
@@ -173,6 +196,7 @@ export default defineComponent({
           formRef,
           tableAttrs,
           selectedKeys,
+          expandedKeys,
           tableData as any,
           dictTools,
           components.value,

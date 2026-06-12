@@ -10,7 +10,14 @@ import type { TableColumnData } from '@arco-design/web-vue'
 import type { TableFormImportItemConfig } from '@/types/imports'
 import TooltipHeader from '../components/TooltipHeader.vue'
 import { getSlot } from '@/utils/get'
-import { getColumnKey, getRawRecord, isEditable, isHidden, setIndex } from '../utils'
+import {
+  getColumnKey,
+  getRawRecord,
+  isEditable,
+  isHidden,
+  setIndex,
+  shouldUseIndexOperation
+} from '../utils'
 import type { Component, Ref } from 'vue'
 import type { UseDictTools } from '@/utils/dict'
 import { get } from 'lodash-es'
@@ -41,7 +48,7 @@ export function renderTableColumns(
   const validColumns = getValidColumns(props, props.columns || [])
   const columns: TableColumnData[] = []
 
-  if (props.indexable) {
+  if (props.indexable && !shouldUseIndexOperation(props)) {
     columns.push(renderIndexColumn(props, pageSizeRef, pageRef))
   }
 

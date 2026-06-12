@@ -145,6 +145,63 @@ export function getRawRecord(record: Recordable) {
   return record?.__abRaw || record
 }
 
+/** 判断数据中是否存在树形子节点。 */
+export function hasTreeData(rows: Recordable[] = []) {
+  return rows.some(row => {
+    const children = row?.children
+    return Array.isArray(children) && (children.length > 0 || hasTreeData(children))
+  })
+}
+
+/** 树形表存在序号列时，改用 operation 列避免 Arco 将树展开按钮挂到序号列。 */
+export function shouldUseIndexOperation(props: TableProps) {
+  return Boolean(props.indexable && hasTreeData(props.modelValue))
+}
+
+/** 根据展开状态计算当前可见树节点。 */
+export function getVisibleTreeRows(
+  rows: Recordable[] = [],
+  rowKey: string,
+  expandedKeys: (string | number)[] = []
+) {
+  const expandedKeySet = new Set(expandedKeys)
+  const visibleRows: Recordable[] = []
+
+  const travel = (_rows: Recordable[]) => {
+    _rows.forEach(row => {
+      visibleRows.push(row)
+      const children = row?.children
+      if (Array.isArray(children) && expandedKeySet.has(row?.[rowKey])) {
+        travel(children)
+      }
+    })
+  }
+
+  travel(rows)
+  return visibleRows
+}
+
+/** 获取所有树节点主键，用于默认全展开时初始化序号映射。 */
+export function getTreeRowKeys(rows: Recordable[] = [], rowKey: string) {
+  const keys: (string | number)[] = []
+
+  const travel = (_rows: Recordable[]) => {
+    _rows.forEach(row => {
+      const key = row?.[rowKey]
+      if (key !== undefined) {
+        keys.push(key)
+      }
+      const children = row?.children
+      if (Array.isArray(children)) {
+        travel(children)
+      }
+    })
+  }
+
+  travel(rows)
+  return keys
+}
+
 /** 统一解析列级动态配置，保证所有函数属性拿到一致上下文。 */
 function resolveColumnFn<T>(
   value: TableColumnFn<T> | T | undefined,

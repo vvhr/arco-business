@@ -128,7 +128,7 @@ const propsRows: ApiRow[] = [
   { name: 'rowKey', description: '行主键字段，用于选择、展开和拖拽定位。', type: 'string', defaultValue: 'id' },
   { name: 'emptyValue', description: '空值展示文本。', type: 'string', defaultValue: '-' },
   { name: 'adaptive', description: '是否根据父级高度自适应滚动区域。', type: 'boolean', defaultValue: 'false' },
-  { name: 'scroll', description: 'Arco Table 滚动配置；adaptive 模式会默认补齐 y: 100% 和横向滚动宽度。', type: 'TableScroll', defaultValue: '-' },
+  { name: 'scroll', description: 'Arco Table 滚动配置；adaptive 模式会默认补齐 y: 100% 和横向滚动状态。', type: 'TableScroll', defaultValue: '-' },
   { name: 'showSummary', description: '是否显示合计行。', type: 'boolean', defaultValue: 'false' },
   { name: 'summaryMethod', description: '自定义合计数据生成函数。', type: '(param: TableSummaryParams) => TableData[]', defaultValue: 'null' },
   { name: 'summarySpanMethod', description: '合计行单元格合并函数。', type: '(data: TableSummarySpanParams) => { rowspan?; colspan? } | void', defaultValue: '-' },
