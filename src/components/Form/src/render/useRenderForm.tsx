@@ -396,6 +396,7 @@ export function useRenderForm(
           'ab-form-main__base-row': true,
           'is-designable': props.designable
         }}
+        gutter={10}
         style="margin-left:0;margin-right:0;"
       >
         {currentSchemas.map(item => renderSchema(item))}
