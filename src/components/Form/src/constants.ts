@@ -37,7 +37,8 @@ export const needInputPlaceholder: FormInputName[] = [
   'Input',
   'InputNumber',
   'Mention',
-  'InputTag'
+  'InputTag',
+  'Textarea'
 ]
 
 export const needSelectPlaceholder: FormInputName[] = [
