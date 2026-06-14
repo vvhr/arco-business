@@ -68,11 +68,11 @@ export const abFormProps = {
     type: Object as PropType<FormProps['disabledStyles']>,
     default: () => ({
       textColor: 'var(--color-text-1)',
-      borderColor: 'rgb(var(--arcoblue-6))',
-      bgColor: 'transparent',
-      itemMarginBottom: '0px',
-      labelMarginBottom: '0px',
-      labelFontSize: false as false,
+      borderColor: false,
+      bgColor: false,
+      itemMarginBottom: false,
+      labelMarginBottom: false,
+      labelFontSize: false,
       noPadding: false,
       defaultCursor: false,
       noSuffix: false
@@ -108,7 +108,7 @@ export const abFormProps = {
   },
   labelColFlex: {
     type: [String, Number] as PropType<string | number>,
-    default: undefined
+    default: '80px'
   },
   designable: {
     type: Boolean,

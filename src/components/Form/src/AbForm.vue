@@ -142,9 +142,6 @@ export default defineComponent({
 
   .ab-form-item-is-disabled {
     .arco-form-item-message,
-    .arco-form-item-extra {
-      color: var(--color-text-4);
-    }
     .arco-form-item-label-col {
       margin-bottom: var(--ab-form-disabled-label-margin-bottom);
       > .arco-form-item-label {
