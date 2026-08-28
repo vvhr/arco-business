@@ -195,6 +195,7 @@ export type TableColumnType =
   | 'date'
   | 'amount'
   | 'sensitive'
+  | 'image-text'
 
 /** 不同业务列类型的附加配置。 */
 export type TableColumnTypeProps = {
@@ -247,6 +248,14 @@ export type TableColumnTypeProps = {
   sensitiveRegex?: [RegExp | string, string]
   /** 是否允许悬停/聚焦时查看原始值。 */
   sensitiveHover?: boolean
+  /** 图片地址 */
+  imageSrc?: TableColumnFn<string>
+  /** 图片组件属性 */
+  imageProps?: Recordable
+  /** 图片组件是否仅存在图片时显示。 */
+  imageOnlyExsist?: boolean
+  /** 图片组件右侧文本, 未穿时默认取该列field值 */
+  imageText?: TableColumnFn<string>
   [key: string]: any
 }
 

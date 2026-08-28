@@ -25,6 +25,7 @@ import {
   renderAmountColumn,
   renderDateColumn,
   renderDictColumn,
+  renderImageTextColumn,
   renderSensitiveColumn,
   wrapValueWithFeatures,
   type RenderContext
@@ -236,6 +237,8 @@ export function renderTableColumns(
         return renderDateColumn(ctx)
       case 'sensitive':
         return renderSensitiveColumn(ctx)
+      case 'image-text':
+        return renderImageTextColumn(ctx)
       case 'action':
         return renderActionColumn({
           props: ctx.props,

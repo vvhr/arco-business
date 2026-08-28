@@ -1,4 +1,4 @@
-import { Message, Tag } from '@arco-design/web-vue'
+import { Image, Message, Tag } from '@arco-design/web-vue'
 import { AbIcon } from '@/components/Icon'
 import DotTag from '../components/DotTag.vue'
 import SensitiveSwitch from '../components/SensitiveSwitch.vue'
@@ -225,10 +225,51 @@ function renderSensitiveByType(
   }
 }
 
+/** 渲染左图右文列；文本区域复用 Table 的复制、点击与省略能力。 */
+export function renderImageTextColumn(ctx: RenderContext): TableRenderNode {
+  const { props, column, row, index, value, emptyValue } = ctx
+  const {
+    imageSrc: imageSrcMethod,
+    imageProps,
+    imageOnlyExsist,
+    imageText: imageTextMethod
+  } = column.typeProps || {}
+
+  const imageSrc =
+    imageSrcMethod?.(row, index, column, props.form, props.excontext, props.editable) ?? ''
+  const imageText =
+    imageTextMethod?.(row, index, column, props.form, props.excontext, props.editable) ??
+    value ??
+    emptyValue
+  const textNode = wrapValueWithFeatures(ctx, { value: imageText }, { ellipsis: true })
+  const showImage = !imageOnlyExsist || Boolean(imageSrc)
+
+  return (
+    <div class="ab-table-image-text w-full min-w-0 flex flex-row items-center gap-2.5">
+      {showImage && (
+        <div class="ab-table-image-text__image flex-none">
+          <Image
+            width={30}
+            height={30}
+            fit="contain"
+            preview={true}
+            {...(imageProps || {})}
+            src={imageSrc}
+          />
+        </div>
+      )}
+      <div class="ab-table-image-text__text min-w-0 flex-1 overflow-hidden text-ellipsis text-nowrap">
+        {textNode}
+      </div>
+    </div>
+  )
+}
+
 /** 给展示值追加复制、点击、对齐和省略等 Table 自建能力。 */
 export function wrapValueWithFeatures(
   ctx: RenderContext,
-  result: RenderResult | string | TableRenderNode
+  result: RenderResult | string | TableRenderNode,
+  options: { ellipsis?: boolean } = {}
 ): TableRenderNode {
   const { props, column, row, index, emit } = ctx
 
@@ -248,7 +289,7 @@ export function wrapValueWithFeatures(
     return valueRender !== undefined ? valueRender : value
   }
 
-  const ellipsis = column.ellipsis ?? props.ellipsis ?? false
+  const ellipsis = options.ellipsis ?? column.ellipsis ?? props.ellipsis ?? false
   const align = column.align ?? props.align ?? 'left'
   const rowClassAlign =
     align === 'left' ? 'justify-start' : align === 'right' ? 'justify-end' : 'justify-center'
