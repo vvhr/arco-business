@@ -233,8 +233,12 @@ export type TableColumnTypeProps = {
   amountDecimal?: boolean
   /** 金额小数位数。 */
   amountDigits?: number
+  /** 金额是否自动补零。 */
+  amountZero?: boolean
   /** 金额单位。 */
   amountUnit?: string
+  /** 动态格式化金额单位，优先于 amountUnit。 */
+  amountUnitFormat?: TableColumnFn<string>
   /** 金额单位位置。 */
   amountUnitPosition?: 'left' | 'right'
   /** 内置脱敏类型。 */

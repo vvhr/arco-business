@@ -126,7 +126,7 @@ function getArcoTagColor(type?: string) {
 
 /** 渲染金额列，复用项目级金额格式化能力。 */
 export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
-  const { column, value, emptyValue } = ctx
+  const { props, column, row, index, value, emptyValue } = ctx
 
   if (value === '' || value === null || value === undefined) {
     return emptyValue
@@ -136,16 +136,24 @@ export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
     amountThousand = false,
     amountDecimal = true,
     amountDigits = 2,
+    amountZero = true,
     amountUnit = '',
+    amountUnitFormat,
     amountUnitPosition = 'right'
   } = column.typeProps || {}
+
+  const formattedAmountUnit =
+    typeof amountUnitFormat === 'function'
+      ? amountUnitFormat(row, index, column, props.form, props.excontext, props.editable)
+      : amountUnit
 
   return {
     value: formatAmount(value, {
       amountThousand,
       amountDecimal,
       amountDigits,
-      amountUnit,
+      amountZero,
+      amountUnit: formattedAmountUnit,
       amountUnitPosition,
       defaultValue: emptyValue
     })

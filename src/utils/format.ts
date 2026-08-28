@@ -86,6 +86,7 @@ export function formatAmount(
     amountThousand?: boolean // 是否显示千分位分隔符 (例如: 1,234.56)
     amountDecimal?: boolean // 是否显示小数位
     amountDigits?: number // 小数的位数 默认2
+    amountZero?: boolean // 是否自动补零
     amountUnit?: string // 自定义金额的单位 (例如: $, ¥, 元) 默认空
     amountUnitPosition?: 'left' | 'right' // 单位的显示位置 ('left' | 'right') @default 'left'
     defaultValue?: string // 当数值无效或不存在时显示的默认字符串 @default "0"
@@ -95,6 +96,7 @@ export function formatAmount(
     amountThousand = true, // 默认显示千分位
     amountDecimal = true, // 默认显示小数
     amountDigits = 2, // 默认保留两位小数
+    amountZero = true, // 默认自动补零
     amountUnit = '', // 默认无单位
     amountUnitPosition = 'left', // 默认单位在左边
     defaultValue = '0' // 默认值为 '0'
@@ -124,7 +126,9 @@ export function formatAmount(
   if (amountDecimal) {
     // 确保小数位数为非负整数
     const validDigits = Math.max(0, Math.floor(amountDigits))
-    localeOptions.minimumFractionDigits = validDigits
+    // 开启自动补零时，整数至少显示一位小数；关闭时不补齐小数位。
+    // amountDigits 始终作为小数位上限，避免原始小数位过多。
+    localeOptions.minimumFractionDigits = amountZero && validDigits > 0 ? 1 : 0
     localeOptions.maximumFractionDigits = validDigits
   } else {
     // 不显示小数位，则小数位数为 0
