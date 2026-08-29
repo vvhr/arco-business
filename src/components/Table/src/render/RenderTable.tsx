@@ -339,6 +339,7 @@ function buildSummary(props: TableProps) {
           amountThousand = false,
           amountDecimal = true,
           amountDigits = 2,
+          amountZero = true,
           amountUnit = '',
           amountUnitPosition = 'right'
         } = findColumn.typeProps || {}
@@ -346,6 +347,7 @@ function buildSummary(props: TableProps) {
           amountThousand,
           amountDecimal,
           amountDigits,
+          amountZero,
           amountUnit,
           amountUnitPosition,
           defaultValue: props.emptyValue

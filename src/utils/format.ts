@@ -126,9 +126,9 @@ export function formatAmount(
   if (amountDecimal) {
     // 确保小数位数为非负整数
     const validDigits = Math.max(0, Math.floor(amountDigits))
-    // 开启自动补零时，整数至少显示一位小数；关闭时不补齐小数位。
+    // 开启自动补零时补齐到 amountDigits；关闭时不补齐小数位。
     // amountDigits 始终作为小数位上限，避免原始小数位过多。
-    localeOptions.minimumFractionDigits = amountZero && validDigits > 0 ? 1 : 0
+    localeOptions.minimumFractionDigits = amountZero ? validDigits : 0
     localeOptions.maximumFractionDigits = validDigits
   } else {
     // 不显示小数位，则小数位数为 0
