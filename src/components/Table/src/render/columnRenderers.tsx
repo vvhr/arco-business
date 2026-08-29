@@ -241,7 +241,14 @@ export function renderImageTextColumn(ctx: RenderContext): TableRenderNode {
     imageTextMethod?.(row, index, column, props.form, props.excontext, props.editable) ??
     value ??
     emptyValue
-  const textNode = wrapValueWithFeatures(ctx, { value: imageText }, { ellipsis: true })
+  const textAlign = column.align ?? 'left'
+  const textAlignClass =
+    textAlign === 'right' ? 'text-right' : textAlign === 'center' ? 'text-center' : 'text-left'
+  const textNode = wrapValueWithFeatures(
+    ctx,
+    { value: imageText },
+    { ellipsis: true, align: textAlign }
+  )
   const showImage = !imageOnlyExsist || Boolean(imageSrc)
 
   return (
@@ -258,7 +265,9 @@ export function renderImageTextColumn(ctx: RenderContext): TableRenderNode {
           />
         </div>
       )}
-      <div class="ab-table-image-text__text min-w-0 flex-1 overflow-hidden text-ellipsis text-nowrap">
+      <div
+        class={`ab-table-image-text__text min-w-0 flex-1 overflow-hidden text-ellipsis text-nowrap ${textAlignClass}`}
+      >
         {textNode}
       </div>
     </div>
@@ -269,7 +278,7 @@ export function renderImageTextColumn(ctx: RenderContext): TableRenderNode {
 export function wrapValueWithFeatures(
   ctx: RenderContext,
   result: RenderResult | string | TableRenderNode,
-  options: { ellipsis?: boolean } = {}
+  options: { ellipsis?: boolean; align?: TableColumn['align'] } = {}
 ): TableRenderNode {
   const { props, column, row, index, emit } = ctx
 
@@ -290,7 +299,7 @@ export function wrapValueWithFeatures(
   }
 
   const ellipsis = options.ellipsis ?? column.ellipsis ?? props.ellipsis ?? false
-  const align = column.align ?? props.align ?? 'left'
+  const align = options.align ?? column.align ?? props.align ?? 'left'
   const rowClassAlign =
     align === 'left' ? 'justify-start' : align === 'right' ? 'justify-end' : 'justify-center'
   const textClassEllipsis = ellipsis ? 'text-ellipsis overflow-hidden text-nowrap' : ''
