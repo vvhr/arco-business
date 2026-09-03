@@ -345,7 +345,7 @@ export function wrapValueWithFeatures(
       )}
       <div
         class={`ab-table-cell-value__text flex-1 ${textClassEllipsis} ${textClickable}`}
-        onClick={() => onClickValue()}
+        onClick={clickable ? onClickValue : undefined}
       >
         {valueRender || value}
       </div>
