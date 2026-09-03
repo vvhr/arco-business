@@ -119,7 +119,7 @@ function getArcoTagColor(type?: string) {
     warning: 'orange',
     danger: 'red',
     error: 'red',
-    info: '#86909c'
+    info: 'gray'
   }
   return type ? colorMap[type] || type : 'arcoblue'
 }
