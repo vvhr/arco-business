@@ -320,6 +320,8 @@ export interface TableColumn {
     Recordable
   /** 是否进入编辑态。 */
   editable?: TableColumnFn<boolean> | boolean
+  /** 编辑态列宽 */
+  editWidth?: number
   /** 编辑组件配置。 */
   editProps?: TableColumnEditProps
   /** 默认合计逻辑是否统计该列。 */

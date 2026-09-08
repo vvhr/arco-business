@@ -14,6 +14,7 @@ import {
   getColumnKey,
   getRawRecord,
   isEditable,
+  isNeverEditable,
   isHidden,
   setIndex,
   shouldUseIndexOperation
@@ -100,12 +101,16 @@ export function renderTableColumns(
 
     const ellipsis = column.ellipsis ?? props.ellipsis ?? false
     const tooltip = column.tooltip ?? ellipsis
+
+    // 可编辑态列宽
+    const width = isNeverEditable(props, column) ? column.width : (column.editWidth ?? column.width)
+
     const columnAttrs: TableColumnData = {
       dataIndex: column.field || column.key || '',
       title: () => renderHeader(column, columnKey),
       align: column.align || props.align || 'center',
       fixed: column.fixed,
-      width: column.width,
+      width: width,
       minWidth: column.minWidth,
       ellipsis,
       tooltip,
@@ -115,15 +120,21 @@ export function renderTableColumns(
           return renderSummaryCell(column, rawRow)
         }
         return (
-          getSlot(slots, column.field || column.key || '', createSlotData(rawRow, arcoColumn, rowIndex)) ||
-          renderTableColumnDefault(column, rawRow, rowIndex)
+          getSlot(
+            slots,
+            column.field || column.key || '',
+            createSlotData(rawRow, arcoColumn, rowIndex)
+          ) || renderTableColumnDefault(column, rawRow, rowIndex)
         )
       },
       ...(column.columnAttrs || {})
     }
 
     if (isEditable(props, column, {}, null)) {
-      columnAttrs.bodyCellClass = mergeCellClass(columnAttrs.bodyCellClass, 'ab-table-column-editable')
+      columnAttrs.bodyCellClass = mergeCellClass(
+        columnAttrs.bodyCellClass,
+        'ab-table-column-editable'
+      )
     } else {
       columnAttrs.bodyCellClass = mergeCellClass(columnAttrs.bodyCellClass, 'ab-table-column')
     }

@@ -1,9 +1,4 @@
-import type {
-  TableAction,
-  TableColumn,
-  TableColumnFn,
-  TableProps
-} from './types'
+import type { TableAction, TableColumn, TableColumnFn, TableProps } from './types'
 import { isFunction } from '@/utils/is'
 
 /** 根据当前分页状态计算跨页连续序号。 */
@@ -60,6 +55,12 @@ export function isLoadingAction(
   return resolveColumnFn(action.loading, false, row, index, column, props)
 }
 
+/** 判断当前列是否始终不可编辑。 */
+export function isNeverEditable(props: TableProps, column: TableColumn) {
+  // 表格全局不可编辑 或 列级不可编辑
+  return props.editable === false || column.editable === false || column.type === 'action'
+}
+
 /** 判断当前列在当前行是否进入编辑态。 */
 export function isEditable(
   props: TableProps,
@@ -77,22 +78,19 @@ export function isEditable(
 }
 
 /** 判断编辑组件是否禁用。 */
-export function isDisabled(
-  props: TableProps,
-  column: TableColumn,
-  row: Recordable,
-  index: number
-) {
-  return resolveColumnFn(column.editProps?.componentProps?.disabled, false, row, index, column, props)
+export function isDisabled(props: TableProps, column: TableColumn, row: Recordable, index: number) {
+  return resolveColumnFn(
+    column.editProps?.componentProps?.disabled,
+    false,
+    row,
+    index,
+    column,
+    props
+  )
 }
 
 /** 判断当前单元格是否展示复制入口。 */
-export function isCopyable(
-  props: TableProps,
-  column: TableColumn,
-  row: Recordable,
-  index: number
-) {
+export function isCopyable(props: TableProps, column: TableColumn, row: Recordable, index: number) {
   return resolveColumnFn(column.copyable, false, row, index, column, props)
 }
 
