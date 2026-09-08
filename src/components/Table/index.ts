@@ -40,7 +40,6 @@ export type {
   TableColumnEditProps,
   TableEmits,
   TableExpose,
-  TableFormAutoRules,
   TableFormComponentEventFn,
   TableFormComponentEvents,
   TableFormComponentName,

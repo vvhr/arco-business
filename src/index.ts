@@ -96,7 +96,6 @@ export type {
   TableDefineProps,
   TableEmits,
   TableExpose,
-  TableFormAutoRules,
   TableFormComponentEventFn,
   TableFormComponentEvents,
   TableFormComponentName,

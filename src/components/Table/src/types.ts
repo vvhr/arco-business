@@ -12,6 +12,7 @@ import type {
 import type { Component, CSSProperties, Slots, VNodeChild } from 'vue'
 import type { DictItem, DictMap } from '@/types/dict'
 import type { TableFormImportItem } from '@/types/imports'
+import type { AutoRules } from '@/types/rules'
 
 type ArcoTablePublicProps = InstanceType<typeof import('@arco-design/web-vue')['Table']>['$props']
 export type TableScroll = NonNullable<ArcoTablePublicProps['scroll']>
@@ -395,7 +396,7 @@ export interface TableColumnEditProps {
   /** Arco FormItem 属性。 */
   formItemProps?: {
     rules?: FieldRule | FieldRule[]
-    autoRules?: TableFormAutoRules[]
+    autoRules?: AutoRules[]
   } & Recordable
   /** 编辑组件内部插槽配置。 */
   insideProps?: {
@@ -470,21 +471,6 @@ export type TableFormInsidePropsRender =
   | TableColumnFn<TableRenderNode | false>
   | false
   | string
-
-/** 表单自动校验规则名称。 */
-export type TableFormAutoRules =
-  | 'isRequired'
-  | 'isRequiredArray'
-  | 'noSpace'
-  | 'normalText'
-  | 'isIdCard'
-  | 'isMobilePhone'
-  | 'isTelephone'
-  | 'noChinese'
-  | 'isCreditCode'
-  | 'onlyNumber'
-  | 'onlyLetter'
-  | 'isEmail'
 
 /** Arco 选项字段映射。 */
 export type TableOptionKeys = {

@@ -208,7 +208,7 @@ const editPropsRows: ApiRow[] = [
   { name: '_v_componentProps', description: '动态组件属性函数。', type: 'TableColumnFn<Recordable>', defaultValue: '-' },
   { name: 'componentEvent', description: '编辑组件事件映射。', type: 'TableFormComponentEvents', defaultValue: '{}' },
   { name: 'formItemProps.rules', description: 'Arco FieldRule 校验规则。', type: 'FieldRule | FieldRule[]', defaultValue: '[]' },
-  { name: 'formItemProps.autoRules', description: '自动校验规则名。', type: 'TableFormAutoRules[]', defaultValue: '[]' },
+  { name: 'formItemProps.autoRules', description: '自动校验规则名。', type: 'AutoRules[]', defaultValue: '[]' },
   { name: 'insideProps.renders', description: '编辑组件内部插槽渲染集合。', type: 'TableFormInsidePropsRenders', defaultValue: '{}' }
 ]
 
