@@ -130,7 +130,7 @@ export function renderTableColumns(
       ...(column.columnAttrs || {})
     }
 
-    if (isEditable(props, column, {}, null)) {
+    if (!isNeverEditable(props, column)) {
       columnAttrs.bodyCellClass = mergeCellClass(
         columnAttrs.bodyCellClass,
         'ab-table-column-editable'
