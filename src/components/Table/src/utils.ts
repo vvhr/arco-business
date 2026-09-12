@@ -143,6 +143,44 @@ export function getRawRecord(record: Recordable) {
   return record?.__abRaw || record
 }
 
+/**
+ * 获取编辑行字段在表单模型中的真实路径。
+ *
+ * Arco Table 的树节点 rowIndex 是展开后的展示序号，不能直接用于访问仍保持
+ * children 嵌套结构的表单模型，因此需要按节点引用回溯到实际树路径。
+ */
+export function getRowFormFieldPath(
+  rows: Recordable[],
+  targetRow: Recordable,
+  field: string | undefined,
+  fallbackIndex: number,
+  childrenKey = 'children'
+): string {
+  const rawTarget = getRawRecord(targetRow)
+
+  const findPath = (items: Recordable[], parentPath = ''): string | undefined => {
+    for (let index = 0; index < items.length; index++) {
+      const rawRow = getRawRecord(items[index])
+      const rowPath = parentPath ? `${parentPath}.${childrenKey}.${index}` : String(index)
+
+      if (rawRow === rawTarget) {
+        return field ? `${rowPath}.${field}` : rowPath
+      }
+
+      const children = rawRow?.[childrenKey]
+      if (Array.isArray(children) && children.length) {
+        const childPath = findPath(children, rowPath)
+        if (childPath) {
+          return childPath
+        }
+      }
+    }
+    return undefined
+  }
+
+  return findPath(rows) || (field ? `${fallbackIndex}.${field}` : String(fallbackIndex))
+}
+
 /** 判断数据中是否存在树形子节点。 */
 export function hasTreeData(rows: Recordable[] = []) {
   return rows.some(row => {

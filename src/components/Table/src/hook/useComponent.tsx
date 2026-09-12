@@ -6,7 +6,7 @@ import { setReactiveValue } from '@/utils/set'
 import { getAutoRulesMap } from '@/utils/rules'
 import { getPlaceholder } from '@/locale/utils'
 import { t } from '@/locale'
-import { isDisabled } from '../utils'
+import { getRawRecord, getRowFormFieldPath, isDisabled } from '../utils'
 import type {
   TableColumn,
   TableColumnFn,
@@ -33,12 +33,13 @@ export function useComponent(
 ) {
   const componentName = column?.editProps?.component || 'Input'
   const field = column.editProps?.field || column.field
+  const modelRow = getRawRecord(row)
   const freshKey = `${column.key || field}-${index}-${column.editProps?.componentProps?.freshKey || 0}`
   const rules = getFormItemRules()
   const formItemProps = {
     label: '',
     hideLabel: !hasRequiredRule(rules, column.editProps?.formItemProps?.autoRules),
-    field: `${index}.${field}`,
+    field: getRowFormFieldPath(props.modelValue, modelRow, field, index),
     ...(column.editProps?.formItemProps || {}),
     rules
   }
@@ -59,17 +60,17 @@ export function useComponent(
         ? componentConfigs[componentName]?.modelValueKey || 'modelValue'
         : 'modelValue'
 
-      bindings[modelValueKey] = get(row, field)
+      bindings[modelValueKey] = get(modelRow, field)
       bindings[`onUpdate:${modelValueKey}`] = (value: any) => {
-        setReactiveValue(row, field, value)
+        setReactiveValue(modelRow, field, value)
       }
     }
     if (column.editProps?.componentProps?.vBinds) {
       Object.entries(column.editProps.componentProps.vBinds).forEach(([propName, fieldPath]) => {
         if (propName && fieldPath && typeof fieldPath === 'string') {
-          bindings[propName] = get(row, fieldPath)
+          bindings[propName] = get(modelRow, fieldPath)
           bindings[`onUpdate:${propName}`] = (value: any) => {
-            setReactiveValue(row, fieldPath, value)
+            setReactiveValue(modelRow, fieldPath, value)
           }
         }
       })
@@ -112,8 +113,8 @@ export function useComponent(
       ...getPlaceholderText(column, componentConfigs),
       ...setCascaderProps(column),
       ...componentProps,
-      ...setAttrsOptions(row, index, column, componentProps, formModel, props),
-      disabled: isDisabled(props, column, row, index),
+      ...setAttrsOptions(modelRow, index, column, componentProps, formModel, props),
+      disabled: isDisabled(props, column, modelRow, index),
       ...getDynamicComponentProps(column, formModel, props)
     }
 
@@ -132,7 +133,7 @@ export function useComponent(
       if (isFunction(eventFn)) {
         compEvents[eventName] = getComponentEventFunction(
           eventFn,
-          row,
+          modelRow,
           index,
           column,
           formModel,
@@ -150,7 +151,8 @@ export function useComponent(
     for (const slotName in insideRenders) {
       const fn = insideRenders[slotName]
       if (isFunction(fn)) {
-        slotObj[slotName] = () => fn(row, index, column, formModel, props.excontext, props.editable)
+        slotObj[slotName] = () =>
+          fn(modelRow, index, column, formModel, props.excontext, props.editable)
       } else if (typeof fn === 'string') {
         slotObj[slotName] = () => fn
       }
