@@ -41,7 +41,8 @@ const props = withDefaults(defineProps<ModalProps>(), {
   scrollbarHeight: '400px',
   scrollbarType: 'embed',
   scrollbarOuterClass: '',
-  scrollbarOuterStyle: ''
+  scrollbarOuterStyle: '',
+  noScrollbarStyle: '',
 })
 const emit = defineEmits(['update:modelValue', 'scroll', 'close', 'open'])
 const visible = computed({
@@ -96,6 +97,7 @@ const getBindValue = computed(() => {
     'scrollbarType',
     'scrollbarOuterClass',
     'scrollbarOuterStyle',
+    'noScrollbarStyle',
     // 排除扩展属性
     'beforeClose'
   ]
@@ -224,7 +226,7 @@ defineExpose({
     >
       <slot></slot>
     </Scrollbar>
-    <div v-else class="ab-modal-body__no-scrollbar">
+    <div v-else class="ab-modal-body__no-scrollbar" :style="noScrollbarStyle">
       <slot></slot>
     </div>
 

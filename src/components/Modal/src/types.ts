@@ -85,4 +85,5 @@ export interface ModalProps extends ModalConfig {
   beforeClose?: BeforeCloseFn
   // 避免触发boolean错误
   bodyStyle?: StyleValue
+  noScrollbarStyle?: StyleValue
 }
