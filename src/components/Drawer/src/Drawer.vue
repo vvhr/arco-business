@@ -188,7 +188,7 @@ defineExpose({
     <Scrollbar
       v-if="scrollable"
       ref="scrollbarRef"
-      :style="[scrollbarStyle, contentLayoutStyle, contentStyle]"
+      :style="[contentLayoutStyle, scrollbarStyle, contentStyle]"
       :type="scrollbarType"
       :outer-class="scrollbarOuterClass"
       :outer-style="scrollbarOuterStyle"

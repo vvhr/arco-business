@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { computed, defineComponent, onMounted, onUnmounted, ref, unref, watch } from 'vue'
+import { computed, defineComponent, nextTick, onMounted, onUnmounted, ref, unref, watch } from 'vue'
 import type { TableColumn, TableColumnSelect, TableProps, TableRawInstance } from './types'
 import { renderPagination } from './render/RenderPagination'
 import { renderTable } from './render/RenderTable'
@@ -128,7 +128,10 @@ export default defineComponent({
       emit('register', tableRef.value)
     })
 
+    let pageSizeChangePending = false
+    let disposed = false
     onUnmounted(() => {
+      disposed = true
       stopWatchPage()
     })
 
@@ -153,7 +156,19 @@ export default defineComponent({
     function handlePageChange(currentPage: number, pageSize: number) {
       currentPageRef.value = currentPage
       pageSizeRef.value = pageSize
+      if (pageSizeChangePending) return
       emit('page-change', { page: currentPage, pageSize })
+    }
+
+    async function handlePageSizeChange(pageSize: number) {
+      pageSizeRef.value = pageSize
+      if (pageSizeChangePending) return
+      pageSizeChangePending = true
+      // Arco 会在本轮更新中按新条数调整页码，合并后只请求最终分页一次。
+      await nextTick()
+      pageSizeChangePending = false
+      if (!disposed)
+        emit('page-change', { page: currentPageRef.value, pageSize: pageSizeRef.value })
     }
 
     async function validate() {
@@ -206,7 +221,8 @@ export default defineComponent({
           pageSizeRef,
           currentPageRef,
           pagination as any,
-          handlePageChange
+          handlePageChange,
+          handlePageSizeChange
         )}
       </div>
     )

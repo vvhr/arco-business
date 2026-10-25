@@ -33,3 +33,4 @@
 - Chrome 真实组件验收通过：金额真实编辑通知、精确金额与零值点击、蓝色圆点、分页事件顺序、Modal 两种滚动模式正文 padding、长正文抽屉独立滚动及底部操作可见，无 pageerror。
 - 库侧 ESLint 仍报告原有 Table.vue 的组件名 Table 为 HTML 保留名称；该行未改动，本次不改变组件实例名称。TSX 不在现有 ESLint 配置匹配范围，使用类型检查及构建验证；新增运行代码其余 lint 检查通过。
 - 固定组件包及来源补丁由 DiffCat PR 交付；正式 npm 发布与独立审查由维护者后续处理，本轮不代替审查或发布。
+- 补验修正：flex 布局保留 scrollbarHeight 和历史 noScrollbarStyle 的显式高度，contentStyle 仍具有最高优先级；每页条数变化与 Arco 自动调整页码合并为一次最终查询。Chrome 已验证 200px 滚动高度、123px 历史高度、175px 显式覆盖、默认 12px/10px 留白，以及条数 10→50、页码 2→1 只查询一次。

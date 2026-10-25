@@ -230,7 +230,7 @@ defineExpose({
     <Scrollbar
       v-if="scrollable"
       ref="scrollbarRef"
-      :style="[scrollbarStyle, contentLayoutStyle, contentStyle]"
+      :style="[contentLayoutStyle, scrollbarStyle, contentStyle]"
       :type="scrollbarType"
       :outer-class="scrollbarOuterClass"
       :outer-style="scrollbarOuterStyle"
@@ -241,7 +241,7 @@ defineExpose({
     <div
       v-else
       class="ab-modal-body__no-scrollbar"
-      :style="[noScrollbarStyle, contentLayoutStyle, contentStyle]"
+      :style="[contentLayoutStyle, noScrollbarStyle, contentStyle]"
     >
       <slot></slot>
     </div>

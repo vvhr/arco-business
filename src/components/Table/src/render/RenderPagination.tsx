@@ -8,7 +8,8 @@ export function renderPagination(
   pageSizeRef: Ref<number>,
   currentPageRef: Ref<number>,
   pagination: Ref<TablePagination>,
-  handlePageChange: (page: number, pageSize: number) => void
+  handlePageChange: (page: number, pageSize: number) => void,
+  handlePageSizeChange: (pageSize: number) => void
 ) {
   if (!props.pagination) {
     return undefined
@@ -27,7 +28,7 @@ export function renderPagination(
           pageSizeRef.value = pageSize
         }}
         onChange={(page: number) => handlePageChange(page, pageSizeRef.value)}
-        onPageSizeChange={(pageSize: number) => handlePageChange(currentPageRef.value, pageSize)}
+        onPageSizeChange={handlePageSizeChange}
       />
     </div>
   )

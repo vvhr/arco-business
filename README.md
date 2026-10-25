@@ -49,6 +49,8 @@ Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之�
 
 `AbTable` 可通过 `amountDefaults` 设置共享金额策略，列级 `typeProps` 优先。`amountZeroDisplay` 可指定零值显示，`amountZeroClickable: false` 可关闭零值点击；未设置时保留原有行为。金额类型列现在也支持 `render` 和 `formatter`，优先级与默认列一致。
 
+分页先同步 page/pageSize 模型再发出查询事件；切换每页条数时等待同轮页码自动调整结束，再派发一次最终 page-change。常规换页仍即时通知。
+
 Modal 和 Drawer 均支持 `contentStyle` 与 `contentLayout="flex"`，分别设置实际正文容器样式和可收缩的纵向布局；滚动与非滚动模式均生效。默认留白保持原值，复杂详情可显式传 `:content-style="{ padding: 0 }"`，由业务子区域拥有滚动和留白。`bodyStyle` 仍作用于外层 Arco body，Modal 原有 `noScrollbarStyle` 继续兼容，显式 `contentStyle` 优先。
 
 ## 安装
