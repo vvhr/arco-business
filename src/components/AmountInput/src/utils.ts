@@ -1,4 +1,5 @@
 import type { AmountEmptyValue, AmountModelValue, NormalizedAmountInputResult } from './types'
+import { truncateDecimal } from '@/utils/decimal'
 export function normalizeAmountInputValue(
   rawValue: string,
   precision: number,
@@ -21,6 +22,9 @@ export function normalizeAmountInputValue(
 }
 export function normalizeExternalAmountValue(value: AmountModelValue, precision: number): string {
   if (value === null || value === undefined || value === '') return ''
+  if (typeof value === 'number' || /^[+-]?(?:\d+\.?\d*|\.\d+)[eE][+-]?\d+$/.test(value.trim())) {
+    return truncateDecimal(value, precision) ?? ''
+  }
   return normalizeAmountInputValue(String(value), precision, null).normalized
 }
 export function formatDisplayValue(
@@ -67,7 +71,7 @@ export function sanitizeAmount(rawValue: string, precision: number): string {
       result += char
       continue
     }
-    if (char === '.' && !hasDot && precision > 0) {
+    if (char === '.' && !hasDot) {
       hasDot = true
       result += result ? '.' : '0.'
     }

@@ -32,14 +32,14 @@ function precisionOf(value: number): number {
   return Number.isFinite(value) ? Math.min(100, Math.max(0, Math.floor(value))) : 2
 }
 
-function renderDecimal(decimal: Decimal, precision: number, pad: boolean): string {
+function renderDecimal(decimal: Decimal, precision: number, pad: boolean, round = true): string {
   const digits = precisionOf(precision)
   let absolute = decimal.coefficient < BigInt(0) ? -decimal.coefficient : decimal.coefficient
   if (decimal.scale > digits) {
     const divisor = powerOfTen(decimal.scale - digits)
     const remainder = absolute % divisor
     absolute /= divisor
-    if (remainder * BigInt(2) >= divisor) absolute += BigInt(1)
+    if (round && remainder * BigInt(2) >= divisor) absolute += BigInt(1)
   } else if (decimal.scale < digits) {
     absolute *= powerOfTen(digits - decimal.scale)
   }
@@ -54,6 +54,12 @@ function renderDecimal(decimal: Decimal, precision: number, pad: boolean): strin
 export function formatDecimal(value: unknown, precision = 2, pad = true): string | null {
   const decimal = parseDecimal(value)
   return decimal ? renderDecimal(decimal, precision, pad) : null
+}
+
+/** 输入回填展开科学计数法，保持输入组件截断小数而不四舍五入的契约。 */
+export function truncateDecimal(value: unknown, precision: number): string | null {
+  const decimal = parseDecimal(value)
+  return decimal ? renderDecimal(decimal, precision, false, false) : null
 }
 
 export function isDecimalZero(value: unknown): boolean {

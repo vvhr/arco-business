@@ -11,7 +11,8 @@ const {
   formatAmount,
   sumAmounts,
   formatDecimal,
-  normalizeAmountInputValue
+  normalizeAmountInputValue,
+  normalizeExternalAmountValue
 } = require('../dist/index.cjs')
 
 assert.equal(
@@ -27,6 +28,16 @@ assert.equal(sumAmounts(['0.1', '0.2', '-0.05', null, 'invalid'], 4), '0.2500')
 assert.equal(sumAmounts(['9007199254740993.1234', '0.0001'], 4), '9007199254740993.1235')
 assert.equal(sumAmounts(['1e-7', '2e-7']), '0.0000003')
 assert.equal(formatDecimal('-9.995', 2), '-10.00')
+assert.deepEqual(normalizeAmountInputValue('12.34', 0, null), {
+  display: '12',
+  normalized: '12',
+  output: '12'
+})
+assert.equal(normalizeAmountInputValue('-0.99', 0, null).output, '-0')
+assert.equal(normalizeExternalAmountValue(1e-7, 4), '0')
+assert.equal(normalizeExternalAmountValue('1.23456e-2', 4), '0.0123')
+assert.equal(normalizeExternalAmountValue(1e21, 4), '1000000000000000000000')
+assert.equal(normalizeExternalAmountValue(Number.NaN, 4), '')
 assert.deepEqual(normalizeAmountInputValue('-1,234.5600', 4, null), {
   display: '-1234.5600',
   normalized: '-1234.5600',
