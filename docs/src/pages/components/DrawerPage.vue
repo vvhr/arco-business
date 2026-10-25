@@ -8,6 +8,9 @@
   <DemoBlock id="drawer-advanced-demo" title="自适应滚动与关闭拦截" description="展示 header-actions、footer、scrollable 内容区和 beforeClose 拦截。" :source="advancedSource">
     <AdvancedDemo />
   </DemoBlock>
+  <DemoBlock id="drawer-content-layout" title="公开正文布局与独立滚动" description="contentStyle 清除额外正文留白，contentLayout=flex 让正文区域收缩并独立滚动，底部操作保持可见。滚动与非滚动模式均支持正文配置，bodyStyle 仍作用于外层 Arco body。" :source="contentLayoutSource">
+    <ContentLayoutDemo />
+  </DemoBlock>
   <ApiTable id="drawer-api" title="Props API" description="AbDrawer 的核心配置集中在显示状态、方向、标题和滚动策略。" :rows="propsRows" />
   <ApiTable id="drawer-events" title="Events API" description="事件用于同步显示状态、监听打开关闭和内部滚动。" :rows="eventsRows" />
   <ApiTable id="drawer-expose" title="Expose API" description="启用 scrollable 后可通过实例方法控制内部滚动条。" :rows="exposeRows" />
@@ -25,9 +28,11 @@ import BasicDemo from '@docs/demos/drawer/basic.vue'
 import source from '@docs/demos/drawer/basic.vue?raw'
 import AdvancedDemo from '@docs/demos/drawer/advanced.vue'
 import advancedSource from '@docs/demos/drawer/advanced.vue?raw'
+import ContentLayoutDemo from '@docs/demos/drawer/content-layout.vue'
+import contentLayoutSource from '@docs/demos/drawer/content-layout.vue?raw'
 
 const propsRows: ApiRow[] = [
-  { name: 'contentStyle', description: '实际正文容器样式，滚动和非滚动模式一致，优先于原有正文样式。', type: 'string | CSSProperties', defaultValue: '-' },
+  { name: 'contentStyle', description: '实际正文容器样式，滚动和非滚动模式一致，优先于原有正文样式。', type: 'StyleValue（字符串、样式对象或数组）', defaultValue: '-' },
   { name: 'contentLayout', description: 'flex 提供可收缩纵向布局，适用于子区域独立滚动。', type: 'flow | flex', defaultValue: 'flow' },
   { name: 'modelValue', description: '显示状态，支持 v-model。', type: 'boolean', defaultValue: 'false' },
   { name: 'title', description: '标题文本。', type: 'string', defaultValue: '-' },

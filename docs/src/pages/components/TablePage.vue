@@ -53,6 +53,10 @@
   <DemoBlock id="table-layout-demo" title="固定高度与自适应高度" description="通过容器高度约束验证滚动区域和分页区域不会被文档样式覆盖。" :source="layoutSource">
     <LayoutDemo />
   </DemoBlock>
+  <DemoBlock id="table-exact-amount" title="精确金额、零值策略与原始行合计" description="大金额保持十进制精度；共享金额策略可被数量列覆盖，合计读取 rawData。金额列保留原类型并支持 formatter/render，无需转换为 default。" :source="exactAmountSource">
+    <ExactAmountDemo />
+  </DemoBlock>
+  <SectionBlock id="table-pagination-contract" kicker="Pagination" title="分页模型先于查询同步" description="page-change 回调执行时，page/pageSize 模型已同步，可以直接读取查询参数。切换每页条数时等待同轮自动页码调整后只通知一次最终查询，常规换页即时通知。" />
   <DemoBlock id="table-summary-demo" title="合计行" description="合计行可与普通表格和选择列共存，用于金额、数量等列汇总。" :source="summarySource">
     <SummaryDemo />
   </DemoBlock>
@@ -65,6 +69,7 @@
 
   <ApiTable id="table-api" title="Props API" description="表格入参围绕数据、列配置、选择、编辑、分页和布局组织。" :rows="propsRows" />
   <ApiTable id="table-events" title="Events API" description="事件用于接入页面查询、行操作、选择结果和拖拽结果。" :rows="eventsRows" />
+  <ApiTable id="table-amount-utils" title="精确金额工具" description="需要支持原生 BigInt 的浏览器。金额计算建议使用十进制字符串，工具无法恢复 number 输入此前已丢失的精度。" :rows="amountUtilsRows" />
   <ApiTable id="table-expose" title="Expose API" description="表格实例方法用于外部控制选择态和编辑校验。" :rows="exposeRows" />
   <ApiTable id="table-types" title="Types API" description="表格没有导出名为 TableSchema 的类型，公开的表格 schema 类型是 TableColumn。" :rows="typesRows" />
   <ApiTable id="table-type-column" title="TableColumn 类型" description="TableColumn 是 AbTable 的列 schema，负责显示、格式化、编辑、合计和交互行为。" :rows="columnRows" />
@@ -92,6 +97,8 @@ import LayoutDemo from '@docs/demos/table/layout.vue'
 import layoutSource from '@docs/demos/table/layout.vue?raw'
 import SummaryDemo from '@docs/demos/table/summary.vue'
 import summarySource from '@docs/demos/table/summary.vue?raw'
+import ExactAmountDemo from '@docs/demos/table/exact-amount.vue'
+import exactAmountSource from '@docs/demos/table/exact-amount.vue?raw'
 import EditableActionDemo from '@docs/demos/table/editable-action.vue'
 import editableActionSource from '@docs/demos/table/editable-action.vue?raw'
 import DynamicEditingDemo from '@docs/demos/table/dynamic-editing.vue'
@@ -148,7 +155,7 @@ const eventsRows: ApiRow[] = [
   { name: 'update:pageSize', description: '每页条数变化时触发。', type: '(value: number) => void', defaultValue: '-' },
   { name: 'register', description: '表格原始实例注册回调。', type: '(tableRef: TableRawInstance | undefined) => void', defaultValue: '-' },
   { name: 'selection-change', description: '选择结果变化。', type: '(rows: Recordable[]) => void', defaultValue: '-' },
-  { name: 'page-change', description: '分页变化。', type: '(value: { page; pageSize }) => void', defaultValue: '-' },
+  { name: 'page-change', description: '模型先同步再通知查询；条数变化与自动页码调整合并为一次最终通知。', type: '(value: { page; pageSize }) => void', defaultValue: '-' },
   { name: 'current-change', description: '当前行变化。', type: '(currentRow: Recordable) => void', defaultValue: '-' },
   { name: 'row-click', description: '行点击事件。', type: '(row: Recordable) => void', defaultValue: '-' },
   { name: 'value-click', description: '可点击单元格值被点击。', type: '(key: string, row: Recordable) => void', defaultValue: '-' },
@@ -163,7 +170,14 @@ const exposeRows: ApiRow[] = [
   { name: 'resetValidate', description: '清空编辑表格的 Arco Form 校验状态。', type: '() => void', defaultValue: '-' }
 ]
 
+const amountUtilsRows: ApiRow[] = [
+  { name: 'sumAmounts(values, precision?)', description: '忽略空值及非法值，精确累加后再舍入；省略精度保留全部有效小数，指定精度时补齐位数。', type: '(unknown[], number?) => string', defaultValue: '-' },
+  { name: 'formatDecimal(value, precision?, pad?)', description: '精确格式化，half-expand 舍入；非法值返回 null，不带千分位和单位。', type: '(unknown, number = 2, boolean = true) => string | null', defaultValue: '-' },
+  { name: 'formatAmount(value, config?)', description: '精确金额展示，配置千分位、小数位、补零、单位和零值展示。', type: '(string | number | null | undefined, AmountFormatOptions?) => string', defaultValue: '-' }
+]
+
 const typesRows: ApiRow[] = [
+  { name: 'TableSummaryParams', description: '表格合计回调参数，rawData 是原始行；旧列级 summaryMethod 仍接收 number[]。', type: '{ columns; data; rawData }', defaultValue: '-' },
   { name: 'TableColumn', description: '表格列 schema 类型，描述字段、标题、渲染、编辑、合计和操作行为。', type: '{ field?; key?; label?; type?; render?; editProps?; children?; ... }', defaultValue: '-' },
   { name: 'TableColumnType', description: '内置业务列类型。', type: 'default | action | dict | date | amount | sensitive', defaultValue: '-' },
   { name: 'TableColumnTypeProps', description: '业务列附加配置，覆盖操作列、字典列、日期、金额和脱敏展示。', type: '{ actions?; dictName?; dateFormat?; amountDigits?; sensitiveType?; ... }', defaultValue: '-' },
@@ -184,7 +198,7 @@ const columnRows: ApiRow[] = [
   { name: 'hidden / visible', description: '列显隐控制，hidden 支持 TableColumnFn 动态判断。', type: 'boolean | TableColumnFn<boolean>', defaultValue: 'false' },
   { name: 'children', description: '子列配置，用于多级表头。', type: 'TableColumn[]', defaultValue: '[]' },
   { name: 'type / typeProps', description: '业务列类型及其附加配置。', type: 'TableColumnType / TableColumnTypeProps', defaultValue: 'default' },
-  { name: 'formatter / render', description: '单元格格式化或完整自定义渲染。', type: 'TableColumnFn<string | number | VNode>', defaultValue: '-' },
+  { name: 'formatter / render', description: '默认列和金额列支持；render 优先于 formatter，formatter 保留点击等特性。', type: 'TableColumnFn<string | number | VNode>', defaultValue: '-' },
   { name: 'ellipsis / tooltip', description: '单元格省略和 tooltip 展示策略。', type: 'boolean | Record<string, any>', defaultValue: '-' },
   { name: 'copyable / clickable', description: '是否展示复制按钮或允许点击单元格值。', type: 'boolean | TableColumnFn<boolean>', defaultValue: 'false' },
   { name: 'editProps', description: '编辑态组件配置。', type: 'TableColumnEditProps', defaultValue: '-' },
@@ -204,7 +218,7 @@ const typePropsRows: ApiRow[] = [
 
 const editPropsRows: ApiRow[] = [
   { name: 'field', description: '编辑字段路径，默认使用 column.field。', type: 'string', defaultValue: 'column.field' },
-  { name: 'component', description: '编辑组件名，内置支持常用 Arco 输入组件，也可通过 imports 注册。', type: 'TableFormComponentName | string', defaultValue: 'Input' },
+  { name: 'component', description: '编辑组件名，内置 AmountInput 和常用 Arco 输入组件，也可通过 imports 注册。', type: 'TableFormComponentName | string', defaultValue: 'Input' },
   { name: 'defaultValue', description: '默认值，保留给外部初始化逻辑使用。', type: 'any', defaultValue: '-' },
   { name: 'componentProps', description: '传给编辑组件的属性。', type: 'TableFormComponentProps', defaultValue: '{}' },
   { name: '_v_componentProps', description: '动态组件属性函数。', type: 'TableColumnFn<Recordable>', defaultValue: '-' },

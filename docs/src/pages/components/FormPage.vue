@@ -249,7 +249,7 @@ const schemaBaseRows: ApiRow[] = [
 
 const inputSchemaRows: ApiRow[] = [
   { name: 'field', description: '必填，写入 form model 的字段路径。', type: 'string', defaultValue: '-' },
-  { name: 'component', description: '必填，内置输入组件名或 imports 注册的组件名。', type: 'FormInputName | string', defaultValue: 'Input' },
+  { name: 'component', description: '必填，内置 AmountInput 等输入组件，或 imports 注册的组件名。AmountInput 输出字符串金额。', type: 'FormInputName | string', defaultValue: 'Input' },
   { name: 'formItemProps', description: '字段级 FormItem 配置和校验规则。', type: 'FormItemProps', defaultValue: '{}' },
   { name: 'componentProps', description: '输入控件属性，支持 options 函数和 _v_ 动态属性。', type: 'FormComponentProps', defaultValue: '{}' },
   { name: 'outsideProps', description: '输入组件外层前后缀区域。', type: 'FormOutsideProps', defaultValue: '{}' },

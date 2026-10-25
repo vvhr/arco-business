@@ -8,7 +8,10 @@
   <DemoBlock id="modal-advanced-demo" title="工具栏、拖拽标志与关闭拦截" description="展示 header-actions、draggable 标志、滚动内容、自定义 footer 和 beforeClose 拦截。" :source="advancedSource">
     <AdvancedDemo />
   </DemoBlock>
-  <ApiTable id="modal-api" title="Props API" description="AbModal 保留 Arco Modal 的常见配置，同时收敛标题、全屏和滚动语义。" :rows="propsRows" />
+  <DemoBlock id="modal-content-layout" title="公开正文布局与独立滚动" description="contentStyle 设置实际正文容器，contentLayout=flex 允许内部区域收缩滚动。禁用内置滚动后由示例正文接管滚动，底部操作保持可见；无需覆盖内部类名。contentStyle 优先于历史正文样式，显式高度保留。" :source="contentLayoutSource">
+    <ContentLayoutDemo />
+  </DemoBlock>
+  <ApiTable id="modal-api" title="Props API" description="AbModal 保留 Arco Modal 的常见配置，同时收敛标题、全屏和滚动语义。bodyStyle 作用于外层 Arco body，contentStyle 作用于正文容器。" :rows="propsRows" />
   <ApiTable id="modal-events" title="Events API" description="事件用于同步显示状态、监听打开关闭和内部滚动。" :rows="eventsRows" />
   <ApiTable id="modal-expose" title="Expose API" description="启用 scrollable 后可通过实例方法控制内部滚动条。" :rows="exposeRows" />
   <ApiTable id="modal-slots" title="Slots API" description="插槽用于替换标题、补充标题操作区和自定义底部区域。" :rows="slotsRows" />
@@ -25,9 +28,11 @@ import BasicDemo from '@docs/demos/modal/basic.vue'
 import source from '@docs/demos/modal/basic.vue?raw'
 import AdvancedDemo from '@docs/demos/modal/advanced.vue'
 import advancedSource from '@docs/demos/modal/advanced.vue?raw'
+import ContentLayoutDemo from '@docs/demos/modal/content-layout.vue'
+import contentLayoutSource from '@docs/demos/modal/content-layout.vue?raw'
 
 const propsRows: ApiRow[] = [
-  { name: 'contentStyle', description: '实际正文容器样式，滚动和非滚动模式一致，优先于原有正文样式。', type: 'string | CSSProperties', defaultValue: '-' },
+  { name: 'contentStyle', description: '实际正文容器样式，滚动和非滚动模式一致，优先于原有正文样式。', type: 'StyleValue（字符串、样式对象或数组）', defaultValue: '-' },
   { name: 'contentLayout', description: 'flex 提供可收缩纵向布局，适用于子区域独立滚动。', type: 'flow | flex', defaultValue: 'flow' },
   { name: 'modelValue', description: '显示状态，支持 v-model。', type: 'boolean', defaultValue: 'false' },
   { name: 'title', description: '标题文本。', type: 'string', defaultValue: '-' },

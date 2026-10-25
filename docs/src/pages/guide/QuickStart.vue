@@ -9,6 +9,8 @@
   <SectionBlock id="quick-install" kicker="Install" title="安装依赖" description="业务项目需要同时安装组件库和 Arco Design Vue，Vue 由宿主项目提供。">
     <div class="docs-callout">
       <pre class="docs-code-inline">pnpm add arco-business @arco-design/web-vue</pre>
+      <p>本文的新增金额能力随 0.0.5-beta.1 提供；使用该预发布版本时显式安装 beta：</p>
+      <pre class="docs-code-inline">pnpm add arco-business@0.0.5-beta.1 @arco-design/web-vue</pre>
     </div>
   </SectionBlock>
 

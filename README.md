@@ -59,6 +59,12 @@ Modal 和 Drawer 均支持 `contentStyle` 与 `contentLayout="flex"`，分别设
 pnpm add arco-business @arco-design/web-vue
 ```
 
+使用本文新增金额能力的预发布版本时，显式安装 beta（发布后可用）：
+
+```bash
+pnpm add arco-business@0.0.5-beta.1 @arco-design/web-vue
+```
+
 ## 快速开始
 
 ### 全量注册
@@ -113,6 +119,7 @@ const schemas: FormSchema[] = [
 | --- | --- |
 | `AbForm` | Schema 驱动的业务表单，支持布局、动态属性、校验、只读态和自定义组件。 |
 | `AbTable` | 面向列表页和可编辑表格的业务表格，支持操作列、选择、展开、合计和编辑态。 |
+| `AbAmountInput` | 字符串金额输入，支持可配置精度、千分位、中文大写及真实数值变更通知。 |
 | `AbIcon` | 基于 Iconify 的图标组件，支持内置图标和自定义图标集。 |
 | `AbUpload` | 业务上传组件，统一文件字段映射、列表展示和上传交互。 |
 | `AbModal` | 对 Arco Modal 的业务封装，适合标准确认、表单弹窗和异步关闭。 |
@@ -186,6 +193,7 @@ setLocale('en-US')
 - `getAutoRulesMap`：获取内置快捷校验规则。
 - `useDict`：处理字典映射。
 - `formatAmount`、`formatDate`、`formatSensitive`：金额、日期和脱敏格式化。
+- `formatDecimal`、`sumAmounts`：精确十进制字符串格式化和求和。
 - `findNode`、`findNodes`：树结构节点查询。
 - `setLocale`、`getCurrentLocale`、`setCustomLocale`：语言切换和语言包覆盖。
 

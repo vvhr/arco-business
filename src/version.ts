@@ -4,9 +4,9 @@
  */
 export const VERSION_INFO = {
   // npm 版本
-  version: '0.0.4',
+  version: '0.0.5-beta.1',
   // 构建版本（内部测试用）
-  buildVersion: 'dev-20260927',
+  buildVersion: 'dev-20261025-0515',
   // 构建时间
   buildTime: new Date().toISOString(),
   // 环境标识

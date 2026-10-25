@@ -26,6 +26,7 @@ export const navGroups: NavGroup[] = [
     items: [
       { label: 'AbForm 表单', path: '/components/form' },
       { label: 'AbTable 表格', path: '/components/table' },
+      { label: 'AbAmountInput 金额输入', path: '/components/amount-input' },
       { label: 'AbIcon 图标', path: '/components/icon' },
       { label: 'AbUpload 上传', path: '/components/upload' },
       { label: 'AbModal 对话框', path: '/components/modal' },
@@ -69,6 +70,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/components/icon',
     component: () => import('./pages/components/IconPage.vue')
+  },
+  {
+    path: '/components/amount-input',
+    component: () => import('./pages/components/AmountInputPage.vue')
   },
   {
     path: '/components/upload',
