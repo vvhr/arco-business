@@ -34,6 +34,8 @@
     "dev:lib": "vite build --watch",
     "update-build": "node scripts/update-build-version.js",
     "check": "vue-tsc --noEmit",
+    "test:table-dot-tag": "vite build && node scripts/test-table-dot-tag.mjs",
+    "test:foundation": "vite build && node scripts/test-foundation.mjs && node scripts/test-table-dot-tag.mjs",
     "build": "node scripts/update-build-version.js && vue-tsc --noEmit && vite build",
     "build:types": "vue-tsc --declaration --emitDeclarationOnly --outDir dist",
     "preview": "vite preview",

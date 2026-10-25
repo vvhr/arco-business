@@ -1,19 +1,6 @@
 <script lang="tsx">
-import {
-  computed,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  ref,
-  unref,
-  watch
-} from 'vue'
-import type {
-  TableColumn,
-  TableColumnSelect,
-  TableProps,
-  TableRawInstance
-} from './types'
+import { computed, defineComponent, onMounted, onUnmounted, ref, unref, watch } from 'vue'
+import type { TableColumn, TableColumnSelect, TableProps, TableRawInstance } from './types'
 import { renderPagination } from './render/RenderPagination'
 import { renderTable } from './render/RenderTable'
 import { usePagination } from './hook/usePagination'
@@ -48,7 +35,10 @@ export default defineComponent({
     const selectedKeys = ref<(string | number)[]>([])
     const expandedKeys = ref<(string | number)[]>([])
     const dictTools: UseDictTools = useDict(props.dict)
-    const { pageSizeRef, currentPageRef, pagination, watchPage } = usePagination(props as any, emit as any)
+    const { pageSizeRef, currentPageRef, pagination, watchPage } = usePagination(
+      props as any,
+      emit as any
+    )
     const stopWatchPage = watchPage()
 
     const tableAttrs = computed(() => {
@@ -56,6 +46,7 @@ export default defineComponent({
       const cleanProps = [
         'modelValue',
         'columns',
+        'amountDefaults',
         'form',
         'excontext',
         'editable',
@@ -94,21 +85,27 @@ export default defineComponent({
           __abRaw: row
         }
         if (!Reflect.has(row, 'disabled') && selectableConfig?.selectable) {
-          clone.disabled = selectableConfig.selectable(
-            row,
-            index,
-            {} as TableColumn,
-            props.form,
-            props.excontext,
-            props.editable
-          ) === false
+          clone.disabled =
+            selectableConfig.selectable(
+              row,
+              index,
+              {} as TableColumn,
+              props.form,
+              props.excontext,
+              props.editable
+            ) === false
         }
         return clone
       })
     })
 
     watch(
-      () => [attrs.expandedKeys, attrs.defaultExpandedKeys, attrs.defaultExpandAllRows, props.modelValue],
+      () => [
+        attrs.expandedKeys,
+        attrs.defaultExpandedKeys,
+        attrs.defaultExpandAllRows,
+        props.modelValue
+      ],
       () => {
         if (Array.isArray(attrs.expandedKeys)) {
           expandedKeys.value = attrs.expandedKeys as (string | number)[]
@@ -154,6 +151,8 @@ export default defineComponent({
     }
 
     function handlePageChange(currentPage: number, pageSize: number) {
+      currentPageRef.value = currentPage
+      pageSizeRef.value = pageSize
       emit('page-change', { page: currentPage, pageSize })
     }
 

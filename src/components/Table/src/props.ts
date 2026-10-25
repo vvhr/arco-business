@@ -1,12 +1,7 @@
 import type { PropType } from 'vue'
 import type { DictMap } from '@/types/dict'
 import type { TableFormImportItem } from '@/types/imports'
-import type {
-  TableColumn,
-  TableColumnExpand,
-  TablePagination,
-  TableProps
-} from './types'
+import type { TableColumn, TableColumnExpand, TablePagination, TableProps } from './types'
 import {
   DEFAULT_EMPTY_VALUE,
   DEFAULT_PAGE_INDEX,
@@ -45,8 +40,7 @@ type TableRuntimePropKey = keyof Pick<
   | 'draggable'
 >
 
-type TableRuntimeProps = Record<TableRuntimePropKey, any> &
-  Partial<Record<keyof TableProps, any>>
+type TableRuntimeProps = Record<TableRuntimePropKey, any> & Partial<Record<keyof TableProps, any>>
 
 /**
  * Table 的 Vue runtime props 定义。
@@ -118,6 +112,10 @@ export const tableProps = {
   emptyValue: {
     type: String,
     default: DEFAULT_EMPTY_VALUE
+  },
+  amountDefaults: {
+    type: Object as PropType<TableProps['amountDefaults']>,
+    default: () => ({})
   },
   adaptive: {
     type: Boolean,

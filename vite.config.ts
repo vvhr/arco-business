@@ -34,7 +34,8 @@ async function generateGlobalDts() {
     'AbModal',
     'AbDrawer',
     'AbText',
-    'AbComboInput'
+    'AbComboInput',
+    'AbAmountInput'
   ]
 
   // 生成组件声明
@@ -138,7 +139,14 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['vue', '@arco-design/web-vue', '@iconify/vue', '@vueuse/core', 'lodash-es', 'dayjs'],
+      external: [
+        'vue',
+        '@arco-design/web-vue',
+        '@iconify/vue',
+        '@vueuse/core',
+        'lodash-es',
+        'dayjs'
+      ],
       output: {
         globals: {
           vue: 'Vue',

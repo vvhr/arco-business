@@ -84,6 +84,8 @@ const getBindValue = computed(() => {
     'scrollbarOuterClass',
     'scrollbarOuterStyle',
     // 排除扩展属性
+    'contentStyle',
+    'contentLayout',
     'beforeClose'
   ]
   const attrs = useAttrs()
@@ -105,6 +107,12 @@ const getBindValue = computed(() => {
     footer: slots.footer ? true : false
   }
 })
+
+const contentLayoutStyle = computed(() =>
+  props.contentLayout === 'flex'
+    ? ({ display: 'flex', flexDirection: 'column', minHeight: 0, height: '100%' } as const)
+    : undefined
+)
 
 const scrollbarRef = ref()
 
@@ -160,12 +168,7 @@ defineExpose({
 </script>
 
 <template>
-  <Drawer
-    v-bind="getBindValue"
-    v-model:visible="visible"
-    @open="onOpen"
-    @close="onClose"
-  >
+  <Drawer v-bind="getBindValue" v-model:visible="visible" @open="onOpen" @close="onClose">
     <template v-if="!!header" #header>
       <div class="flex justify-between items-center w-full">
         <div class="flex items-center">
@@ -185,7 +188,7 @@ defineExpose({
     <Scrollbar
       v-if="scrollable"
       ref="scrollbarRef"
-      :style="scrollbarStyle"
+      :style="[scrollbarStyle, contentLayoutStyle, contentStyle]"
       :type="scrollbarType"
       :outer-class="scrollbarOuterClass"
       :outer-style="scrollbarOuterStyle"
@@ -193,7 +196,7 @@ defineExpose({
     >
       <slot></slot>
     </Scrollbar>
-    <div v-else class="ab-drawer-body__no-scrollbar">
+    <div v-else class="ab-drawer-body__no-scrollbar" :style="[contentLayoutStyle, contentStyle]">
       <slot></slot>
     </div>
 

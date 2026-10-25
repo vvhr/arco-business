@@ -39,6 +39,17 @@ Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之�
 - pnpm >= 8.0.0
 - Vue >= 3.2.0
 - @arco-design/web-vue >= 2.58.0
+- 精确十进制运算需要支持原生 BigInt 的浏览器。
+
+## 金额与正文布局
+
+`AbAmountInput` 的编辑输出为十进制字符串，支持 `precision`、`emptyValue`、`readonly`、`disabled`、`showChineseUppercase` 和千分位配置。表单 schema 与表格编辑组件名均为 `AmountInput`，无需另行注册；回填及只聚焦失焦不触发业务 `change`。
+
+`formatAmount` 保留十进制字符串精度，`sumAmounts(values, precision?)` 先精确累加后舍入；未指定 precision 时保留完整有效小数，指定时补齐对应位数。空值和非法值不计入合计。列级旧 `summaryMethod(values)` 仍接收 number 数组；要求精度的自定义合计请使用表格级 `summaryMethod({ rawData })` 与 `sumAmounts`。
+
+`AbTable` 可通过 `amountDefaults` 设置共享金额策略，列级 `typeProps` 优先。`amountZeroDisplay` 可指定零值显示，`amountZeroClickable: false` 可关闭零值点击；未设置时保留原有行为。金额类型列现在也支持 `render` 和 `formatter`，优先级与默认列一致。
+
+Modal 和 Drawer 均支持 `contentStyle` 与 `contentLayout="flex"`，分别设置实际正文容器样式和可收缩的纵向布局；滚动与非滚动模式均生效。默认留白保持原值，复杂详情可显式传 `:content-style="{ padding: 0 }"`，由业务子区域拥有滚动和留白。`bodyStyle` 仍作用于外层 Arco body，Modal 原有 `noScrollbarStyle` 继续兼容，显式 `contentStyle` 优先。
 
 ## 安装
 

@@ -11,25 +11,30 @@ import { AbModal } from './components/Modal'
 import { AbDrawer } from './components/Drawer'
 import { AbText } from './components/Text'
 import { AbComboInput } from './components/ComboInput'
+import { AbAmountInput } from './components/AmountInput'
+export { AbAmountInput }
+export type {
+  AmountInputProps,
+  AmountInputEmits,
+  AmountModelValue,
+  AmountEmptyValue,
+  NormalizedAmountInputResult
+} from './components/AmountInput'
+export * from './components/AmountInput/src/utils'
+export { sumAmounts, isDecimalZero, formatDecimal } from './utils/decimal'
+export type { AmountFormatOptions } from './utils/format'
 
 // Import version info
 import { VERSION_INFO, getVersionInfo, printVersionInfo } from './version'
 
 // Import
-import type {
-  TableFormImportItem,
-  TableFormImportItemConfig
-} from './types/imports'
+import type { TableFormImportItem, TableFormImportItemConfig } from './types/imports'
 import type { FormImportItem } from './components/Form'
 
 // Export global types
 export * from './types'
 
-export type {
-  FormImportItem,
-  TableFormImportItem,
-  TableFormImportItemConfig
-}
+export type { FormImportItem, TableFormImportItem, TableFormImportItemConfig }
 // Export components
 export { AbForm, AbIcon, AbTable, AbUpload, AbModal, AbDrawer, AbText, AbComboInput }
 
@@ -108,7 +113,8 @@ export type {
   TableRawInstance,
   TableSize,
   TableSlotDefault,
-  TableSlots
+  TableSlots,
+  TableSummaryParams
 } from './components/Table'
 
 // Icon
@@ -222,7 +228,8 @@ const install = (app: App, options?: InstallOptions) => {
     AbModal,
     AbDrawer,
     AbText,
-    AbComboInput
+    AbComboInput,
+    AbAmountInput
   ]
   components.forEach(component => {
     app.use(component)

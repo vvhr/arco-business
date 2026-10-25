@@ -27,6 +27,8 @@ import AdvancedDemo from '@docs/demos/modal/advanced.vue'
 import advancedSource from '@docs/demos/modal/advanced.vue?raw'
 
 const propsRows: ApiRow[] = [
+  { name: 'contentStyle', description: '实际正文容器样式，滚动和非滚动模式一致，优先于原有正文样式。', type: 'string | CSSProperties', defaultValue: '-' },
+  { name: 'contentLayout', description: 'flex 提供可收缩纵向布局，适用于子区域独立滚动。', type: 'flow | flex', defaultValue: 'flow' },
   { name: 'modelValue', description: '显示状态，支持 v-model。', type: 'boolean', defaultValue: 'false' },
   { name: 'title', description: '标题文本。', type: 'string', defaultValue: '-' },
   { name: 'hideTitle', description: '是否隐藏标题区域。', type: 'boolean', defaultValue: 'false' },

@@ -211,7 +211,11 @@ export function renderTableColumns(
       emit
     }
 
-    if (column.type === 'default' || !column.type) {
+    if (
+      column.type === 'default' ||
+      !column.type ||
+      (column.type === 'amount' && (column.render !== undefined || column.formatter !== undefined))
+    ) {
       if (column.render !== undefined) {
         return column.render(row, index, column, props.form, props.excontext, props.editable)
       }

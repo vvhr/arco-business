@@ -110,6 +110,7 @@ const diffFeatures = [
 ]
 
 const propsRows: ApiRow[] = [
+  { name: 'amountDefaults', description: '共享金额列策略，列级 typeProps 优先；支持 amountZeroDisplay 和 amountZeroClickable。', type: 'TableColumnTypeProps', defaultValue: '{}' },
   { name: 'modelValue', description: '表格数据，支持 v-model。', type: 'Recordable[]', defaultValue: '[]' },
   { name: 'columns', description: '业务列配置。', type: 'TableColumn[]', defaultValue: '[]' },
   { name: 'form', description: '传给列函数和编辑组件的页面级表单模型。', type: 'Recordable', defaultValue: '{}' },
@@ -130,7 +131,7 @@ const propsRows: ApiRow[] = [
   { name: 'adaptive', description: '是否根据父级高度自适应滚动区域。', type: 'boolean', defaultValue: 'false' },
   { name: 'scroll', description: 'Arco Table 滚动配置；adaptive 模式会默认补齐 y: 100% 和横向滚动状态。', type: 'TableScroll', defaultValue: '-' },
   { name: 'showSummary', description: '是否显示合计行。', type: 'boolean', defaultValue: 'false' },
-  { name: 'summaryMethod', description: '自定义合计数据生成函数。', type: '(param: TableSummaryParams) => TableData[]', defaultValue: 'null' },
+  { name: 'summaryMethod', description: '自定义合计数据生成函数；rawData 为原始行，金额运算使用 sumAmounts 保留精度。', type: '(param: TableSummaryParams) => TableData[]', defaultValue: 'null' },
   { name: 'summarySpanMethod', description: '合计行单元格合并函数。', type: '(data: TableSummarySpanParams) => { rowspan?; colspan? } | void', defaultValue: '-' },
   { name: 'freshKey', description: '强制刷新表格的 key。', type: 'number', defaultValue: '0' },
   { name: 'imports', description: '编辑组件局部注册配置。', type: 'TableFormImportItem[]', defaultValue: '[]' },
@@ -196,6 +197,7 @@ const typePropsRows: ApiRow[] = [
   { name: 'dictViewType', description: '字典展示形态。', type: 'tag | text | dot-tag', defaultValue: 'text' },
   { name: 'dictViewRender', description: '自定义字典展示渲染函数。', type: '(originValue, value, option) => VNode | string', defaultValue: '-' },
   { name: 'dateFormat', description: '日期列格式化模板。', type: 'string', defaultValue: '-' },
+  { name: 'amountZeroDisplay / amountZeroClickable', description: '显式设置零值展示及零值是否可点击；未设置时沿用原行为。', type: 'string / boolean', defaultValue: '-' },
   { name: 'amountThousand / amountDigits / amountUnit', description: '金额列千分位、小数位和单位设置。', type: 'boolean / number / string', defaultValue: '-' },
   { name: 'sensitiveType / sensitiveRegex', description: '脱敏列内置类型或自定义脱敏正则。', type: 'phone | idCard | email / [RegExp | string, string]', defaultValue: '-' }
 ]

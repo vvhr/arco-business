@@ -27,6 +27,8 @@ import {
   setIndex,
   shouldUseIndexOperation
 } from '../utils'
+import { get } from 'lodash-es'
+import { sumAmounts } from '@/utils/decimal'
 import { formatAmount } from '@/utils/format'
 import { getSlot } from '@/utils/get'
 import { t } from '@/locale'
@@ -309,7 +311,11 @@ function buildSummary(props: TableProps) {
   }
   if (props.summaryMethod) {
     return (params: { columns: TableColumnData[]; data: TableData[] }) => {
-      return props.summaryMethod?.(params)?.map(markSummaryRow) || []
+      return (
+        props
+          .summaryMethod?.({ ...params, rawData: params.data.map(getRawRecord) })
+          ?.map(markSummaryRow) || []
+      )
     }
   }
   return ({ columns, data }: { columns: TableColumnData[]; data: TableData[] }) => {
@@ -323,7 +329,8 @@ function buildSummary(props: TableProps) {
         row[dataIndex] = t('table.summary.total')
         return
       }
-      const findColumn = findColumnByKey(props.columns, dataIndex) || findColumnByField(props.columns, dataIndex)
+      const findColumn =
+        findColumnByKey(props.columns, dataIndex) || findColumnByField(props.columns, dataIndex)
       if (!findColumn?.summable) {
         row[dataIndex] = props.emptyValue
         return
@@ -334,7 +341,7 @@ function buildSummary(props: TableProps) {
         return
       }
       if (findColumn.type === 'amount') {
-        const count = sumValues(values)
+        const count = sumAmounts(data.map(item => get(getRawRecord(item), dataIndex)))
         const {
           amountThousand = false,
           amountDecimal = true,
@@ -342,7 +349,7 @@ function buildSummary(props: TableProps) {
           amountZero = true,
           amountUnit = '',
           amountUnitPosition = 'right'
-        } = findColumn.typeProps || {}
+        } = { ...props.amountDefaults, ...findColumn.typeProps }
         row[dataIndex] = formatAmount(count, {
           amountThousand,
           amountDecimal,
@@ -350,6 +357,8 @@ function buildSummary(props: TableProps) {
           amountZero,
           amountUnit,
           amountUnitPosition,
+          amountZeroDisplay:
+            findColumn.typeProps?.amountZeroDisplay ?? props.amountDefaults?.amountZeroDisplay,
           defaultValue: props.emptyValue
         })
         return

@@ -10,6 +10,7 @@ declare module 'vue' {
     AbDrawer: typeof import('arco-business')['AbDrawer']
     AbText: typeof import('arco-business')['AbText']
     AbComboInput: typeof import('arco-business')['AbComboInput']
+    AbAmountInput: typeof import('arco-business')['AbAmountInput']
   }
 }
 

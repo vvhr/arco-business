@@ -14,7 +14,7 @@ import type { DictItem, DictMap } from '@/types/dict'
 import type { TableFormImportItem } from '@/types/imports'
 import type { AutoRules } from '@/types/rules'
 
-type ArcoTablePublicProps = InstanceType<typeof import('@arco-design/web-vue')['Table']>['$props']
+type ArcoTablePublicProps = InstanceType<(typeof import('@arco-design/web-vue'))['Table']>['$props']
 export type TableScroll = NonNullable<ArcoTablePublicProps['scroll']>
 
 /** Table 继承 Arco Table 后保留的尺寸枚举。 */
@@ -50,29 +50,28 @@ export interface TableEmits {
  * 默认继承 Arco Table 的公开属性，但排除了会被 Table 自身接管的滚动、
  * 分页、展开、选择、拖拽、合计等配置。被排除的能力统一通过 Table 自有属性转换。
  */
-export interface TableProps
-  extends Omit<
-    Partial<ArcoTablePublicProps>,
-    | 'data'
-    | 'columns'
-    | 'scroll'
-    | 'pagination'
-    | 'pagePosition'
-    | 'page-position'
-    | 'virtualListProps'
-    | 'virtual-list-props'
-    | 'filterIconAlignLeft'
-    | 'filter-icon-align-left'
-    | 'scrollbar'
-    | 'summary'
-    | 'summarySpanMethod'
-    | 'summary-span-method'
-    | 'rowSelection'
-    | 'row-selection'
-    | 'expandable'
-    | 'draggable'
-    | 'size'
-  > {
+export interface TableProps extends Omit<
+  Partial<ArcoTablePublicProps>,
+  | 'data'
+  | 'columns'
+  | 'scroll'
+  | 'pagination'
+  | 'pagePosition'
+  | 'page-position'
+  | 'virtualListProps'
+  | 'virtual-list-props'
+  | 'filterIconAlignLeft'
+  | 'filter-icon-align-left'
+  | 'scrollbar'
+  | 'summary'
+  | 'summarySpanMethod'
+  | 'summary-span-method'
+  | 'rowSelection'
+  | 'row-selection'
+  | 'expandable'
+  | 'draggable'
+  | 'size'
+> {
   /** 表格数据，内部会透传给 Arco Table 的 data。 */
   modelValue: Recordable[]
   /** 业务列定义，内部转换为 Arco TableColumnData。 */
@@ -105,6 +104,8 @@ export interface TableProps
   rowKey: string
   /** 空值展示文本。 */
   emptyValue: string
+  /** 金额列共享策略，列级 typeProps 优先。 */
+  amountDefaults?: TableColumnTypeProps
   /** 是否启用父级高度自适应。 */
   adaptive: boolean
   /** Arco Table 横向/纵向滚动配置，adaptive 模式下会自动补齐 y: '100%' 和横向滚动状态。 */
@@ -114,7 +115,9 @@ export interface TableProps
   /** 自定义 Arco summary 数据生成函数。 */
   summaryMethod: ((param: TableSummaryParams) => TableData[]) | null
   /** Arco summary 单元格合并函数。 */
-  summarySpanMethod?: (data: TableSummarySpanParams) => { rowspan?: number; colspan?: number } | void
+  summarySpanMethod?: (
+    data: TableSummarySpanParams
+  ) => { rowspan?: number; colspan?: number } | void
   /** 强制刷新 table 的 key。 */
   freshKey: number
   /** 编辑组件局部注册配置。 */
@@ -135,6 +138,8 @@ export type TableSummaryParams = {
   columns: TableColumnData[]
   /** 当前参与渲染的表格数据。 */
   data: TableData[]
+  /** 公开的原始行集合，无需读取内部渲染记录。 */
+  rawData: Recordable[]
 }
 
 /** 合计行单元格合并函数入参。 */
@@ -237,6 +242,10 @@ export type TableColumnTypeProps = {
   amountDigits?: number
   /** 金额是否自动补零。 */
   amountZero?: boolean
+  /** 数值为零时的显式展示文本；未传时沿用金额格式化。 */
+  amountZeroDisplay?: string
+  /** 是否允许零值触发点击，默认沿用 clickable。 */
+  amountZeroClickable?: boolean
   /** 金额单位。 */
   amountUnit?: string
   /** 动态格式化金额单位，优先于 amountUnit。 */
@@ -348,8 +357,10 @@ export interface TableColumnSelect extends Omit<TableRowSelection, 'title' | 'wi
 }
 
 /** 顶层展开列配置，会转换为 Arco expandable.expandedRowRender。 */
-export interface TableColumnExpand
-  extends Omit<TableExpandable, 'title' | 'width' | 'expandedRowRender'> {
+export interface TableColumnExpand extends Omit<
+  TableExpandable,
+  'title' | 'width' | 'expandedRowRender'
+> {
   label?: string
   width?: number
   /** 自定义展开行渲染；未传时使用 expand 插槽。 */
@@ -364,6 +375,7 @@ export interface TableColumnDraggable extends Omit<TableDraggable, 'title' | 'wi
 
 /** 编辑态支持的默认 Arco 组件名称。 */
 export type TableFormComponentName =
+  | 'AmountInput'
   | 'AutoComplete'
   | 'Cascader'
   | 'CheckboxGroup'
@@ -469,10 +481,7 @@ export interface TableFormComponentEvents {
 export type TableFormInsidePropsRenders = Recordable<TableFormInsidePropsRender>
 
 /** 编辑组件内部插槽单项渲染配置。 */
-export type TableFormInsidePropsRender =
-  | TableColumnFn<TableRenderNode | false>
-  | false
-  | string
+export type TableFormInsidePropsRender = TableColumnFn<TableRenderNode | false> | false | string
 
 /** Arco 选项字段映射。 */
 export type TableOptionKeys = {

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { formatDecimal, isDecimalZero } from './decimal'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 import { logger, onLocaleChange } from '@/locale'
@@ -80,77 +81,48 @@ export function formatDate(value: string | number | Date, formatString?: string)
  * @param config - 格式化配置项
  * @returns 格式化后的金额字符串
  */
+export interface AmountFormatOptions {
+  amountThousand?: boolean
+  amountDecimal?: boolean
+  amountDigits?: number
+  amountZero?: boolean
+  amountZeroDisplay?: string
+  amountUnit?: string
+  amountUnitPosition?: 'left' | 'right'
+  defaultValue?: string
+}
+
 export function formatAmount(
   value: number | string | null | undefined,
-  config: {
-    amountThousand?: boolean // 是否显示千分位分隔符 (例如: 1,234.56)
-    amountDecimal?: boolean // 是否显示小数位
-    amountDigits?: number // 小数的位数 默认2
-    amountZero?: boolean // 是否自动补零
-    amountUnit?: string // 自定义金额的单位 (例如: $, ¥, 元) 默认空
-    amountUnitPosition?: 'left' | 'right' // 单位的显示位置 ('left' | 'right') @default 'left'
-    defaultValue?: string // 当数值无效或不存在时显示的默认字符串 @default "0"
-  } = {}
+  config: AmountFormatOptions = {}
 ): string {
   const {
-    amountThousand = true, // 默认显示千分位
-    amountDecimal = true, // 默认显示小数
-    amountDigits = 2, // 默认保留两位小数
-    amountZero = true, // 默认自动补零
-    amountUnit = '', // 默认无单位
-    amountUnitPosition = 'left', // 默认单位在左边
-    defaultValue = '0' // 默认值为 '0'
+    amountThousand = true,
+    amountDecimal = true,
+    amountDigits = 2,
+    amountZero = true,
+    amountZeroDisplay,
+    amountUnit = '',
+    amountUnitPosition = 'left',
+    defaultValue = '0'
   } = config
-
-  // 1. 处理无效值
-  // 尝试转换为数字
-  const numericValue = parseFloat(String(value))
-
-  // 如果转换后是 NaN, Infinity, -Infinity，或者原始值 was null/undefined
-  if (isNaN(numericValue) || !isFinite(numericValue)) {
-    // 如果有自定义单位，也需要加上
+  const decimal = formatDecimal(value, amountDecimal ? amountDigits : 0, amountZero)
+  if (decimal === null) {
     return amountUnit
       ? amountUnitPosition === 'left'
-        ? `${amountUnit}${defaultValue}`
-        : `${defaultValue}${amountUnit}`
+        ? amountUnit + defaultValue
+        : defaultValue + amountUnit
       : defaultValue
   }
-
-  // 2. 准备 NumberFormatOptions
-  const localeOptions: Intl.NumberFormatOptions = {}
-
-  // 设置是否使用千分位
-  localeOptions.useGrouping = amountThousand
-
-  // 设置小数位数
-  if (amountDecimal) {
-    // 确保小数位数为非负整数
-    const validDigits = Math.max(0, Math.floor(amountDigits))
-    // 开启自动补零时补齐到 amountDigits；关闭时不补齐小数位。
-    // amountDigits 始终作为小数位上限，避免原始小数位过多。
-    localeOptions.minimumFractionDigits = amountZero ? validDigits : 0
-    localeOptions.maximumFractionDigits = validDigits
-  } else {
-    // 不显示小数位，则小数位数为 0
-    localeOptions.minimumFractionDigits = 0
-    localeOptions.maximumFractionDigits = 0
-  }
-
-  // 3. 使用 Intl.NumberFormat 进行格式化
-  // 使用 'en-US' 作为 locale，它提供标准的千分位和点作为小数分隔符。
-  // 如果需要支持其他语言的千分位/小数位符号（如欧洲的逗号分隔），可以在这里调整 locale。
-  const formatter = new Intl.NumberFormat('en-US', localeOptions)
-  let formattedNumber = formatter.format(numericValue)
-
-  // 4. 添加单位
-  if (amountUnit) {
-    if (amountUnitPosition === 'left') {
-      formattedNumber = `${amountUnit} ${formattedNumber}`
-    } else {
-      // 'right'
-      formattedNumber = `${formattedNumber} ${amountUnit}`
-    }
-  }
-
-  return formattedNumber
+  if (amountZeroDisplay !== undefined && isDecimalZero(value)) return amountZeroDisplay
+  const parts = decimal.split('.')
+  let integer = parts[0]
+  const fraction = parts[1]
+  if (amountThousand) integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const formatted = integer + (fraction ? '.' + fraction : '')
+  return amountUnit
+    ? amountUnitPosition === 'left'
+      ? amountUnit + ' ' + formatted
+      : formatted + ' ' + amountUnit
+    : formatted
 }

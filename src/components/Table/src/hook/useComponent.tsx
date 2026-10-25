@@ -178,7 +178,14 @@ function getPlaceholderText(
   column: TableColumn,
   componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>
 ) {
-  const needInputPlaceholder = ['AutoComplete', 'Input', 'InputNumber', 'InputTag', 'Mention']
+  const needInputPlaceholder = [
+    'AmountInput',
+    'AutoComplete',
+    'Input',
+    'InputNumber',
+    'InputTag',
+    'Mention'
+  ]
   const needSelectPlaceholder = ['Cascader', 'DatePicker', 'Select', 'TimePicker', 'TreeSelect']
   const needRangePlaceholder = ['RangePicker']
   const componentName = column.editProps?.component || 'Input'
@@ -214,7 +221,10 @@ function getPlaceholderText(
 }
 
 function setCascaderProps(column: TableColumn) {
-  if (column.editProps?.component !== 'Cascader' || column.editProps?.componentProps?.pathMode !== undefined) {
+  if (
+    column.editProps?.component !== 'Cascader' ||
+    column.editProps?.componentProps?.pathMode !== undefined
+  ) {
     return {}
   }
   return {
@@ -225,7 +235,16 @@ function setCascaderProps(column: TableColumn) {
 /** 执行 _v_componentProps，获取行上下文相关的动态组件属性。 */
 function getDynamicComponentProps(column: TableColumn, formModel: Recordable, props: TableProps) {
   if (isFunction(column.editProps?._v_componentProps)) {
-    return column.editProps?._v_componentProps({}, null, column, formModel, props.excontext, props.editable) || {}
+    return (
+      column.editProps?._v_componentProps(
+        {},
+        null,
+        column,
+        formModel,
+        props.excontext,
+        props.editable
+      ) || {}
+    )
   }
   return {}
 }
@@ -251,7 +270,14 @@ function setAttrsOptions(
   }
   if (typeof componentProps.options === 'function') {
     return {
-      options: componentProps.options(row, index, column, formModel, props.excontext, props.editable),
+      options: componentProps.options(
+        row,
+        index,
+        column,
+        formModel,
+        props.excontext,
+        props.editable
+      ),
       fieldNames
     }
   }

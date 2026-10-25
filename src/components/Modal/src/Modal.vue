@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<ModalProps>(), {
   scrollbarType: 'embed',
   scrollbarOuterClass: '',
   scrollbarOuterStyle: '',
-  noScrollbarStyle: '',
+  noScrollbarStyle: ''
 })
 const emit = defineEmits(['update:modelValue', 'scroll', 'close', 'open'])
 const visible = computed({
@@ -99,6 +99,8 @@ const getBindValue = computed(() => {
     'scrollbarOuterStyle',
     'noScrollbarStyle',
     // 排除扩展属性
+    'contentStyle',
+    'contentLayout',
     'beforeClose'
   ]
   const attrs = useAttrs()
@@ -123,6 +125,12 @@ const getBindValue = computed(() => {
     footer: slots.footer ? true : false
   }
 })
+const contentLayoutStyle = computed(() =>
+  props.contentLayout === 'flex'
+    ? ({ display: 'flex', flexDirection: 'column', minHeight: 0, height: '100%' } as const)
+    : undefined
+)
+
 const scrollbarRef = ref()
 
 const fullscreenLocal = ref(props.fullscreen)
@@ -197,7 +205,11 @@ defineExpose({
     <template v-if="!hideTitle" #title>
       <div class="flex justify-between items-center relative w-full">
         <div class="flex items-center">
-          <icon-drag-dot-vertical v-if="draggable" class="ab-modal-draggable-indicator" :size="20"/>
+          <icon-drag-dot-vertical
+            v-if="draggable"
+            class="ab-modal-draggable-indicator"
+            :size="20"
+          />
           <slot name="title">
             {{ title }}
           </slot>
@@ -206,10 +218,10 @@ defineExpose({
           <slot name="header-actions"></slot>
           <div v-if="showFullscreen" class="ab-modal-btn" @click="toggleFull">
             <icon-fullscreen-exit v-if="fullscreenLocal" :size="16" />
-            <icon-fullscreen v-else :size="16"/>
+            <icon-fullscreen v-else :size="16" />
           </div>
           <div class="ab-modal-btn" @click="handleClose()">
-            <icon-close :size="16"/>
+            <icon-close :size="16" />
           </div>
         </div>
       </div>
@@ -218,7 +230,7 @@ defineExpose({
     <Scrollbar
       v-if="scrollable"
       ref="scrollbarRef"
-      :style="scrollbarStyle"
+      :style="[scrollbarStyle, contentLayoutStyle, contentStyle]"
       :type="scrollbarType"
       :outer-class="scrollbarOuterClass"
       :outer-style="scrollbarOuterStyle"
@@ -226,7 +238,11 @@ defineExpose({
     >
       <slot></slot>
     </Scrollbar>
-    <div v-else class="ab-modal-body__no-scrollbar" :style="noScrollbarStyle">
+    <div
+      v-else
+      class="ab-modal-body__no-scrollbar"
+      :style="[noScrollbarStyle, contentLayoutStyle, contentStyle]"
+    >
       <slot></slot>
     </div>
 

@@ -2,6 +2,20 @@
 
 本项目遵循语义化版本风格记录变更。
 
+## [Unreleased]
+
+### Added
+
+- 新增 `AbAmountInput`，支持字符串金额、千分位、中文大写及真实数值编辑通知；表单和表格编辑态内置 `AmountInput`。
+- 新增精确字符串金额求和 `sumAmounts`；合计回调公开 `rawData`。
+- 新增表格 `amountDefaults`、金额列 `amountZeroDisplay`/`amountZeroClickable`，以及 Modal/Drawer 的 `contentStyle`/`contentLayout` 正文布局接口。
+
+### Fixed
+
+- 金额格式化及默认金额合计不再通过浮点数转换十进制字符串；金额类型列可直接使用 `render`/`formatter`。
+- 分页查询事件前同步页码及每页数量，避免查询读取旧分页值。
+- 修复 `AbTable` 字典列 `dot-tag` 使用 `primary` 或默认类型时蓝色圆点不可见的问题；Arco 内置颜色统一使用对应调色板变量，保留自定义 CSS 颜色和标签底色。
+
 ## [0.0.1] - 2026-06-02
 
 ### Added

@@ -27,6 +27,7 @@ import {
   VerificationCode
 } from '@arco-design/web-vue'
 import AbTable from '@/components/Table'
+import AbAmountInput from '@/components/AmountInput'
 import AbUpload from '@/components/Upload'
 import AbComboInput from '@/components/ComboInput'
 import AbText from '@/components/Text'
@@ -35,6 +36,7 @@ import Disclosure from './components/Disclosure.vue'
 import Group from './components/Group.vue'
 
 const defaultComponents: Recordable<Component, FormComponentName> = {
+  AmountInput: AbAmountInput,
   Group,
   Disclosure,
   Blank,
@@ -68,9 +70,7 @@ const defaultComponents: Recordable<Component, FormComponentName> = {
   VerificationCode
 }
 
-const defaultArrayStrategies: Partial<
-  Record<FormComponentName, (cps: Recordable) => boolean>
-> = {
+const defaultArrayStrategies: Partial<Record<FormComponentName, (cps: Recordable) => boolean>> = {
   CheckboxGroup: () => true,
   InputTag: () => true,
   Transfer: () => true,

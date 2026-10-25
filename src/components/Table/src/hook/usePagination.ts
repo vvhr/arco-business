@@ -25,11 +25,13 @@ export function usePagination(props: TableProps, emit: TableEmits) {
   function watchPage() {
     const stop1 = watch(
       () => pageSizeRef.value,
-      (val: number) => emit('update:pageSize', val)
+      (val: number) => emit('update:pageSize', val),
+      { flush: 'sync' }
     )
     const stop2 = watch(
       () => currentPageRef.value,
-      (val: number) => emit('update:page', val)
+      (val: number) => emit('update:page', val),
+      { flush: 'sync' }
     )
     const stop3 = watch(
       () => unref(props).pageSize,

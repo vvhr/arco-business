@@ -10,6 +10,7 @@ import type { DictItem } from '@/types/dict'
 import type { UseDictTools } from '@/utils/dict'
 import { isClickable, isCopyable } from '../utils'
 import { t, logger } from '@/locale'
+import { isDecimalZero } from '@/utils/decimal'
 
 /** 展示态列渲染器共享上下文。 */
 export interface RenderContext {
@@ -140,7 +141,7 @@ export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
     amountUnit = '',
     amountUnitFormat,
     amountUnitPosition = 'right'
-  } = column.typeProps || {}
+  } = { ...props.amountDefaults, ...column.typeProps }
 
   const formattedAmountUnit =
     typeof amountUnitFormat === 'function'
@@ -155,6 +156,8 @@ export function renderAmountColumn(ctx: RenderContext): RenderResult | string {
       amountZero,
       amountUnit: formattedAmountUnit,
       amountUnitPosition,
+      amountZeroDisplay:
+        column.typeProps?.amountZeroDisplay ?? props.amountDefaults?.amountZeroDisplay,
       defaultValue: emptyValue
     })
   }
@@ -288,7 +291,14 @@ export function wrapValueWithFeatures(
 
   const { value, valueRender } = result
   const copyable = isCopyable(props, column, row, index)
-  const clickable = isClickable(props, column, row, index)
+  const clickable =
+    isClickable(props, column, row, index) &&
+    !(
+      column.type === 'amount' &&
+      (column.typeProps?.amountZeroClickable ?? props.amountDefaults?.amountZeroClickable) ===
+        false &&
+      isDecimalZero(ctx.originValue)
+    )
 
   if (!copyable && !clickable) {
     return valueRender !== undefined ? valueRender : value

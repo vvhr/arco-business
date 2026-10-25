@@ -5,7 +5,9 @@ import type { DefineComponent } from 'vue'
 import type { TableExpose, TableProps } from './src/types'
 
 /** Table 在模板和全局组件声明中暴露的 props 类型。 */
-type TablePublicProps = Partial<Omit<TableProps, 'onSelectionChange' | 'onRowClick' | 'onChange'>> & {
+type TablePublicProps = Partial<
+  Omit<TableProps, 'onSelectionChange' | 'onRowClick' | 'onChange'>
+> & {
   onSelectionChange?: (value: Recordable[]) => any
   onPageChange?: (value: { page: number; pageSize: number }) => any
   onCurrentChange?: (currentRow: Recordable) => any
@@ -52,5 +54,6 @@ export type {
   TableScroll,
   TableSize,
   TableSlotDefault,
-  TableSlots
+  TableSlots,
+  TableSummaryParams
 } from './src/types'

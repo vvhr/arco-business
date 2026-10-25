@@ -42,6 +42,10 @@ export interface DrawerProps extends DrawerConfig {
   /**
    * acro-design 实际为 visible，为保持系统统一性，使用 modelValue。
    */
+  /** 正文容器样式，滚动与非滚动模式一致，优先于内置布局。 */
+  contentStyle?: StyleValue
+  /** flex 模式支持多层内容收缩与子区域独立滚动。 */
+  contentLayout?: 'flow' | 'flex'
   modelValue?: boolean
   /**
    * 默认标题文字。

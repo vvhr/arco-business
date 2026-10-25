@@ -247,6 +247,7 @@ export type FormComponentName = FormContainerName | FormDecoratorName | FormInpu
 export type FormContainerName = 'Group' | 'Blank' | 'Disclosure'
 export type FormDecoratorName = 'Divider' | 'Alert' | 'Image' | 'Result' | 'Text'
 export type FormInputName =
+  | 'AmountInput'
   | 'AutoComplete'
   | 'Cascader'
   | 'CheckboxGroup'

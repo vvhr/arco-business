@@ -16,8 +16,8 @@ import { Tag } from '@arco-design/web-vue'
 
 const props = withDefaults(
   defineProps<{
-  value: string
-  type?: 'primary' | 'success' | 'info' | 'warning' | 'danger'
+    value: string
+    type?: 'primary' | 'success' | 'info' | 'warning' | 'danger'
     color?: string
     hit?: boolean
     effect?: 'dark' | 'light' | 'plain'
@@ -49,8 +49,28 @@ const cssColorMap = {
   danger: 'rgb(var(--danger-6))'
 }
 
+const arcoPresetColors = new Set([
+  'red',
+  'orangered',
+  'orange',
+  'gold',
+  'lime',
+  'green',
+  'cyan',
+  'blue',
+  'arcoblue',
+  'purple',
+  'pinkpurple',
+  'magenta',
+  'gray'
+])
+
 const tagColor = computed(() => props.color || colorMap[props.type])
-const dotColor = computed(() => props.color || cssColorMap[props.type])
+const dotColor = computed(() => {
+  if (!props.color) return cssColorMap[props.type]
+  // Arco 标签预设色名需要转为调色板变量，不能直接作为圆点的 CSS 颜色。
+  return arcoPresetColors.has(props.color) ? `rgb(var(--${props.color}-6))` : props.color
+})
 </script>
 
 <style scoped lang="less">

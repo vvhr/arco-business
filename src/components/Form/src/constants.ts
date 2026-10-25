@@ -33,6 +33,7 @@ export const needOptions: FormInputName[] = [
 export const needDataOptions: FormInputName[] = ['Transfer', 'TreeSelect']
 
 export const needInputPlaceholder: FormInputName[] = [
+  'AmountInput',
   'AutoComplete',
   'Input',
   'InputNumber',

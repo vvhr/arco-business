@@ -18,9 +18,11 @@ import {
   TreeSelect
 } from '@arco-design/web-vue'
 import AbUpload from '@/components/Upload'
+import AbAmountInput from '@/components/AmountInput'
 
 /** Table 编辑态默认支持的 Arco 组件映射。 */
 const defaultComponents: Recordable<Component, TableFormComponentName> = {
+  AmountInput: AbAmountInput,
   AutoComplete,
   Cascader,
   CheckboxGroup,
