@@ -18,8 +18,6 @@
 
 Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之上提供更贴近业务交付的配置协议、组合组件和扩展入口。
 
-> 过去我曾基于 Element Plus 开发了 Advanced Element UI，应广大网友需求，这次基于 Arco Design Vue 对原 Advanced Element UI 进行了底层重构，遵循 Arco Design Vue 的组件风格和样式规范，得益于 Codex 的辅助，对组件细节也进行了增强。
-
 ## 文档
 
 [Acro Business Docs](http://arco.vvhrdesign.com)
