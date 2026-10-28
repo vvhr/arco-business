@@ -27,16 +27,8 @@ export interface EditableRenderContext {
 export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefined {
   const { props, slots, emit, column, row, index, components, componentConfigs } = ctx
 
-  const {
-    field,
-    freshKey,
-    formItemProps,
-    getAnyComponent,
-    setModelValue,
-    setComponentProps,
-    setComponentEvent,
-    setInsideRenders
-  } = useComponent(props, slots, emit, row, index, column, props.form, components, componentConfigs)
+  const { field, freshKey, formItemProps, getAnyComponent, setComponentProps, setInsideRenders } =
+    useComponent(props, slots, emit, row, index, column, props.form, components, componentConfigs)
 
   if (!field) {
     logger.warn('console.table.editFieldRequired', undefined, column)
@@ -51,12 +43,7 @@ export function renderEditableColumn(ctx: EditableRenderContext): VNode | undefi
     }
 
     return (
-      <AnyComponent
-        {...setModelValue()}
-        {...setComponentProps()}
-        {...setComponentEvent()}
-        key={freshKey}
-      >
+      <AnyComponent {...setComponentProps()} key={freshKey}>
         {{ ...setInsideRenders() }}
       </AnyComponent>
     )

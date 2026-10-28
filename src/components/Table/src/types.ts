@@ -401,14 +401,16 @@ export interface TableColumnEditProps {
   component?: TableFormComponentName | string
   /** 默认值，保留给外部初始化逻辑使用。 */
   defaultValue?: any
-  /** 传给编辑组件的属性。 */
+  /** 编辑组件的静态默认属性，与 _v_componentProps 的结果浅合并。 */
   componentProps?: TableFormComponentProps
-  /** 动态组件属性函数。 */
-  _v_componentProps?: TableColumnFn<Recordable>
+  /** 动态增量：同名属性覆盖静态值（含显式 undefined）；未返回的属性保留静态值。 */
+  _v_componentProps?: TableColumnFn<TableFormComponentProps | null | undefined | void>
   /** 编辑组件事件映射。 */
   componentEvent?: TableFormComponentEvents
   /** Arco FormItem 属性。 */
   formItemProps?: {
+    /** 禁用整个表单项，参与编辑组件最终禁用状态及禁用占位判断。 */
+    disabled?: boolean
     rules?: FieldRule | FieldRule[]
     autoRules?: AutoRules[]
   } & Recordable
@@ -427,7 +429,9 @@ export interface TableFormComponentProps {
   fieldNames?: TableOptionKeys
   style?: CSSProperties | string
   placeholder?: string | string[]
-  /** 额外双向绑定字段映射。 */
+  /** 组件或 FormItem 最终禁用时覆盖 placeholder；未设置时保留原提示。范围组件自动复制字符串。 */
+  disabledPlaceholder?: string | string[]
+  /** 额外双向绑定字段映射，支持动态返回；映射整体替换，不深合并。 */
   vBinds?: Recordable<string, string>
   [key: string]: any
 }

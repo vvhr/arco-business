@@ -2,6 +2,15 @@
 
 本项目遵循语义化版本风格记录变更。
 
+## [Unreleased]
+
+### Fixed
+
+- 统一 `AbTable` 编辑列静态与动态属性的浅合并和解析，`disabled`、`options`、`vBinds`、`freshKey` 使用同一份有效属性，支持完全由动态回调提供配置。
+- `_v_componentProps` 改为传入真实业务行与行索引；额外绑定支持动态切换路径，业务更新监听器不会覆盖内部回写。
+- 新增编辑属性 `disabledPlaceholder`，按字段最终禁用状态应用，解禁后恢复原提示；同步公开类型、文档及真实组件挂载回归。
+- 禁用占位覆盖 `formItemProps.disabled` 和 `vBinds.disabled` 来源；保留显式模型属性覆盖自动绑定值的既有优先级，更新监听器独立组合。
+
 ## [0.0.5-beta.1] - 2026-10-26
 
 ### Added

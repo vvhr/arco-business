@@ -66,6 +66,13 @@
   <DemoBlock id="table-dynamic-demo" title="动态编辑、权限与操作列" description="展示 TableColumnFn、autoRules、componentEvent、excontext、可点击单元格和动态操作按钮。" :source="dynamicEditingSource">
     <DynamicEditingDemo />
   </DemoBlock>
+  <SectionBlock id="table-edit-props-contract" kicker="Editing" title="静态默认值与动态增量" description="componentProps 与 _v_componentProps 的结果浅合并，动态同名值优先。未返回属性保留静态值，显式 undefined 覆盖静态值；回调返回 null、undefined 或无返回值视为无增量。style、fieldNames、vBinds 等对象整体替换。">
+    <div class="docs-callout">
+      <p>_v_componentProps(row, index, column, form, excontext, editable) 接收真实业务行、从 0 开始的展示行索引、业务列、外部表单、扩展上下文及表格编辑状态。合并后统一解析 disabled、options、vBinds 和 freshKey，disabled/options 的函数使用相同参数；可以仅使用动态回调返回完整配置。</p>
+      <p>vBinds 将组件属性映射至当前行字段路径，自动回填并监听 update:属性名；动态切换后使用新路径。动态返回 vBinds: undefined 或空对象可取消额外绑定。保持既有值优先级：自动绑定值作为默认值，显式组件属性（含 modelValue、自定义模型属性及 undefined）优先，同名更新事件保留内部回写及业务监听器。</p>
+      <p>disabledPlaceholder: '--' 在字段最终禁用时覆盖提示，解禁后恢复自定义或自动提示；未配置时保留原行为。禁用状态在绑定与显式属性合并后计算，也包含 formItemProps.disabled；组件自身的 false 无法解除表单项禁用。范围组件将字符串自动复制到两端，也支持字符串数组。显式 placeholder: undefined 清除静态及自动提示。vBinds、freshKey、disabledPlaceholder 不透传到编辑组件。</p>
+    </div>
+  </SectionBlock>
 
   <ApiTable id="table-api" title="Props API" description="表格入参围绕数据、列配置、选择、编辑、分页和布局组织。" :rows="propsRows" />
   <ApiTable id="table-events" title="Events API" description="事件用于接入页面查询、行操作、选择结果和拖拽结果。" :rows="eventsRows" />
@@ -220,8 +227,8 @@ const editPropsRows: ApiRow[] = [
   { name: 'field', description: '编辑字段路径，默认使用 column.field。', type: 'string', defaultValue: 'column.field' },
   { name: 'component', description: '编辑组件名，内置 AmountInput 和常用 Arco 输入组件，也可通过 imports 注册。', type: 'TableFormComponentName | string', defaultValue: 'Input' },
   { name: 'defaultValue', description: '默认值，保留给外部初始化逻辑使用。', type: 'any', defaultValue: '-' },
-  { name: 'componentProps', description: '传给编辑组件的属性。', type: 'TableFormComponentProps', defaultValue: '{}' },
-  { name: '_v_componentProps', description: '动态组件属性函数。', type: 'TableColumnFn<Recordable>', defaultValue: '-' },
+  { name: 'componentProps', description: '静态默认属性，与动态结果浅合并。', type: 'TableFormComponentProps', defaultValue: '{}' },
+  { name: '_v_componentProps', description: '按真实行上下文返回动态增量，同名值覆盖静态值（含显式 undefined），支持返回完整配置。', type: 'TableColumnFn<TableFormComponentProps | null | undefined | void>', defaultValue: '-' },
   { name: 'componentEvent', description: '编辑组件事件映射。', type: 'TableFormComponentEvents', defaultValue: '{}' },
   { name: 'formItemProps.rules', description: 'Arco FieldRule 校验规则。', type: 'FieldRule | FieldRule[]', defaultValue: '[]' },
   { name: 'formItemProps.autoRules', description: '自动校验规则名。', type: 'AutoRules[]', defaultValue: '[]' },
@@ -246,12 +253,13 @@ const structureRows: ApiRow[] = [
 ]
 
 const editComponentRows: ApiRow[] = [
-  { name: 'freshKey', description: '强制刷新编辑组件实例。', type: 'string | number', defaultValue: '-' },
+  { name: 'freshKey', description: '强制刷新编辑组件实例，支持动态返回。', type: 'string | number', defaultValue: '0' },
   { name: 'disabled', description: '编辑组件禁用态，支持按行动态判断。', type: 'boolean | TableColumnFn<boolean>', defaultValue: 'false' },
   { name: 'allowClear', description: '清空按钮开关。', type: 'boolean', defaultValue: 'true' },
   { name: 'options', description: '选择类组件选项，支持读取 row、form、excontext。', type: 'any[] | TableColumnFn<any[]>', defaultValue: '[]' },
   { name: 'fieldNames', description: 'Arco 选项字段映射。', type: 'TableOptionKeys', defaultValue: '{}' },
   { name: 'vBinds', description: '扩展 v-model 绑定字段映射。', type: 'Record<string, string>', defaultValue: '{}' },
-  { name: 'placeholder / style', description: '编辑组件占位文案和样式。', type: 'string | string[] / CSSProperties', defaultValue: '-' }
+  { name: 'placeholder / style', description: '编辑组件占位文案和样式；显式 placeholder: undefined 清除静态及自动提示。', type: 'string | string[] / CSSProperties', defaultValue: '-' },
+  { name: 'disabledPlaceholder', description: '按绑定、显式属性及 formItemProps.disabled 计算的最终禁用状态覆盖提示，解禁后恢复。范围组件将字符串复制为两端提示。', type: 'string | string[]', defaultValue: '不覆盖' }
 ]
 </script>

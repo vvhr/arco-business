@@ -89,10 +89,13 @@ const columns: TableColumn[] = [
     editProps: {
       component: 'Select',
       componentProps: {
-        options: (row, _index, _column, _form, excontext) =>
-          excontext.ownersByCategory[row.category] || [],
-        disabled: row => row.locked
+        allowClear: true,
+        disabledPlaceholder: '--'
       },
+      _v_componentProps: (row, _index, _column, _form, excontext) => ({
+        options: excontext.ownersByCategory[row.category] || [],
+        disabled: row.locked
+      }),
       formItemProps: { autoRules: ['isRequired'] }
     }
   },

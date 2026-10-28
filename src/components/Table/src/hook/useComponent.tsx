@@ -6,7 +6,7 @@ import { setReactiveValue } from '@/utils/set'
 import { getAutoRulesMap } from '@/utils/rules'
 import { getPlaceholder } from '@/locale/utils'
 import { t } from '@/locale'
-import { getRawRecord, getRowFormFieldPath, isDisabled } from '../utils'
+import { getRawRecord, getRowFormFieldPath } from '../utils'
 import type {
   TableColumn,
   TableColumnFn,
@@ -34,7 +34,19 @@ export function useComponent(
   const componentName = column?.editProps?.component || 'Input'
   const field = column.editProps?.field || column.field
   const modelRow = getRawRecord(row)
-  const freshKey = `${column.key || field}-${index}-${column.editProps?.componentProps?.freshKey || 0}`
+  // 每次单元格渲染只解析一次，所有消费路径共享同一份有效属性。
+  const componentProps: TableFormComponentProps = {
+    ...column.editProps?.componentProps,
+    ...column.editProps?._v_componentProps?.(
+      modelRow,
+      index,
+      column,
+      formModel,
+      props.excontext,
+      props.editable
+    )
+  }
+  const freshKey = `${column.key || field}-${index}-${componentProps.freshKey ?? 0}`
   const rules = getFormItemRules()
   const formItemProps = {
     label: '',
@@ -65,8 +77,8 @@ export function useComponent(
         setReactiveValue(modelRow, field, value)
       }
     }
-    if (column.editProps?.componentProps?.vBinds) {
-      Object.entries(column.editProps.componentProps.vBinds).forEach(([propName, fieldPath]) => {
+    if (componentProps.vBinds) {
+      Object.entries(componentProps.vBinds).forEach(([propName, fieldPath]) => {
         if (propName && fieldPath && typeof fieldPath === 'string') {
           bindings[propName] = get(modelRow, fieldPath)
           bindings[`onUpdate:${propName}`] = (value: any) => {
@@ -103,22 +115,58 @@ export function useComponent(
     return ruleList.some(rule => rule?.required) || autoRules.some(isRequiredAutoRule)
   }
 
-  /** 生成编辑组件属性。 */
+  /** 统一生成绑定、显式属性和事件，再按最终禁用状态应用占位策略。 */
   function setComponentProps(): Recordable {
-    const componentProps = column.editProps?.componentProps || {}
+    const bindings = setModelValue()
+    const componentEvents = setComponentEvent()
+    // 保留既有优先级：显式组件属性覆盖模型自动生成的值。
+    const effectiveProps: TableFormComponentProps = {
+      ...bindings,
+      ...componentProps,
+      ...componentEvents
+    }
+    // 更新监听器单独组合，避免业务监听器覆盖内部回写。
+    for (const eventName of Object.keys(bindings)) {
+      if (eventName.startsWith('onUpdate:')) {
+        effectiveProps[eventName] = [
+          bindings[eventName],
+          componentProps[eventName],
+          componentEvents[eventName]
+        ]
+          .flat()
+          .filter(Boolean)
+      }
+    }
+    const disabled = isFunction(effectiveProps.disabled)
+      ? effectiveProps.disabled(modelRow, index, column, formModel, props.excontext, props.editable)
+      : effectiveProps.disabled
+    // 与 Arco useFormItem 保持一致：FormItem 禁用时，组件 false 无法解除禁用。
+    effectiveProps.disabled = Boolean(disabled || formItemProps.disabled)
+    Object.assign(
+      effectiveProps,
+      setAttrsOptions(modelRow, index, column, effectiveProps, formModel, props)
+    )
     const compProps: Recordable = {
       style: {
         width: '100%'
       },
-      ...getPlaceholderText(column, componentConfigs),
-      ...setCascaderProps(column),
-      ...componentProps,
-      ...setAttrsOptions(modelRow, index, column, componentProps, formModel, props),
-      disabled: isDisabled(props, column, modelRow, index),
-      ...getDynamicComponentProps(column, formModel, props)
+      ...getPlaceholderText(column, componentConfigs, effectiveProps),
+      ...setCascaderProps(column, effectiveProps),
+      ...effectiveProps
     }
 
+    if (effectiveProps.disabled && effectiveProps.disabledPlaceholder !== undefined) {
+      const placeholder = effectiveProps.disabledPlaceholder
+      compProps.placeholder =
+        typeof placeholder === 'string' &&
+        (componentName === 'RangePicker' ||
+          (componentName === 'TimePicker' && effectiveProps.type === 'time-range'))
+          ? [placeholder, placeholder]
+          : placeholder
+    }
     delete compProps.vBinds
+    delete compProps.freshKey
+    delete compProps.disabledPlaceholder
     return compProps
   }
 
@@ -162,9 +210,7 @@ export function useComponent(
 
   return {
     getAnyComponent,
-    setModelValue,
     setComponentProps,
-    setComponentEvent,
     setInsideRenders,
     field,
     freshKey,
@@ -176,7 +222,8 @@ export function useComponent(
 /** 按组件类型自动生成输入或选择类 placeholder。 */
 function getPlaceholderText(
   column: TableColumn,
-  componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>
+  componentConfigs: Partial<Recordable<TableFormImportItemConfig, TableFormComponentName>>,
+  componentProps: TableFormComponentProps
 ) {
   const needInputPlaceholder = [
     'AmountInput',
@@ -189,7 +236,6 @@ function getPlaceholderText(
   const needSelectPlaceholder = ['Cascader', 'DatePicker', 'Select', 'TimePicker', 'TreeSelect']
   const needRangePlaceholder = ['RangePicker']
   const componentName = column.editProps?.component || 'Input'
-  const componentProps = column.editProps?.componentProps || {}
   const component = componentConfigs[componentName]
 
   if (needInputPlaceholder.includes(componentName) || component?.needInputPlaceholder) {
@@ -220,33 +266,13 @@ function getPlaceholderText(
   return {}
 }
 
-function setCascaderProps(column: TableColumn) {
-  if (
-    column.editProps?.component !== 'Cascader' ||
-    column.editProps?.componentProps?.pathMode !== undefined
-  ) {
+function setCascaderProps(column: TableColumn, componentProps: TableFormComponentProps) {
+  if (column.editProps?.component !== 'Cascader' || componentProps.pathMode !== undefined) {
     return {}
   }
   return {
     pathMode: true
   }
-}
-
-/** 执行 _v_componentProps，获取行上下文相关的动态组件属性。 */
-function getDynamicComponentProps(column: TableColumn, formModel: Recordable, props: TableProps) {
-  if (isFunction(column.editProps?._v_componentProps)) {
-    return (
-      column.editProps?._v_componentProps(
-        {},
-        null,
-        column,
-        formModel,
-        props.excontext,
-        props.editable
-      ) || {}
-    )
-  }
-  return {}
 }
 
 /** 解析 options 和 fieldNames，兼容静态和动态选项。 */

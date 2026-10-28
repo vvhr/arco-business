@@ -45,6 +45,36 @@ Acro Business 不替代 Arco Design Vue 的基础组件能力，而是在其之�
 
 `AbAmountInput` 的编辑输出为十进制字符串，支持 `precision`、`emptyValue`、`readonly`、`disabled`、`showChineseUppercase` 和千分位配置。表单 schema 与表格编辑组件名均为 `AmountInput`，无需另行注册；回填及只聚焦失焦不触发业务 `change`。
 
+### AbTable 编辑属性契约
+
+`editProps.componentProps` 提供静态默认值，`editProps._v_componentProps` 在每次编辑单元格渲染时返回动态增量。二者浅合并，同名属性由动态值覆盖；动态结果未包含的属性保留静态值，显式 `undefined` 会覆盖静态值。回调返回 `null`、`undefined` 或不返回值等同于没有增量。`style`、`fieldNames`、`vBinds` 等对象属性整体替换，不深合并。
+
+动态回调签名为 `(row, index, column, form, excontext, editable)`，依次传入真实业务行对象、当前展示行索引（从 0 开始）、业务列、外部表单、扩展上下文和表格编辑状态。`disabled` 与 `options` 的函数值也使用这一签名，并在合并后执行；被覆盖的静态函数不会执行。未设置或显式清除 `disabled` 时恢复为 `false`，`freshKey` 恢复为 `0`。显式 `placeholder: undefined` 清除静态及自动提示，交给组件自身处理。
+
+渲染、禁用状态、选项、额外双向绑定与刷新 key 使用同一份有效属性，因此可以完全省略静态配置：
+
+```ts
+const column: TableColumn = {
+  field: 'ownerId',
+  label: '负责人',
+  editProps: {
+    component: 'OwnerPicker', // 通过 imports 注册，支持 label / update:label
+    _v_componentProps: (row, index, column, form, context, editable) => ({
+      options: context.ownersByCategory[row.category] || [],
+      disabled: row.locked,
+      disabledPlaceholder: '--',
+      placeholder: `请选择${column.label}`,
+      vBinds: { label: row.useAlias ? 'owner.alias' : 'owner.name' },
+      freshKey: row.editorVersion
+    })
+  }
+}
+```
+
+`vBinds` 将组件属性映射到当前行的字段路径，自动回填属性并监听 `update:属性名` 回写；动态切换映射后，后续事件写入新路径。返回 `{ vBinds: undefined }` 或 `{ vBinds: {} }` 可取消额外绑定。保持既有值优先级：行模型生成的主字段和额外绑定值作为默认值，显式配置的组件属性（含 `modelValue`、自定义模型属性及显式 `undefined`）优先；同名 `onUpdate:*` 属性监听器和 `componentEvent` 监听器仍会执行，且不会覆盖内部回写。`vBinds`、`freshKey`、`disabledPlaceholder` 为表格内部配置，不透传到编辑组件。
+
+`disabledPlaceholder` 可放在静态或动态属性中：字段最终禁用时覆盖提示，解禁后恢复自定义或自动提示。最终状态在绑定与显式组件属性合并后计算，并遵循 Arco 规则：`editProps.formItemProps.disabled: true` 也会禁用组件，组件自身的 `disabled: false` 无法解除表单项禁用。支持通过 `vBinds: { disabled: 'locked' }` 绑定行禁用状态。未配置占位策略时保持原提示；空字符串可隐藏禁用提示。`RangePicker` 和 `type: 'time-range'` 的 `TimePicker` 会将字符串复制为两端提示，也可直接传入字符串数组。
+
 `formatAmount` 保留十进制字符串精度，`sumAmounts(values, precision?)` 先精确累加后舍入；未指定 precision 时保留完整有效小数，指定时补齐对应位数。空值和非法值不计入合计。列级旧 `summaryMethod(values)` 仍接收 number 数组；要求精度的自定义合计请使用表格级 `summaryMethod({ rawData })` 与 `sumAmounts`。
 
 `AbTable` 可通过 `amountDefaults` 设置共享金额策略，列级 `typeProps` 优先。`amountZeroDisplay` 可指定零值显示，`amountZeroClickable: false` 可关闭零值点击；未设置时保留原有行为。金额类型列现在也支持 `render` 和 `formatter`，优先级与默认列一致。

@@ -77,18 +77,6 @@ export function isEditable(
   return resolveColumnFn(column.editable, true, row, index, column, props)
 }
 
-/** 判断编辑组件是否禁用。 */
-export function isDisabled(props: TableProps, column: TableColumn, row: Recordable, index: number) {
-  return resolveColumnFn(
-    column.editProps?.componentProps?.disabled,
-    false,
-    row,
-    index,
-    column,
-    props
-  )
-}
-
 /** 判断当前单元格是否展示复制入口。 */
 export function isCopyable(props: TableProps, column: TableColumn, row: Recordable, index: number) {
   return resolveColumnFn(column.copyable, false, row, index, column, props)
